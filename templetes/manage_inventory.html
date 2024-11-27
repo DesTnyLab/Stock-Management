@@ -1,0 +1,69 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Inventory</title>
+    <script src="{% static 'js/main.js' %}" defer></script>
+</head>
+<body>
+    <h1>Manage Inventory</h1>
+
+
+    <div class="form-container">
+        <h2>Add Product</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ product_form.as_p }}
+            <button type="submit" name="product_form">Add Purchase</button>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Add Purchase</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ purchase_form.as_p }}
+            <button type="submit" name="purchase_form">Add Purchase</button>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Add Sale</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ sale_form.as_p }}
+            <button type="submit" name="sale_form">Add Sale</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <h2>Stock Availability</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Total Purchased</th>
+                    <th>Total Sold</th>
+                    <th>Remaining Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                <tr>
+                    <td>{{ stock.product.name }}</td>
+                    <td>{{ stock.total_purchased }}</td>
+                    <td>{{ stock.total_sold }}</td>
+                    <td>{{ stock.remaining_stock }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No stock data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
