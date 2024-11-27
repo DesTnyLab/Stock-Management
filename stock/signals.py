@@ -37,12 +37,3 @@ def update_stock_on_sale(sender, instance, created, **kwargs):
     stock.save()
 
 
-@receiver(post_delete, sender=Sale)
-def update_stock_on_sale_delete(sender, instance, **kwargs):
-    """Update stock when a sale is deleted."""
-    try:
-        stock = Stock.objects.get(product=instance.product)
-        stock.total_sold -= instance.quantity
-        stock.save()
-    except Stock.DoesNotExist:
-        pass  # Handle gracefully if Stock doesn't exist
