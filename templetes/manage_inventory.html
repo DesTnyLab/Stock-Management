@@ -1,69 +1,97 @@
-
 {% load static %}
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Manage Inventory</title>
-    <script src="{% static 'js/main.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tripura books</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
-    <h1>Manage Inventory</h1>
-
-
-    <div class="form-container">
-        <h2>Add Product</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ product_form.as_p }}
-            <button type="submit" name="product_form">Add Product</button>
-        </form>
+    <div class="menu">
+        <div class="logo"></div>
+        <ul>
+            <li>Overview</li>
+            <li>Inventory</li>
+            <li>Orders</li>
+            <li>Reports</li>
+            <li>Analysis</li>
+        </ul>
+        Settings
     </div>
-
-    <div class="form-container">
-        <h2>Add Purchase</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ purchase_form.as_p }}
-            <button type="submit" name="purchase_form">Add Purchase</button>
-        </form>
+    <div class="dashboard">
+        <div class="nav_bar">
+            <div id="nav_intro">Inventory Dashboard <br>
+                <p>All in one inventory stock analyzer</p>
+            </div>
+            <div id="date">27th Nov, 2024</div>
+            <input type="text" placeholder="Search something...">
+        </div>
+        <div class="stock_overview">
+            <div class="new_added">
+                <div class="form-container">
+                    <h2>Add Product</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ product_form.as_p }}
+                        <button type="submit" name="product_form">Add Purchase</button>
+                    </form>
+                </div>
+            </div>
+            <div class="total_items">
+                <div class="form-container">
+                    <h2>Add Purchase</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ purchase_form.as_p }}
+                        <button type="submit" name="purchase_form">Add Purchase</button>
+                    </form>
+                </div>
+            </div>
+            <div class="sold_out">
+                <div class="form-container">
+                    <h2>Add Sale</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ sale_form.as_p }}
+                        <button type="submit" name="sale_form">Add Sale</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="product_overview">
+            <div class="table-container">
+                <h2>Stock Availability</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Total Purchased</th>
+                            <th>Total Sold</th>
+                            <th>Remaining Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks %}
+                        <tr>
+                            <td>{{ stock.product.name }}</td>
+                            <td>{{ stock.total_purchased }}</td>
+                            <td>{{ stock.total_sold }}</td>
+                            <td>{{ stock.remaining_stock }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No stock data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <div class="form-container">
-        <h2>Add Sale</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ sale_form.as_p }}
-            <button type="submit" name="sale_form">Add Sale</button>
-        </form>
-    </div>
-
-    <div class="table-container">
-        <h2>Stock Availability</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Total Purchased</th>
-                    <th>Total Sold</th>
-                    <th>Remaining Stock</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for stock in stocks %}
-                <tr>
-                    <td>{{ stock.product.name }}</td>
-                    <td>{{ stock.total_purchased }}</td>
-                    <td>{{ stock.total_sold }}</td>
-                    <td>{{ stock.remaining_stock }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4">No stock data available.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <script src="{% static 'js/main.js' %}" defer></script>
 </body>
+
 </html>
