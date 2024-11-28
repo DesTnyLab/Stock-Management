@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Stock
+from .models import Stock, Product
 from .forms import PurchaseForm, SaleForm, ProductForm
 
 
@@ -51,5 +51,14 @@ def manage_inventory(request):
     )
 
 
-def hello_world(request):
-    return render(request, "stock/index.html")
+
+
+def product_stock_search_ajax(request):
+    """AJAX view to search product stock details."""
+    query = request.GET.get('query', '')  
+    
+ 
+    stocks = Stock.objects.filter(product__name__icontains=query)  
+    
+   
+    return render(request, 'product_stock_search_results.html', {'stocks': stocks})

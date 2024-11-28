@@ -1,0 +1,13 @@
+<!-- product_stock_search_results.html -->
+{% for stock in stocks %}
+    <tr>
+        <td>{{ stock.product.name }}</td>
+        <td>{{ stock.total_purchased }}</td>
+        <td>{{ stock.total_sold }}</td>
+        <td>{{ stock.remaining_stock }}</td>
+    </tr>
+{% empty %}
+    <tr>
+        <td colspan="4">No stock data available for the search query.</td>
+    </tr>
+{% endfor %}
