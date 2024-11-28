@@ -20,8 +20,10 @@ class PurchaseForm(forms.ModelForm):
         
     def clean_quantity(self):
             quantity = self.cleaned_data['quantity']
-            product = self.cleaned_data['product']
+            product_name = self.cleaned_data['product']
+            product, _ = Product.objects.get_or_create(name=product_name)
             stock, _ = Stock.objects.get_or_create(product=product)
+          
             if stock.remaining_stock is None:
                 raise forms.ValidationError("Stock data is invalid. Please check the stock record.")
             if quantity < 0:

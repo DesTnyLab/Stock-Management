@@ -1,11 +1,13 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Purchase, Sale, Stock
+from .models import Purchase, Sale, Stock, Product
 
 @receiver(post_save, sender=Purchase)
 def update_stock_on_purchase(sender, instance, created, **kwargs):
     """Update stock when a purchase is made."""
-    stock, created_stock = Stock.objects.get_or_create(product=instance.product)
+    product = Product.objects.get(name= instance.product)
+    
+    stock, created_stock = Stock.objects.get_or_create(product=product)
     if created:  # New purchase
         stock.total_purchased += instance.quantity
     else:  # Existing purchase updated
@@ -14,11 +16,10 @@ def update_stock_on_purchase(sender, instance, created, **kwargs):
     stock.save()
 
 
-
-
 @receiver(post_save, sender=Sale)
 def update_stock_on_sale(sender, instance, created, **kwargs):
     """Update stock when a sale is made."""
+   
     stock, created_stock = Stock.objects.get_or_create(product=instance.product)
     if created:  # New sale
         stock.total_sold += instance.quantity

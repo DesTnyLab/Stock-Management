@@ -9,7 +9,7 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.CharField(max_length=255) 
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
@@ -25,6 +25,7 @@ class Purchase(models.Model):
     #         raise ValidationError("Quantity must be greater than zero.")
 
     def save(self, *args, **kwargs):
+        product_obj, created = Product.objects.get_or_create(name=self.product)
         # self.full_clean()  # Validate before saving
         super().save(*args, **kwargs)
 
