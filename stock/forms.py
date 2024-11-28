@@ -26,8 +26,7 @@ class PurchaseForm(forms.ModelForm):
                 raise forms.ValidationError("Stock data is invalid. Please check the stock record.")
             if quantity < 0:
                 raise forms.ValidationError("Purchase quantity cannot be negative.")
-            if stock.remaining_stock < quantity:
-                raise forms.ValidationError(f"Not enough stock. Only {stock.remaining_stock} units available.")
+            
             return quantity
 
 
