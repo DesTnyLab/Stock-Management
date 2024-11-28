@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tripura books</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
@@ -27,7 +28,8 @@
                 <p>All in one inventory stock analyzer</p>
             </div>
             <div id="date">27th Nov, 2024</div>
-            <input type="text" placeholder="Search something...">
+            <input type="text" id="product-search" placeholder="Search by product name..." />
+            <button id="search-button">Search</button>
         </div>
         <div class="stock_overview">
             <div class="new_added">
@@ -61,6 +63,7 @@
                 </div>
             </div>
         </div>
+      
         <div class="product_overview">
             <div class="table-container">
                 <h2>Stock Availability</h2>
@@ -73,7 +76,7 @@
                             <th>Remaining Stock</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="stock-list">
                         {% for stock in stocks %}
                         <tr>
                             <td>{{ stock.product.name }}</td>
@@ -81,16 +84,52 @@
                             <td>{{ stock.total_sold }}</td>
                             <td>{{ stock.remaining_stock }}</td>
                         </tr>
-                        {% empty %}
+                    {% empty %}
                         <tr>
-                            <td colspan="4">No stock data available.</td>
+                            <td colspan="4">No stock data available for the search query.</td>
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+        
     </div>
+
+
+<script>
+    $(document).ready(function() {
+        // Trigger search on key input in the search box
+        $('#product-search').on('input', function() {
+            var query = $(this).val();  // Get the search query
+            
+            // Make an AJAX request to fetch the stock information
+            $.ajax({
+                url: '{% url "product_stock_search_ajax" %}',  // URL to your AJAX view
+                method: 'GET',
+                data: { 'query': query },  // Send the query to the backend
+                success: function(data) {
+                    // On success, update the stock table with the filtered data
+                    $('#stock-list').html(data);
+                }
+            });
+        });
+    
+        // Trigger search when the user clicks the search button
+        $('#search-button').click(function() {
+            var query = $('#product-search').val();  // Get the query
+            $.ajax({
+                url: '{% url "product_stock_search_ajax" %}',  // URL to your AJAX view
+                method: 'GET',
+                data: { 'query': query },  // Send the query
+                success: function(data) {
+                    // Update the stock table with the filtered data
+                    $('#stock-list').html(data);
+                }
+            });
+        });
+    });
+    </script>
     <script src="{% static 'js/main.js' %}" defer></script>
 </body>
 
