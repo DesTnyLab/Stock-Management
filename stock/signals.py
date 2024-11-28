@@ -14,15 +14,6 @@ def update_stock_on_purchase(sender, instance, created, **kwargs):
     stock.save()
 
 
-@receiver(post_delete, sender=Purchase)
-def update_stock_on_purchase_delete(sender, instance, **kwargs):
-    """Update stock when a purchase is deleted."""
-    try:
-        stock = Stock.objects.get(product=instance.product)
-        stock.total_purchased -= instance.quantity
-        stock.save()
-    except Stock.DoesNotExist:
-        pass  # Handle gracefully if Stock doesn't exist
 
 
 @receiver(post_save, sender=Sale)
