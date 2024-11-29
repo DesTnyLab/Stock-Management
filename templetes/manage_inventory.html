@@ -86,7 +86,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="4">No stock data available for the search query.</td>
+                            <td colspan="4">No stock data available.</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -99,17 +99,16 @@
 
 <script>
     $(document).ready(function() {
-        // Trigger search on key input in the search box
+       
         $('#product-search').on('input', function() {
-            var query = $(this).val();  // Get the search query
+            var query = $(this).val();  
             
             // Make an AJAX request to fetch the stock information
             $.ajax({
-                url: '{% url "product_stock_search_ajax" %}',  // URL to your AJAX view
+                url: '{% url "product_stock_search_ajax" %}',  
                 method: 'GET',
                 data: { 'query': query },  // Send the query to the backend
                 success: function(data) {
-                    // On success, update the stock table with the filtered data
                     $('#stock-list').html(data);
                 }
             });
