@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Stock, Product
+from .models import Stock, Product, Purchase, Sale
 from .forms import PurchaseForm, SaleForm, ProductForm
 
 
@@ -62,3 +62,20 @@ def product_stock_search_ajax(request):
     
    
     return render(request, 'product_stock_search_results.html', {'stocks': stocks})
+
+
+
+def view_product_details(request, id):
+    # Get the product object
+    product = get_object_or_404(Product, id=id)
+
+    # Filter purchases based on the product name
+    purchase_data = Purchase.objects.filter(product=product.name)
+
+    sale_data = Sale.objects.filter(product=product)
+   
+    return render(request, "purches_history.html", context={
+        'product': product,
+        'purchase_data': purchase_data,
+        'sale_data': sale_data
+    })

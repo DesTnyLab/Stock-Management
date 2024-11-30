@@ -83,6 +83,8 @@
                             <td>{{ stock.total_purchased }}</td>
                             <td>{{ stock.total_sold }}</td>
                             <td>{{ stock.remaining_stock }}</td>
+                            <td><a href="{% url 'product_history' stock.product.id %}">View details</a>
+                            </td>
                         </tr>
                     {% empty %}
                         <tr>
