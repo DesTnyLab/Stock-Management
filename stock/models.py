@@ -17,6 +17,8 @@ class Purchase(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
 
+    def get_total_cost(self):
+        return self.quantity*self.price
     def __str__(self):
         return f"Purchase of {self.quantity} {self.product}"
 
@@ -46,6 +48,10 @@ class Sale(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
 
+
+    def get_total_cost(self):
+        return self.quantity*self.price
+    
     def __str__(self):
         return f"Sale of {self.quantity} {self.product.name}"
 

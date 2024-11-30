@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase History - {{ product.name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Purchase History for "{{ product.name }}"</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchase_data %}
+                    <tr>
+                        <td>{{ purchase.date }}</td>
+                        <td>{{ purchase.quantity }}</td>
+                        <td>{{ purchase.price }}</td>
+                        <td>{{purchase.get_total_cost}}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No purchases made for this product yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Sale History for "{{ product.name }}"</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sale_data %}
+                    <tr>
+                        <td>{{ sale.date }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>{{ sale.price }}</td>
+                        <td>{{ sale.get_total_cost }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No purchases made for this product yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'manage_inventory' %}" class="btn btn-primary">Back to Products</a>
+    </div>
+
+</body>
+</html>
