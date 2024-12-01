@@ -11,6 +11,11 @@ import io
 import urllib
 import base64
 
+
+def index(request):
+    return render(request, 'stock/login.html')
+
+
 def manage_inventory(request):
 
     # handel product form submisstion
@@ -53,13 +58,13 @@ def manage_inventory(request):
                 output_field=IntegerField()
             )
         )
-        .order_by('rem_stock')[:10]  # Order by remaining_stock and limit to top 10
+        .order_by('rem_stock')[:5]  # Order by remaining_stock and limit to top 10
     )
 
 
     return render(
         request,
-        "manage_inventory.html",
+        "stock/index.html",
         {
             "purchase_form": purchase_form,
             "product_form": product_form,
@@ -68,6 +73,18 @@ def manage_inventory(request):
         },
     )
 
+def view_stock(request):
+    stocks =  Stock.objects.all()
+            
+
+
+    return render(request,
+        "stock/stock.html",
+        {
+           
+            "stocks": stocks,
+        },
+    )
 
 
 
@@ -79,7 +96,7 @@ def product_stock_search_ajax(request):
     stocks = Stock.objects.filter(product__name__icontains=query)  
     
    
-    return render(request, 'product_stock_search_results.html', {'stocks': stocks})
+    return render(request, 'stock/product_stock_search_results.html', {'stocks': stocks})
 
 
 
@@ -92,7 +109,7 @@ def view_product_details(request, id):
 
     sale_data = Sale.objects.filter(product=product)
    
-    return render(request, "purches_history.html", context={
+    return render(request, "stock/product_details.html", context={
         'product': product,
         'purchase_data': purchase_data,
         'sale_data': sale_data
@@ -130,23 +147,6 @@ def view_product_details(request, id):
 
 
 
-def today_profit(request):
-    # Get today's date
-    today = date.today()
-    
-    # Fetch sales data for today
-    sale_data = Sale.objects.filter(date=today).select_related('product')
-    
-    # Calculate profit
-    total_profit = 0
-    for sale in sale_data:
-        cost_price = sale.product.cost_price
-        selling_price = sale.product.selling_price
-        quantity = sale.quantity
-        profit = (selling_price - cost_price) * quantity
-        total_profit += profit
-    
-    return render(request, "today_profit.html", {"total_profit": total_profit})
 
 
 
@@ -167,7 +167,13 @@ def todays_top_sales(request):
     
     # Fetch sale data for today
     sale_data = Sale.objects.filter(date=today).select_related('product')
-    
+    total_profit = 0
+    for sale in sale_data:
+        cost_price = sale.product.cost_price
+        selling_price = sale.product.selling_price
+        quantity = sale.quantity
+        profit = (selling_price - cost_price) * quantity
+        total_profit += profit
     # Create sales summary
     sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
 
@@ -178,7 +184,7 @@ def todays_top_sales(request):
     # Sort products by revenue in descending order and select top 5
     sorted_sales = sorted(sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True)
     top_sales = sorted_sales[:5]
-    
+    total_revenue = sum(data["revenue"] for data in sales_summary.values())
     # Prepare data for the graph
     product_names = [item[0] for item in top_sales]
     quantities = [item[1]["quantity"] for item in top_sales]
@@ -211,16 +217,22 @@ def todays_top_sales(request):
     # with open('test_image.png', 'wb') as f:
     #     f.write(buf.getvalue())
 
-    return render(request, "todays_top_sales.html", {
+    return render(request, "stock/today_report.html", {
         "sales_summary": top_sales,
         "today": today,
-        "graph": img_str,  # Pass the image data to the template
+        "graph": img_str,
+        "total_profit": total_profit,
+        'total_revenue':total_revenue
     })
 
 
 def overall_top_sales(request):
     # Fetch all stock data
     stock_data = Stock.objects.select_related('product').all()
+    overall_profit = 0
+    for item in stock_data:
+        profit_data = item.total_selling_cost - item.total_buying_cost
+        overall_profit += profit_data
 
     # Dictionary to aggregate sales data per product
     sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
@@ -234,7 +246,7 @@ def overall_top_sales(request):
 
     # Get the top 5 products
     top_sales = sorted_sales[:10]
-
+    total_revenue = sum(data["revenue"] for data in sales_summary.values())
       # Prepare data for the graph
     product_names = [item[0] for item in top_sales]
     quantities = [item[1]["quantity"] for item in top_sales]
@@ -264,7 +276,9 @@ def overall_top_sales(request):
     # Close the plot to release memory
     plt.close(fig)
 
-    return render(request, "overall_top_sales.html", {
+    return render(request, "stock/overall_report.html", {
         "sales_summary": top_sales,
         "graph": img_str,
+        "total_profit": overall_profit,
+        'total_revenue':total_revenue
     })

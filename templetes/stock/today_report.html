@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Today's Reports {% endblock %}
+  
+{% block content %}
+
+<div style=" width: 75%;
+    padding-left:23%">
+<div class="about-product">
+    <div style="display: flex;">
+        <div>
+            <h3>Today's Profit</h3>
+            <ul style="list-style: none;">
+               
+                <li>
+                    Total Profit: Npr {{ total_profit }}
+                </li>
+                <li>
+                    Total Revenue : {{total_revenue}}
+                </li>
+          
+            </ul>
+        </div>
+        <div style="padding-left: 10%;">
+
+       
+      
+        <!-- Display the bar chart -->
+        <img  src="data:image/png;base64,{{ graph }}" alt="Top Sales Graph" />
+
+        </div>
+    </div>
+   
+<div>
+    
+    <h3>Sales Summary</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity Sold</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product, data in sales_summary %}
+            <tr>
+                <td>{{ product }}</td>
+                <td>{{ data.quantity }}</td>
+                <td>{{ data.revenue }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
