@@ -6,7 +6,10 @@ import json
 from datetime import date 
 from collections import defaultdict
 from django.db.models import F, ExpressionWrapper, IntegerField
-
+import matplotlib.pyplot as plt
+import io
+import urllib
+import base64
 
 def manage_inventory(request):
 
@@ -157,26 +160,62 @@ def overall_profit(request):
     return render(request, "overall_profit.html", {"total_profit": overall_profit})
 
 
+
 def todays_top_sales(request):
     # Get today's date
     today = date.today()
     
+    # Fetch sale data for today
     sale_data = Sale.objects.filter(date=today).select_related('product')
- 
+    
+    # Create sales summary
     sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
 
     for item in sale_data:
         sales_summary[item.product.name]["quantity"] += item.quantity
         sales_summary[item.product.name]["revenue"] += item.quantity * item.price
     
-   
+    # Sort products by revenue in descending order and select top 5
     sorted_sales = sorted(sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True)
     top_sales = sorted_sales[:5]
+    
+    # Prepare data for the graph
+    product_names = [item[0] for item in top_sales]
+    quantities = [item[1]["quantity"] for item in top_sales]
+    
+    # Create a bar graph
+    fig, ax = plt.subplots()
+    ax.bar(product_names, quantities, color='skyblue')
+    
+    # Add labels to the bars
+    for i, v in enumerate(quantities):
+        ax.text(i, v + 0.1, str(v), ha='center', va='bottom')  # Display quantity value above each bar
+    
+    # Add title and labels
+    ax.set_title('Top 5 Sales Products for Today')
+    ax.set_xlabel('Product Name')
+    ax.set_ylabel('Quantity Sold')
+    
+       # Save the plot to a BytesIO object
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    
+    # Convert the image to base64 string
+    img_str = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+
+    # Close the plot to release memory
+    plt.close(fig)
+    # print(img_str)
+    # with open('test_image.png', 'wb') as f:
+    #     f.write(buf.getvalue())
+
     return render(request, "todays_top_sales.html", {
         "sales_summary": top_sales,
-        "today": today
+        "today": today,
+        "graph": img_str,  # Pass the image data to the template
     })
-
 
 
 def overall_top_sales(request):
@@ -196,6 +235,36 @@ def overall_top_sales(request):
     # Get the top 5 products
     top_sales = sorted_sales[:10]
 
+      # Prepare data for the graph
+    product_names = [item[0] for item in top_sales]
+    quantities = [item[1]["quantity"] for item in top_sales]
+    
+    # Create a bar graph
+    fig, ax = plt.subplots()
+    ax.bar(product_names, quantities, color='skyblue')
+    
+    # Add labels to the bars
+    for i, v in enumerate(quantities):
+        ax.text(i, v + 0.1, str(v), ha='center', va='bottom')  # Display quantity value above each bar
+    
+    # Add title and labels
+    ax.set_title('Top 5 Sales Products ')
+    ax.set_xlabel('Product Name')
+    ax.set_ylabel('Quantity Sold')
+    
+       # Save the plot to a BytesIO object
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    
+    # Convert the image to base64 string
+    img_str = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+
+    # Close the plot to release memory
+    plt.close(fig)
+
     return render(request, "overall_top_sales.html", {
         "sales_summary": top_sales,
+        "graph": img_str,
     })
