@@ -1,62 +1,60 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Tirpura Store {% endblock %}
-  
+
 {% block content %}
 
-<div class="main-content">
+<!-- <div class="main-content"> -->
+<div class="form-container">
+    <div class="form-box">
+        <h3>Add Purchase</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ purchase_form.as_p }}
+            <button type="submit" name="purchase_form">Add Purchase</button>
+        </form>
 
-    <div class="form-container" style=" width: 80%;
-    padding-left:20%">
-        
-        <div class="form-box">
-            <h3>Add Purchase</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ purchase_form.as_p }}
-                <button type="submit" name="purchase_form">Add Purchase</button>
-            </form>
-        </div>
-        <div class="form-box">
-            <h3>Add Sale</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ sale_form.as_p }}
-                <button type="submit" name="sale_form">Add Sale</button>
-            </form>
-        </div>
     </div>
-<div style=" width: 80%;
-    padding-left:20%">
-    <h2 style="padding-left: 40%;">Stock Availability</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Total Purchased</th>
-                <th>Total Sold</th>
-                <th>Remaining Stock</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody id="stock-list">
-            {% for stock in stocks %}
-            <tr>
-                <td>{{ stock.product.name }}</td>
-                <td>{{ stock.total_purchased }}</td>
-                <td>{{ stock.total_sold }}</td>
-                <td>{{ stock.rem_stock}}</td>
-                <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' stock.product.id %}">View details</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="4">No stock data available.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="form-box">
+        <h3>Add Sale</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ sale_form.as_p }}
+            <button type="submit" name="sale_form">Add Sale</button>
+        </form>
+    </div>
 </div>
-    
+<h2 style="text-align: center;">Stock Availability</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Total Purchased</th>
+            <th>Total Sold</th>
+            <th>Remaining Stock</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody id="stock-list">
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock.product.name }}</td>
+            <td>{{ stock.total_purchased }}</td>
+            <td>{{ stock.total_sold }}</td>
+            <td>{{ stock.rem_stock}}</td>
+            <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' stock.product.id %}">View
+                    details</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No stock data available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+<div><a href="{% url 'view_stock' %}">view more</a></div>
 </div>
 {% endblock %}
