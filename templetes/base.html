@@ -5,55 +5,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{% static 'css/stylesheet.css' %}">
-
-  <script src="{% static 'js/main.js' %}" defer></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
-
- 
-
-  <title> {% block title %} hello {% endblock %}
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <script src="{% static 'js/base.js' %}" defer></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <title> {% block title %} default title {% endblock %}
   </title>
 </head>
 
 <body>
-  <div class="sidebar">
-    <img class="logo" src="{% static 'images/image.png' %}" alt="" style="
-      height: 100px;
-      width: 100px;
-      padding-left: 30px;
-      border-radius: 50%;">
-    <a href="{% url 'manage_inventory' %}">Dashboard</a>
-    <a href="{% url 'view_stock' %}">Stock </a>
-    <a href="{% url 'todays_top_sales' %}">Today's Report</a>
-    <a href="{% url 'overall_top_sales' %}">Overall Report</a>
-    <a href="{% url 'login' %}">Settings</a>
-</div>
-<div class="header" style=" 
-padding-left: 40%
-;">
-<div style="display: flex;">
-    <div >
-        <h1> Tripura Stationary Store Pvt. Ltd</h1>
-        <h4 style="padding-left:30%;">Thamal, Kathmandu</h4>
+  <div class="main-body">
+    <div class="sidebar">
+      <div class="logo_div">
+        <img id="logo" src="{% static 'images/image.png' %}" alt="">
+      </div>
+      <a href="{% url 'manage_inventory' %}">Dashboard</a>
+      <a href="{% url 'view_stock' %}">Stock </a>
+      <a href="{% url 'todays_top_sales' %}">Today's Report</a>
+      <a href="{% url 'overall_top_sales' %}">Overall Report</a>
+      <a href="{% url 'login' %}">Settings</a>
     </div>
-    <div style="padding-left: 50px;">
-        
-       </ol>
+    <div class="main-content">
+      <div class="header">
+        <div class="company_title">
+          Tripurasundari Books and Stationery <br>
+          <div id="address">Thamel, Kathmandu</div>
+        </div>
+        <div type="date" id="today_date">Date:</div>
+
+      </div>
+      {% block content %}
+
+      {% endblock %}
     </div>
-    
-</div>
-
-
-</div>
-  {% block content %}
-  
-  {% endblock %}
-
-
-
-
-
+  </div>
 </body>
 
 </html>
