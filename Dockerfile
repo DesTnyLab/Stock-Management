@@ -1,42 +1,48 @@
-FROM python:3.10.0-slim-buster
+# Use a modern base image to ensure updated libraries
+FROM python:3.10-slim-bookworm
 
-ENV APP_HOME=/app
-RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/staticfiles
-WORKDIR $APP_HOME
-
-LABEL maintainer='api.imperfect@gmail.com'
-LABEL youtube="https://www.youtube.com/c/APIImperfect"
-LABEL decription="Development image for Real Estate Project"
-
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
-
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE=tirpura.settings
 
+# Define the working directory
+ENV APP_HOME=/app
+WORKDIR $APP_HOME
+
+# Install system dependencies
 RUN apt-get update \
-  && apt-get install -y build-essential \
-  && apt-get install -y libpq-dev \
-  && apt-get install -y gettext \
-  && apt-get -y install netcat gcc postgresql \
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends \
+       build-essential \
+       libpq-dev \
+       libpango1.0-dev \
+       libcairo2-dev \
+       gettext \
+       netcat-openbsd \
+       gcc \
+       postgresql \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --upgrade pip
+# Install Python pip
+RUN pip install --upgrade pip
 
-COPY ./requirements.txt /app/requirements.txt 
+# Copy and install Python dependencies
+COPY ./requirements.txt $APP_HOME/requirements.txt
+RUN pip install -r requirements.txt
 
-RUN pip3 install -r requirements.txt
+# Copy project files into the container
+COPY . $APP_HOME
 
+# Copy and configure entrypoint scripts
 COPY ./entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
 
 COPY ./start /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
+RUN sed -i 's/\r$//g' /start && chmod +x /start
 
+# Expose the application port
+EXPOSE 8000
 
-
-
-ENTRYPOINT [ "/entrypoint"]
+# Set entrypoint
+ENTRYPOINT ["/entrypoint"]

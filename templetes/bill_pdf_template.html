@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill {{ bill.bill_no }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Company Name</h1>
+        <p>Address | Phone | Email</p>
+    </header>
+
+    <h2>Bill No: {{ bill.bill_no }}</h2>
+    <p>Date: {{ bill.date }}</p>
+    <p>Customer: {{ bill.customer.name }} ({{ bill.customer.company }})</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in bill_items %}
+                {% for product in item.products.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ product.product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.rate }}</td>
+                    <td>{{ product.get_subtotal }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4"><strong>Total</strong></td>
+                <td>{{ total }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <footer>
+        <p>Thank you for your business!</p>
+    </footer>
+</body>
+</html>
