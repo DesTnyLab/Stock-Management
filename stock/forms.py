@@ -1,5 +1,8 @@
 from django import forms
-from .models import Purchase, Sale, Product, Stock
+from .models import *
+from django.forms import inlineformset_factory
+
+
 
 
 class ProductForm(forms.ModelForm):
@@ -55,3 +58,23 @@ class SaleForm(forms.ModelForm):
             raise forms.ValidationError(f"Cannot sell {quantity} units. Only {stock.total_purchased} units available.")
         return quantity
 
+
+
+class BillForm(forms.ModelForm):
+    class Meta:
+        model = Bill
+        fields = ['bill_no', 'customer', 'date']
+
+class BillItemProductForm(forms.ModelForm):
+    class Meta:
+        model = BillItemProduct
+        fields = ['product', 'quantity', 'rate']
+
+# Inline formset to handle multiple BillItemProducts for a single BillItem
+BillItemProductFormSet = inlineformset_factory(
+    BillItem, 
+    BillItemProduct, 
+    form=BillItemProductForm,
+    extra=1,  # Number of empty forms to display
+    can_delete=True  # Allow deletion of items
+)

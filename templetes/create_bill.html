@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Bill</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Create Bill</h1>
+
+    <!-- Bill Form -->
+    <form id="billForm">
+        <label for="customer">Customer:</label>
+        <select id="customer" name="customer_id" required>
+            <option value="" disabled selected>Select a customer</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}">{{ customer.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" id="bill_no" name="bill_no" value="" placeholder="Enter Bill Number" required>
+        <input type="hidden" id="bill_id" name="bill_id" value="">
+
+        <h2>Add Product</h2>
+        <label for="product">Product:</label>
+        <select id="product" name="product_id" required>
+            <option value="" disabled selected>Select a product</option>
+            {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+
+        <label for="rate">Rate:</label>
+        <input type="number" id="rate" name="rate" step="0.01" required>
+
+        <button type="button" id="addProduct">Add Product</button>
+    </form>
+
+    <hr>
+
+    <!-- Section to Display Bill Items -->
+    <h2>Bill Summary</h2>
+    <table border="1" id="billTable">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamically added rows will appear here -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><strong>Total:</strong></td>
+                <td id="billTotal">0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Export Button -->
+    <button type="button" id="export" style="display: none;">Export as PDF</button>
+    <button type="button" id="clear" style="display: none;">Clear</button>
+    <script>
+        $('#addProduct').on('click', function () {
+            const billId = $('#bill_id').val();
+            const bill_no = $('#bill_no').val();
+            const customerId = $('#customer').val();
+            const productId = $('#product').val();
+            const quantity = $('#quantity').val();
+            const rate = $('#rate').val();
+
+            $.ajax({
+                url: '{% url "add_bill_item_ajax" %}',
+                method: 'POST',
+                data: {
+                    bill_id: billId,
+                    bill_no: bill_no,
+                    customer_id: customerId,
+                    product_id: productId,
+                    quantity: quantity,
+                    rate: rate,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (!billId) {
+                        $('#bill_id').val(response.bill_id);
+                        $('#export').show();
+                        $('#clear').show();
+                    }
+
+                    // Add product to the bill table
+                    $('#billTable tbody').append(`
+                        <tr>
+                            <td>${response.product_name}</td>
+                            <td>${response.quantity}</td>
+                            <td>${response.rate}</td>
+                            <td>${response.subtotal.toFixed(2)}</td>
+                        </tr>
+                    `);
+
+                    // Update total
+                    $('#billTotal').text(response.total.toFixed(2));
+                },
+                error: function () {
+                    alert('Failed to add product.');
+                }
+            });
+        });
+
+        $('#export').on('click', function () {
+    const billID = $('#bill_id').val(); // Capture the bill ID
+
+    if (!billID) {
+        alert('Please ensure the bill ID is correct.');
+        return;
+    }
+
+    // Trigger PDF export with the correct URL
+    window.location.href = `/stock/bills/pdf/${billID}/`;
+});
+
+
+$('#clear').on('click', function () {
+            // Reset all input fields
+            $('#billForm')[0].reset();
+
+            // Clear the table
+            $('#billTable tbody').empty();
+            $('#billTotal').text('0.00');
+
+            // Hide export button
+            $('#export').hide();
+
+            // Clear hidden bill ID
+            $('#bill_id').val('');
+        });
+
+    </script>
+</body>
+</html>
