@@ -17,4 +17,7 @@ urlpatterns = [
     path(
         "search-stock/", product_stock_search_ajax, name="product_stock_search_ajax"
     ),  # AJAX search view for stock
+
+    path('customer/<int:customer_id>/transactions/', generate_ledger, name='generate_ledger'),
+    path('debit/<int:customer_id>/', debit, name="debit"),
 ]
