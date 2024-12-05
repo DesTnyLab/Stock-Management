@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from weasyprint import HTML
 from django.template.loader import render_to_string
+from datetime import datetime
 
 from .forms import BillForm, BillItemProductFormSet
 from .models import Bill, BillItem, BillItemProduct
@@ -340,16 +341,13 @@ def add_bill_item_ajax(request):
         # Update BillItem total
         bill_item.total += bill_item_product.get_subtotal() # Convert subtotal to Decimal
         bill_item.save()
+     # Get or create a Credit instance for the given customer
+        customer = get_object_or_404(Customer, id=customer_id)
+        credit, created = Credit.objects.get_or_create(bill=bill, customer=customer)
 
-        customer = Customer.objects.get(id=customer_id)
-       # Get or create a Credit instance for the given customer
-        credit  = Credit.objects.create(customer=customer)
-
-        # Update fields
+        # Update the credit amount and date
         credit.amount = bill_item.total
         credit.date = now().date()
-
-        # Save the updated instance
         credit.save()
 
         return JsonResponse({
@@ -362,8 +360,6 @@ def add_bill_item_ajax(request):
         })
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
-
-
 
 
 
@@ -390,3 +386,92 @@ def generate_bill_pdf(request, bill_id):
     response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
 
     return response
+
+
+  
+
+
+def generate_ledger(request, customer_id):
+    customer = Customer.objects.get(id=customer_id)
+    
+    # Get all credit and debit transactions for the customer
+    credits = Credit.objects.filter(customer=customer).order_by('date')
+    debits = Debit.objects.filter(customer=customer).order_by('date')
+
+    # Prepare a list of transactions to display
+    transactions = []
+
+    # Calculate the opening balance
+    current_balance = 0.00
+    # Merge credits and debits into a single list of transactions
+    for credit in credits:
+        transactions.append({
+            'date': credit.date,
+            'particulars': f"Bill No. {credit.bill.bill_no}" if credit.bill else "Credit",
+            'debit': 0.00,
+            'credit': credit.amount,
+            'balance': None  # Will calculate later
+        })
+
+    for debit in debits:
+        transactions.append({
+            'date': debit.date,
+            'particulars': "Cheque" if debit.amount > 0 else "Debit",
+            'debit': debit.amount,
+            'credit': 0.00,
+            'balance': None  # Will calculate later
+        })
+
+    # Sort transactions by date
+    transactions.sort(key=lambda x: x['date'])
+
+    # Update the balance for each transaction
+    for transaction in transactions:
+        if transaction['credit'] > 0:
+            current_balance += transaction['credit']
+        if transaction['debit'] > 0:
+            current_balance -= transaction['debit']
+        transaction['balance'] = current_balance
+
+    # Date range filtering
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    if start_date and end_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            transactions = [txn for txn in transactions if start_date <= txn['date'] <= end_date]
+        except ValueError:
+            # Handle invalid date input
+            pass
+    debit_form = DebitForm()
+    return render(request, 'ledger_page.html', {
+        'customer': customer,
+        'transactions': transactions,
+        'start_date': start_date,
+        'end_date': end_date,
+        'debit_form':debit_form
+    })
+
+
+
+def debit(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+
+    if request.method == "POST":
+        debit_form = DebitForm(request.POST)
+        if debit_form.is_valid():
+            debit_instance = debit_form.save(commit=False)
+            debit_instance.customer = customer
+            debit_instance.save()
+            
+            # Update customer total_debit
+            customer.total_debit += debit_instance.amount
+            customer.save()
+
+            messages.success(request, "Debit added successfully.")
+            return redirect("generate_ledger", customer_id=customer.id)
+
+
+   
+
