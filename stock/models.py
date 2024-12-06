@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
-# from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
@@ -61,7 +61,20 @@ class Sale(models.Model):
             self.product.selling_price = self.price
             self.product.save() 
         super().save(*args, **kwargs)
+    
 
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+        product = self.cleaned_data['product']
+        stock = Stock.objects.get(product=product)
+        if stock.remaining_stock is None or stock.total_sold is None:
+            raise ValidationError("Stock data is invalid. Please check the stock record.")
+        if quantity < 0:
+            raise ValidationError("Sale quantity cannot be negative.")
+        if quantity > stock.remaining_stock:
+            raise ValidationError(f"Cannot sell {quantity} units. Only {stock.remaining_stock} units available.")
+        return quantity
+    
 class Stock(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     total_purchased = models.IntegerField(default=0)
@@ -72,7 +85,6 @@ class Stock(models.Model):
     @property
     def remaining_stock(self):
         return self.total_purchased - self.total_sold
-
 
 
 
