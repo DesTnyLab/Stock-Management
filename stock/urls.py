@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('customer/<int:customer_id>/transactions/', generate_ledger, name='generate_ledger'),
     path('debit/<int:customer_id>/', debit, name="debit"),
+    path('customer-details', customer_view_and_create, name= 'customer_details'),
+   
 ]

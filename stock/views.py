@@ -14,13 +14,9 @@ from django.utils.timezone import now
 from weasyprint import HTML
 from django.template.loader import render_to_string
 from datetime import datetime
+from django.urls import reverse
+from django.db import transaction
 
-from .forms import BillForm, BillItemProductFormSet
-from .models import Bill, BillItem, BillItemProduct
-
-
-def login(request):
-    return render(request, "stock/login.html")
 
 
 def manage_inventory(request):
@@ -120,32 +116,6 @@ def view_product_details(request, id):
         },
     )
 
-
-# def sales_and_purchase_report(request, id):
-#     product = Product.objects.get(id=id)
-
-#     # Fetch purchase data for the specific product
-#     purchase_data = Purchase.objects.filter(product=product.name)
-#     purchase_dates = [purchase.date.strftime('%Y-%m-%d') for purchase in purchase_data]  # Convert date to string
-#     purchase_quantities = [purchase.quantity for purchase in purchase_data]
-#     purchase_costs = [float(purchase.get_total_cost()) for purchase in purchase_data]  # Convert Decimal to float
-
-#     # Fetch sale data for the specific product
-#     sale_data = Sale.objects.filter(product=product)
-#     sale_dates = [sale.date.strftime('%Y-%m-%d') for sale in sale_data]  # Convert date to string
-#     sale_quantities = [sale.quantity for sale in sale_data]
-#     sale_revenues = [float(sale.get_total_cost()) for sale in sale_data]  # Convert Decimal to float
-
-#     # Pass the data to the template, ensure to convert the lists to JSON strings
-#     return render(request, 'sales_purchase_report.html', {
-#         'product': product,
-#         'purchase_dates': json.dumps(purchase_dates),
-#         'purchase_quantities': json.dumps(purchase_quantities),
-#         'purchase_costs': json.dumps(purchase_costs),
-#         'sale_dates': json.dumps(sale_dates),
-#         'sale_quantities': json.dumps(sale_quantities),
-#         'sale_revenues': json.dumps(sale_revenues),
-#     })
 
 
 def overall_profit(request):
@@ -305,61 +275,69 @@ def create_bill(request):
 @csrf_exempt
 def add_bill_item_ajax(request):
     if request.method == 'POST':
-        bill_id = request.POST.get('bill_id', None)
-        bill_no = request.POST.get('bill_no')
-        customer_id = request.POST.get('customer_id')
-        product_id = request.POST.get('product_id')
-        quantity = int(request.POST.get('quantity', 1))
-        rate = float(request.POST.get('rate', 0.0))
+        with transaction.atomic():  # Begin a transaction block
+            try:
+                bill_id = request.POST.get('bill_id', None)
+                bill_no = request.POST.get('bill_no')
+                customer_id = request.POST.get('customer_id')
+                product_id = request.POST.get('product_id')
+                quantity = int(request.POST.get('quantity', 1))
+                rate = float(request.POST.get('rate', 0.0))
 
-        # Ensure customer_id and product_id are provided
-        if not customer_id or not product_id:
-            return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
+                # Ensure customer_id and product_id are provided
+                if not customer_id or not product_id:
+                    return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
-        # Create or get the bill
-        if not bill_id:  # If bill_id is not provided, create a new bill
-            bill = Bill.objects.create(
-                bill_no=bill_no,
-                customer_id=customer_id,
-                date=now().date(),
-            )
-        else:  # Retrieve existing bill
-            bill = get_object_or_404(Bill, id=bill_id, )
+                # Create or get the bill
+                if not bill_id:  # If bill_id is not provided, create a new bill
+                    bill = Bill.objects.create(
+                        bill_no=bill_no,
+                        customer_id=customer_id,
+                        date=now().date(),
+                    )
+                else:  # Retrieve existing bill
+                    bill = get_object_or_404(Bill, id=bill_id)
 
-        # Create or get the BillItem for this bill
-        bill_item, created = BillItem.objects.get_or_create(bill=bill)
+                # Create or get the BillItem for this bill
+                bill_item, created = BillItem.objects.get_or_create(bill=bill)
 
-        # Add a new BillItemProduct
-        product = get_object_or_404(Product, id=product_id)
-        bill_item_product = BillItemProduct.objects.create(
-            bill_item=bill_item,
-            product=product,
-            quantity=quantity,
-            rate=rate # Ensure rate is Decimal
-        )
+                # Add a new BillItemProduct
+                product = get_object_or_404(Product, id=product_id)
+                bill_item_product = BillItemProduct.objects.create(
+                    bill_item=bill_item,
+                    product=product,
+                    quantity=quantity,
+                    rate=rate  # Ensure rate is Decimal
+                )
 
-        # Update BillItem total
-        bill_item.total += bill_item_product.get_subtotal() # Convert subtotal to Decimal
-        bill_item.save()
-     # Get or create a Credit instance for the given customer
-        customer = get_object_or_404(Customer, id=customer_id)
-        credit, created = Credit.objects.get_or_create(bill=bill, customer=customer)
+                # Update BillItem total
+                bill_item.total += bill_item_product.get_subtotal()  # Convert subtotal to Decimal
+                bill_item.save()
 
-        # Update the credit amount and date
-        credit.amount = bill_item.total
-        credit.date = now().date()
-        credit.save()
+                # Get or create a Credit instance for the given customer
+                customer = get_object_or_404(Customer, id=customer_id)
+                credit, created = Credit.objects.get_or_create(bill=bill, customer=customer)
 
-        return JsonResponse({
-            'bill_id': bill.id,
-            'product_name': product.name,
-            'quantity': bill_item_product.quantity,
-            'rate': bill_item_product.rate,
-            'subtotal': bill_item_product.get_subtotal(),
-            'total': bill_item.total,
-        })
+                # Update the credit amount and date
+                credit.amount = bill_item.total
+                credit.date = now().date()
+                credit.save()
+
+                return JsonResponse({
+                    'bill_id': bill.id,
+                    'product_name': product.name,
+                    'quantity': bill_item_product.quantity,
+                    'rate': bill_item_product.rate,
+                    'subtotal': bill_item_product.get_subtotal(),
+                    'total': bill_item.total,
+                })
+
+            except Exception as e:
+                # Any exception will roll back the transaction
+                return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
+
 
 
 
@@ -475,3 +453,28 @@ def debit(request, customer_id):
 
    
 
+
+
+
+def customer_view_and_create(request):
+    if request.method == 'POST':
+        # Handle form submission
+        customer_form = CustomerForm(request.POST)
+
+        if customer_form.is_valid():
+            customer_form.save()
+            messages.success(request, "Customer added successfully.")
+            return redirect(reverse('customer_details'))
+        else:
+            messages.error(request, "Failed to add customer. Please check the form.")
+    else:
+        # Handle GET request
+        customer_form = CustomerForm()
+
+    # Fetch all customers for listing
+    customers = Customer.objects.all()
+
+    return render(request, 'view_customer.html', {
+        'customers': customers,
+        'customer_form': customer_form,
+    })

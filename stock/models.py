@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
-# from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
@@ -23,12 +25,7 @@ class Purchase(models.Model):
     def __str__(self):
         return f"Purchase of {self.quantity} {self.product}"
 
-    # def clean(self):
-    #     """Custom validation to ensure quantity is valid."""
-    #     if self.quantity is None:
-    #         raise ValidationError("Error occure please recheck quantity")
-    #     if self.quantity <= 0:
-    #         raise ValidationError("Quantity must be greater than zero.")
+
 
     def save(self, *args, **kwargs):
         product_obj, created = Product.objects.get_or_create(name=self.product, defaults={'cost_price': self.price})
@@ -38,10 +35,7 @@ class Purchase(models.Model):
             product_obj.save()
         
         super().save(*args, **kwargs)
-        # Update stock after saving the purchase
-        # stock, _ = Stock.objects.get_or_create(product=self.product)
-        # stock.total_purchased += self.quantity
-        # stock.save()
+     
 
 class Sale(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -61,7 +55,20 @@ class Sale(models.Model):
             self.product.selling_price = self.price
             self.product.save() 
         super().save(*args, **kwargs)
+    
 
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+        product = self.cleaned_data['product']
+        stock = Stock.objects.get(product=product)
+        if stock.remaining_stock is None or stock.total_sold is None:
+            raise ValidationError("Stock data is invalid. Please check the stock record.")
+        if quantity < 0:
+            raise ValidationError("Sale quantity cannot be negative.")
+        if quantity > stock.remaining_stock:
+            raise ValidationError(f"Cannot sell {quantity} units. Only {stock.remaining_stock} units available.")
+        return quantity
+    
 class Stock(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     total_purchased = models.IntegerField(default=0)
@@ -77,16 +84,29 @@ class Stock(models.Model):
 
 
 
+# def validate_nepal_phone_number(value):
+#     """
+#     Validate that the phone number starts with the Nepal country code and has 8 or 9 digits.
+#     """
+#     value_str = str(value)
+#     if not value_str.startswith("+977"):
+#         raise ValidationError("Phone number must start with the Nepal country code (+977).")
+    
+#     # Remove country code and check length
+#     local_number = value_str.replace("+977", "").strip()
+#     if not local_number.isdigit() or len(local_number) not in [8, 9]:
+#         raise ValidationError("Phone number must have 8 or 9 digits after the country code.")
+
 class Customer(models.Model):
     name = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=10)
     company = models.CharField(max_length=50, default=' ')
     total_debit = models.FloatField(default=0.00)
 
-
-    
-
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.name} '
+
+
     
     
 
@@ -151,3 +171,7 @@ class Debit(models.Model):
 
     def __str__(self):
         return f'{self.customer} Debited on {self.date}'
+
+
+
+
