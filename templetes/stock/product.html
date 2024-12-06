@@ -11,7 +11,7 @@
         <form method="post">
             {% csrf_token %}
             {{ product_form.as_p }}
-            <button type="submit" name="purchase_form">Add Purchase</button>
+            <button type="submit" name="purchase_form">Add Product</button>
         </form>
 
     </div>
@@ -20,7 +20,7 @@
         <form method="post">
             {% csrf_token %}
             {{ purchase_form.as_p }}
-            <button type="submit" name="sale_form">Add Sale</button>
+            <button type="submit" name="sale_form">Add Purchase</button>
         </form>
     </div>
 </div>
