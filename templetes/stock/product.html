@@ -11,7 +11,7 @@
         <form method="post">
             {% csrf_token %}
             {{ product_form.as_p }}
-            <button type="submit" name="purchase_form">Add Product</button>
+            <button type="submit" name="product_form">Add Product</button>
         </form>
 
     </div>
@@ -20,11 +20,16 @@
         <form method="post">
             {% csrf_token %}
             {{ purchase_form.as_p }}
-            <button type="submit" name="sale_form">Add Purchase</button>
+            <button type="submit" name="purchase_form">Add Purchase</button>
         </form>
     </div>
 </div>
 <h2 style="text-align: center;">Product list</h2>
+
+<div style="justify-content: center; padding-left: 20%; padding-bottom: 10px;">
+    <input type="text" id="product-search" placeholder="Search by product name..." />
+    <button id="search-button">Search</button>
+</div>
 <table>
     <thead>
         <tr>
@@ -35,7 +40,7 @@
             <th>Details</th>
         </tr>
     </thead>
-    <tbody id="stock-list">
+    <tbody id="product-list">
         {% for product in products %}
         <tr>
             <td>{{ product.name }}</td>
@@ -57,4 +62,37 @@
 
 
 </div>
+
+<script>
+$(document).ready(function() {
+
+     $('#product-search').on('input', function() {
+         var query = $(this).val();  
+         
+         // Make an AJAX request to fetch the stock information
+         $.ajax({
+             url: '{% url "view_product_search_ajax" %}',  
+             method: 'GET',
+             data: { 'query': query },  // Send the query to the backend
+             success: function(data) {
+                 $('#product-list').html(data);
+             }
+         });
+     });
+ 
+     // Trigger search when the user clicks the search button
+     $('#search-button').click(function() {
+         var query = $('#product-search').val();  // Get the query
+         $.ajax({
+             url: '{% url "view_product_search_ajax" %}',  // URL to your AJAX view
+             method: 'GET',
+             data: { 'query': query },  // Send the query
+             success: function(data) {
+                 // Update the stock table with the filtered data
+                 $('#product-list').html(data);
+             }
+         });
+     });
+ });
+ </script>
 {% endblock %}
