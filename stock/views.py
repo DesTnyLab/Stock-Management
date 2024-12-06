@@ -16,31 +16,9 @@ from django.template.loader import render_to_string
 from datetime import datetime
 from django.urls import reverse
 from django.db import transaction
-
-
+from django.views.generic import View
 
 def manage_inventory(request):
-
-    # handel product form submisstion
-    if request.method == "POST" and "product_form" in request.POST:
-        product_form = ProductForm(request.POST)
-        if product_form.is_valid():
-            product_form.save()
-            messages.success(request, "Product is added successfully.")
-            return redirect("manage_inventory")
-    else:
-        product_form = ProductForm()
-
-    # Handle purchase form submission
-    if request.method == "POST" and "purchase_form" in request.POST:
-        purchase_form = PurchaseForm(request.POST)
-        if purchase_form.is_valid():
-            purchase_form.save()
-            messages.success(request, "Purchase added successfully.")
-            return redirect("manage_inventory")
-    else:
-        purchase_form = PurchaseForm()
-
     # Handle sale form submission
     if request.method == "POST" and "sale_form" in request.POST:
         sale_form = SaleForm(request.POST)
@@ -51,9 +29,7 @@ def manage_inventory(request):
     else:
         sale_form = SaleForm()
 
-    # Display stock
-    # stocks = Stock.objects.all().order_by('remaining_stock')[:5]
-    # Annotate the queryset to calculate remaining_stock
+
     stocks = Stock.objects.annotate(
         rem_stock=ExpressionWrapper(
             F("total_purchased") - F("total_sold"), output_field=IntegerField()
@@ -62,14 +38,21 @@ def manage_inventory(request):
         :5
     ]  # Order by remaining_stock and limit to top 10
 
+    # Generate the sales graph using the TodaysTopSalesView class
+    sales_view = TodaysTopSalesView()  # Instantiate the class
+    today = date.today()
+    sale_data = Sale.objects.filter(date=today).select_related("product")  # Fetch sales for today
+    graph = sales_view.get_graph(sale_data)  # Get the graph
+     
+    print({"graph": graph})
+    # Return render with the graph and stocks
     return render(
         request,
         "stock/index.html",
         {
-            "purchase_form": purchase_form,
-            "product_form": product_form,
             "sale_form": sale_form,
             "stocks": stocks,
+            "graph": graph,  # Pass graph as base64 string
         },
     )
 
@@ -128,76 +111,158 @@ def overall_profit(request):
     return render(request, "overall_profit.html", {"total_profit": overall_profit})
 
 
-def todays_top_sales(request):
-    # Get today's date
-    today = date.today()
+# def todays_top_sales(request):
+#     # Get today's date
+#     today = date.today()
 
-    # Fetch sale data for today
-    sale_data = Sale.objects.filter(date=today).select_related("product")
-    total_profit = 0
-    for sale in sale_data:
-        cost_price = sale.product.cost_price
-        selling_price = sale.product.selling_price
-        quantity = sale.quantity
-        profit = (selling_price - cost_price) * quantity
-        total_profit += profit
-    # Create sales summary
-    sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
+#     # Fetch sale data for today
+#     sale_data = Sale.objects.filter(date=today).select_related("product")
+#     total_profit = 0
+#     for sale in sale_data:
+#         cost_price = sale.product.cost_price
+#         selling_price = sale.product.selling_price
+#         quantity = sale.quantity
+#         profit = (selling_price - cost_price) * quantity
+#         total_profit += profit
+#     # Create sales summary
+#     sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
 
-    for item in sale_data:
-        sales_summary[item.product.name]["quantity"] += item.quantity
-        sales_summary[item.product.name]["revenue"] += item.quantity * item.price
+#     for item in sale_data:
+#         sales_summary[item.product.name]["quantity"] += item.quantity
+#         sales_summary[item.product.name]["revenue"] += item.quantity * item.price
 
-    # Sort products by revenue in descending order and select top 5
-    sorted_sales = sorted(
-        sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
-    )
-    top_sales = sorted_sales[:5]
-    total_revenue = sum(data["revenue"] for data in sales_summary.values())
-    # Prepare data for the graph
-    product_names = [item[0] for item in top_sales]
-    quantities = [item[1]["quantity"] for item in top_sales]
+#     # Sort products by revenue in descending order and select top 5
+#     sorted_sales = sorted(
+#         sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
+#     )
+#     top_sales = sorted_sales[:5]
+#     total_revenue = sum(data["revenue"] for data in sales_summary.values())
+#     # Prepare data for the graph
+#     product_names = [item[0] for item in top_sales]
+#     quantities = [item[1]["quantity"] for item in top_sales]
 
-    # Create a bar graph
-    fig, ax = plt.subplots()
-    ax.bar(product_names, quantities, color="skyblue")
+#     # Create a bar graph
+#     fig, ax = plt.subplots()
+#     ax.bar(product_names, quantities, color="skyblue")
 
-    # Add labels to the bars
-    for i, v in enumerate(quantities):
-        ax.text(
-            i, v + 0.1, str(v), ha="center", va="bottom"
-        )  # Display quantity value above each bar
+#     # Add labels to the bars
+#     for i, v in enumerate(quantities):
+#         ax.text(
+#             i, v + 0.1, str(v), ha="center", va="bottom"
+#         )  # Display quantity value above each bar
 
-    # Add title and labels
-    ax.set_title("Top 5 Sales Products for Today")
-    ax.set_xlabel("Product Name")
-    ax.set_ylabel("Quantity Sold")
+#     # Add title and labels
+#     ax.set_title("Top 5 Sales Products for Today")
+#     ax.set_xlabel("Product Name")
+#     ax.set_ylabel("Quantity Sold")
 
-    # Save the plot to a BytesIO object
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
+#     # Save the plot to a BytesIO object
+#     buf = io.BytesIO()
+#     plt.savefig(buf, format="png")
+#     buf.seek(0)
 
-    # Convert the image to base64 string
-    img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
+#     # Convert the image to base64 string
+#     img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
 
-    # Close the plot to release memory
-    plt.close(fig)
-    # print(img_str)
-    # with open('test_image.png', 'wb') as f:
-    #     f.write(buf.getvalue())
+#     # Close the plot to release memory
+#     plt.close(fig)
+#     # print(img_str)
+#     # with open('test_image.png', 'wb') as f:
+#     #     f.write(buf.getvalue())
 
-    return render(
-        request,
-        "stock/today_report.html",
-        {
-            "sales_summary": top_sales,
-            "today": today,
-            "graph": img_str,
+#     return render(
+#         request,
+#         "stock/today_report.html",
+#         {
+#             "sales_summary": top_sales,
+#             "today": today,
+#             "graph": img_str,
+#             "total_profit": total_profit,
+#             "total_revenue": total_revenue,
+#         },
+#     )
+
+
+
+class TodaysTopSalesView(View):
+    template_name = "stock/today_report.html"
+
+    def get_sales_data(self):
+        """Fetch and process sales data."""
+        today = date.today()
+        sale_data = Sale.objects.filter(date=today).select_related("product")
+
+        total_profit = 0
+        sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
+
+        for sale in sale_data:
+            cost_price = sale.product.cost_price
+            selling_price = sale.product.selling_price
+            quantity = sale.quantity
+            profit = (selling_price - cost_price) * quantity
+            total_profit += profit
+
+            sales_summary[sale.product.name]["quantity"] += quantity
+            sales_summary[sale.product.name]["revenue"] += quantity * sale.price
+
+        # Sort products by revenue and get top 5
+        sorted_sales = sorted(
+            sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
+        )
+        top_sales = sorted_sales[:5]
+        total_revenue = sum(data["revenue"] for data in sales_summary.values())
+
+        return {
+            "top_sales": top_sales,
             "total_profit": total_profit,
             "total_revenue": total_revenue,
-        },
-    )
+        }
+
+    def generate_graph(self, top_sales):
+        """Generate a bar graph for top sales."""
+        product_names = [item[0] for item in top_sales]
+        quantities = [item[1]["quantity"] for item in top_sales]
+
+        fig, ax = plt.subplots()
+        ax.bar(product_names, quantities, color="skyblue")
+
+        for i, v in enumerate(quantities):
+            ax.text(i, v + 0.1, str(v), ha="center", va="bottom")
+
+        ax.set_title("Top 5 Sales Products for Today")
+        ax.set_xlabel("Product Name")
+        ax.set_ylabel("Quantity Sold")
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png")
+        buf.seek(0)
+        plt.close(fig)
+
+        return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    def get(self, request, *args, **kwargs):
+        sales_data = self.get_sales_data()
+        graph = self.generate_graph(sales_data["top_sales"])
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "sales_summary": sales_data["top_sales"],
+                "today": date.today(),
+                "graph": graph,
+                "total_profit": sales_data["total_profit"],
+                "total_revenue": sales_data["total_revenue"],
+            },
+        )
+
+    def get_graph(self, request):
+        """Provide the graph as a separate endpoint for reuse."""
+        sales_data = self.get_sales_data()
+        graph = self.generate_graph(sales_data["top_sales"])
+        print({"graph": graph})
+        return JsonResponse({"graph": graph})
+
 
 
 def overall_top_sales(request):
@@ -269,7 +334,7 @@ def overall_top_sales(request):
 def create_bill(request):
     products = Product.objects.all()
     customers = Customer.objects.all()
-    return render(request, 'create_bill.html', {'products': products, 'customers': customers})
+    return render(request, 'stock/create_bill.html', {'products': products, 'customers': customers})
 
 
 @csrf_exempt
@@ -354,7 +419,7 @@ def generate_bill_pdf(request, bill_id):
     }
 
     # Render the template to HTML
-    html_string = render_to_string('bill_pdf_template.html', context)
+    html_string = render_to_string('stock/bill_pdf_template.html', context)
 
     # Generate PDF from HTML
     pdf_file = HTML(string=html_string).write_pdf()
@@ -423,7 +488,7 @@ def generate_ledger(request, customer_id):
             # Handle invalid date input
             pass
     debit_form = DebitForm()
-    return render(request, 'ledger_page.html', {
+    return render(request, 'stock/ledger_page.html', {
         'customer': customer,
         'transactions': transactions,
         'start_date': start_date,
@@ -474,7 +539,56 @@ def customer_view_and_create(request):
     # Fetch all customers for listing
     customers = Customer.objects.all()
 
-    return render(request, 'view_customer.html', {
+    return render(request, 'stock/view_customers.html', {
         'customers': customers,
         'customer_form': customer_form,
     })
+
+def view_customer_search_ajax(request):
+    """AJAX view to search product stock details."""
+    query = request.GET.get("query", "")
+
+    customer = Customer.objects.filter(name__icontains=query)
+
+    return render(
+        request, "stock/view_customer_on_search.html", {"customers": customer}
+    )
+
+
+
+
+
+
+def manage_product_and_purchase(request):
+
+    # handel product form submisstion
+    if request.method == "POST" and "product" in request.POST:
+        product_form = ProductForm(request.POST)
+        if product_form.is_valid():
+            product_form.save()
+            messages.success(request, "Product is added successfully.")
+            return redirect("manage_product_and_purchase")
+    else:
+        product_form = ProductForm()
+
+    # Handle purchase form submission
+    if request.method == "POST" and "purchase_form" in request.POST:
+        purchase_form = PurchaseForm(request.POST)
+        if purchase_form.is_valid():
+            purchase_form.save()
+            messages.success(request, "Purchase added successfully.")
+            return redirect("manage_product_and_purchase")
+    else:
+        purchase_form = PurchaseForm()
+
+    products =  Product.objects.all()
+
+    return render(
+        request,
+        "stock/product.html",
+        {
+            "purchase_form": purchase_form,
+            "product_form": product_form,
+            "products": products,
+        },
+    )

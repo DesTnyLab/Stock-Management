@@ -6,15 +6,7 @@
 
 <!-- <div class="main-content"> -->
 <div class="form-container">
-    <div class="form-box">
-        <h3>Add Purchase</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ purchase_form.as_p }}
-            <button type="submit" name="purchase_form">Add Purchase</button>
-        </form>
-
-    </div>
+   
     <div class="form-box">
         <h3>Add Sale</h3>
         <form method="post">
@@ -22,6 +14,13 @@
             {{ sale_form.as_p }}
             <button type="submit" name="sale_form">Add Sale</button>
         </form>
+    </div>
+    <div class="form-box">
+        <div id="graph-container" style="height: auto; width: 200px;">
+            <!-- The graph image will be dynamically inserted here -->
+        </div>
+        
+       <a href="{% url 'sales_graph' %}">Today's Report</a> 
     </div>
 </div>
 <h2 style="text-align: center;">Stock Availability</h2>
@@ -57,4 +56,36 @@
 
 <div><a href="{% url 'view_stock' %}">view more</a></div>
 </div>
+
+
+
+
+<script>
+    $(document).ready(function() {
+        // Make the AJAX request to get the graph as base64
+        $.ajax({
+    url: '{% url "sales_graph_json" %}',  // Ensure this URL matches your Django URL config
+    method: 'GET',
+    success: function(response) {
+        // Log the response to verify the base64 string is correct
+        console.log(response.graph);
+
+        // Embed the base64 string into an <img> tag
+        var base64Image = response.graph;
+        if (base64Image) {
+            var imgElement = '<img  src="data:image/png;base64,' + base64Image + '" alt="Top Sales Graph" style="height: auto; width: 480px;" />';
+            $('#graph-container').html(imgElement); // Replace the content of the container with the image
+        } else {
+            console.error("Graph data is missing in the response.");
+        }
+    },
+    error: function(error) {
+        console.error("Error fetching the graph:", error);
+    }
+});
+
+    });
+</script>
+
+
 {% endblock %}
