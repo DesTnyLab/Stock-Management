@@ -1,8 +1,8 @@
 <!-- product_stock_search_results.html -->
-{% for stock in stocks %}
+{% for product in products %}
     <tr>
-        <td>{{ stock.product.name }}</td>
-        <td>{{ stock.total_purchased }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product. }}</td>
         <td>{{ stock.total_sold }}</td>
         <td>{{ stock.remaining_stock }}</td>
         <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' stock.product.id %}">View details</a>

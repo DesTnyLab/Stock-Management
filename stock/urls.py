@@ -26,5 +26,8 @@ urlpatterns = [
      path(
         "search-customer/", view_customer_search_ajax, name="view_customer_search_ajax"
     ),  
-   path('products', manage_product_and_purchase, name='manage_product_and_purchase')
+   path('products', manage_product_and_purchase, name='manage_product_and_purchase'),
+    path(
+        "search-product/", view_product_search_ajax, name="view_product_search_ajax"
+    ),  
 ]

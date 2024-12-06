@@ -1,0 +1,15 @@
+{% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.product_code }}</td>
+            <td>{{ product.cost_price}}</td>
+            <td>{{ product.selling_price}}</td>
+            <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' product.id %}">View
+                    details</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No Product data available.</td>
+        </tr>
+        {% endfor %}
