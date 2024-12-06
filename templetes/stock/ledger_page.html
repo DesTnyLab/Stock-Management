@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Ledger - {{ customer.name }}  {% endblock %}
+  
+{% block content %}
+
+
+    <h3>Add Debit for {{ customer.name }}</h3>
+
+    <form action="{% url 'debit' customer.id %}" method="post">
+        {% csrf_token %}
+        {{ debit_form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+    <!-- Filter by Date Range -->
+
+ 
+
+    <h2>Customer Ledger - {{ customer.name }}</h2>
+
+    <form method="GET" action="{% url 'generate_ledger' customer.id %}">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
+        
+        <button type="submit">Filter</button>
+    </form>
+
+
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.particulars }}</td>
+                    <td>{{ transaction.debit }}</td>
+                    <td>{{ transaction.credit }}</td>
+                    <td>{{ transaction.balance }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

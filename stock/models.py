@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
-from phonenumber_field.modelfields import PhoneNumberField
+
 
 
 class Product(models.Model):
