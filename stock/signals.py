@@ -1,7 +1,6 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Purchase, Sale, Stock, Product, BillItemProduct, Bill
-
 from django.core.exceptions import ValidationError
 
 
@@ -13,7 +12,7 @@ def update_stock_on_purchase(sender, instance, created, **kwargs):
     stock, created_stock = Stock.objects.get_or_create(product=product)
     if created:  # New purchase
         stock.total_purchased += instance.quantity
-        stock.total_buying_cost = (stock.total_buying_cost or 0) + (instance.price * instance.quantity)
+        stock.total_buying_cost = ((stock.total_buying_cost or 0)) + float((instance.price * instance.quantity))
     
     else:  # Existing purchase updated
         previous_quantity = Purchase.objects.get(id=instance.id)
@@ -36,10 +35,6 @@ def update_stock_on_sale(sender, instance, created, **kwargs):
         stock.total_sold += (instance.quantity - previous_quantity)
         stock.total_selling_cost = (stock.total_selling_cost or 0) + (instance.price * instance.quantity)
     stock.save()
-
-
-
-
 
 
 

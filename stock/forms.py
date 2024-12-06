@@ -3,6 +3,10 @@ from .models import *
 from django.forms import inlineformset_factory
 
 
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
+
+from django.forms.widgets import TextInput
 
 
 class ProductForm(forms.ModelForm):
@@ -86,3 +90,12 @@ class DebitForm(forms.ModelForm):
         model = Debit
         fields = ['amount', 'date']
         
+
+
+
+class CustomerForm(forms.ModelForm):
+   
+
+    class Meta:
+        model = Customer
+        fields = ['name', 'phone_number', 'company', ]

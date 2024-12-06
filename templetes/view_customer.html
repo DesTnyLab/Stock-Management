@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Customer Management</title>
+</head>
+<body>
+    
+
+    <h2>Add New Customer</h2>
+    <form method="POST" action="{% url 'customer_details' %}">
+        {% csrf_token %}
+        {{ customer_form.as_p }}
+        <button type="submit">Add Customer</button>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    <h1>Customer List</h1>
+    <ul>
+        {% for customer in customers %}
+            <li>{{ customer.name }} - {{ customer.phone_number }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
