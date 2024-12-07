@@ -26,6 +26,11 @@ def manage_inventory(request):
             sale_form.save()
             messages.success(request, "Sale added successfully.")
             return redirect("manage_inventory")
+        else:
+            # Add form errors to messages
+            for field, errors in sale_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         sale_form = SaleForm()
 
@@ -44,7 +49,7 @@ def manage_inventory(request):
     sale_data = Sale.objects.filter(date=today).select_related("product")  # Fetch sales for today
     graph = sales_view.get_graph(sale_data)  # Get the graph
      
-    print({"graph": graph})
+   
     # Return render with the graph and stocks
     return render(
         request,
@@ -442,8 +447,12 @@ def debit(request, customer_id):
 
             messages.success(request, "Debit added successfully.")
             return redirect("generate_ledger", customer_id=customer.id)
-
-
+        else:
+            # Add form errors to messages
+            for field, errors in debit_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
+            return redirect("generate_ledger", customer_id=customer.id)
    
 
 
@@ -457,9 +466,12 @@ def customer_view_and_create(request):
         if customer_form.is_valid():
             customer_form.save()
             messages.success(request, "Customer added successfully.")
-            return redirect(reverse('customer_details'))
+            return redirect('customer_details')
         else:
-            messages.error(request, "Failed to add customer. Please check the form.")
+            # Add form errors to messages
+            for field, errors in customer_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         # Handle GET request
         customer_form = CustomerForm()
@@ -496,6 +508,11 @@ def manage_product_and_purchase(request):
             product_form.save()
             messages.success(request, "Product is added successfully.")
             return redirect("manage_product_and_purchase")
+        else:
+            # Add form errors to messages
+            for field, errors in product_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         product_form = ProductForm()
 
@@ -506,6 +523,11 @@ def manage_product_and_purchase(request):
             purchase_form.save()
             messages.success(request, "Purchase added successfully.")
             return redirect("manage_product_and_purchase")
+        else:
+            # Add form errors to messages
+            for field, errors in purchase_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         purchase_form = PurchaseForm()
 

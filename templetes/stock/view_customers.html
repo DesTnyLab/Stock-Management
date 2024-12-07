@@ -3,21 +3,115 @@
 {% block title %} Customer Details {% endblock %}
   
 {% block content %}
+
+<style>
+    /* Popup container */
+    .popup {
+        position: fixed;
+        bottom: 20px; /* Positioned at the bottom-right corner */
+        right: -300px; /* Start off-screen to the right */
+        z-index: 1000;
+        background-color: rgba(204, 201, 219, 0.9);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        display: none; /* Initially hidden */
+        border: 3px solid transparent; /* Placeholder for border loading effect */
+        position: relative; /* Necessary for the pseudo-element */
+    }
+    
+    /* Show popup with slide-in animation */
+    .popup.show {
+        display: block;
+        animation: slideIn 0.5s ease forwards; /* Slide-in animation */
+    }
+    
+    /* Hide popup with slide-out animation */
+    .popup.hide {
+        animation: slideOut 0.5s ease forwards; /* Slide-out animation */
+    }
+    
+    /* Popup content styles */
+    .popup-content {
+        color: #9da6ce;
+        font-size: 16px;
+    }
+    
+    .popup-content.success {
+        color: green;
+    }
+    
+    .popup-content.error {
+        color: rgb(240, 6, 6);
+    }
+    
+    .popup-content.info {
+        color: blue;
+    }
+    
+    .popup-content.warning {
+        color: orange;
+    }
+  
+    /* Slide-in animation */
+    @keyframes slideIn {
+        from {
+            transform: translateX(300px); /* Slide in from the right */
+            opacity: 0; /* Start fully transparent */
+        }
+        to {
+            transform: translateX(0); /* Slide into the final position */
+            opacity: 1; /* Fully visible */
+        }
+    }
+    
+    /* Slide-out animation */
+    @keyframes slideOut {
+        from {
+            transform: translateX(0); /* Start in the visible position */
+            opacity: 1; /* Fully visible */
+        }
+        to {
+            transform: translateX(300px); /* Slide out to the right */
+            opacity: 0; /* Fully transparent */
+        }
+    }
+    
+    /* Border gradient animation */
+
+    </style>
+    
+    
+{% if messages %}
+<div id="popup-message" class="popup">
+    {% for message in messages %}
+    <div class="popup-content {{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
 <div>
     <h2>Add New Customer</h2>
-<form method="POST" action="{% url 'customer_details' %}">
-    {% csrf_token %}
-    {{ customer_form.as_p }}
+
+
+    <form method="post" action="{% url 'customer_details' %}">
+        {% csrf_token %}
+        {% for field in customer_form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                <!-- Errors for each field (hidden to suppress display) -->
+                <span style="display: none;">{{ field.errors }}</span>
+            </div>
+        {% endfor %}
     <button type="submit">Add Customer</button>
 </form>
 
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+
 
 </div>
 
@@ -95,6 +189,31 @@
                 }
             });
         });
+    });
+    </script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const popup = document.getElementById("popup-message");
+    
+        if (popup) {
+            // Show the popup with slide-in animation
+            popup.classList.add("show");
+    
+            // Wait for 5 seconds, then slide out
+            setTimeout(() => {
+                popup.classList.remove("show");
+                popup.classList.add("hide");
+    
+                // Fully hide the popup after the slide-out animation completes
+                setTimeout(() => {
+                    popup.style.display = "none";
+                }, 500); // Match the duration of the slide-out animation
+            }, 3000); // Adjust duration as needed
+        }
     });
     </script>
 {% endblock %}
