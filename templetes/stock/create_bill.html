@@ -92,6 +92,7 @@
         {% endfor %}
     </select>
     <input type="number" id="bill_no" name="bill_no" value="" placeholder="Enter Bill Number" required>
+    <input type="number" id="discount" name="discount" value="" placeholder="Discount Rate" required>
     <input type="hidden" id="bill_id" name="bill_id" value="">
 
     <h2>Add Product</h2>
@@ -178,6 +179,7 @@
     $('#addProduct').on('click', function () {
         const billId = $('#bill_id').val();
         const bill_no = $('#bill_no').val();
+        const discount = $('#discount').val();
         const customerId = $('#customer').val();
         const productId = $('#product').val();
         const quantity = $('#quantity').val();
@@ -191,6 +193,7 @@
                 bill_no: bill_no,
                 customer_id: customerId,
                 product_id: productId,
+                discount:discount,
                 quantity: quantity,
                 rate: rate,
                 csrfmiddlewaretoken: '{{ csrf_token }}'

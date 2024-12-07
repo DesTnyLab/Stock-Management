@@ -62,7 +62,7 @@ class SaleForm(forms.ModelForm):
 class BillForm(forms.ModelForm):
     class Meta:
         model = Bill
-        fields = ['bill_no', 'customer', 'date']
+        fields = ['bill_no', 'customer', 'date', 'discount']
 
 class BillItemProductForm(forms.ModelForm):
     class Meta:
@@ -113,5 +113,4 @@ class CustomerForm(forms.ModelForm):
             raise forms.ValidationError("Phone number must be at least 9 digits long.")
         
         return phone_number
-    
     

@@ -17,6 +17,8 @@ from datetime import datetime
 from django.urls import reverse
 from django.db import transaction
 from django.views.generic import View
+from num2words import num2words
+
 
 def manage_inventory(request):
     # Handle sale form submission
@@ -280,6 +282,7 @@ def add_bill_item_ajax(request):
                 product_id = request.POST.get('product_id')
                 quantity = int(request.POST.get('quantity', 1))
                 rate = float(request.POST.get('rate', 0.0))
+                discount = int(request.POST.get('discount', 0))
 
                 # Validate required fields
                 if not customer_id or not product_id:
@@ -290,6 +293,7 @@ def add_bill_item_ajax(request):
                     bill = Bill.objects.create(
                         bill_no=bill_no,
                         customer_id=customer_id,
+                        discount=discount,
                         date=now().date(),
                     )
                 else:
@@ -334,12 +338,28 @@ def add_bill_item_ajax(request):
                 })
 
             except Exception as e:
-                print("hello")
-                print(e)
+             
                 # Rollback the transaction in case of an error
                 return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
+
+
+
+def convert_to_nepali_currency(amount):
+    """Convert a numeric amount to words in Nepalese currency format."""
+    rupees = int(amount)  # Get the whole number part as Rupees
+    paisa = round((amount - rupees) * 100)  # Get the fractional part as Paise
+    
+    # Convert Rupees to words
+    rupees_in_words = num2words(rupees, lang='en')
+    
+    # Convert Paise to words (if any)
+    if paisa > 0:
+        paisa_in_words = num2words(paisa, lang='en')
+        return f"{rupees_in_words} Rupees and {paisa_in_words} Paise"
+    else:
+        return f"{rupees_in_words} Rupees"
 
 
 
@@ -348,12 +368,19 @@ def generate_bill_pdf(request, bill_id):
     # Fetch the bill and related data
     bill = Bill.objects.get(id=bill_id)
     bill_items = bill.billitem_set.prefetch_related('products')
+    total = sum(item.total for item in bill_items)
+    discount = bill.discount
+    total_amount = total - ((discount*total)/100)
 
+    total_in_words = convert_to_nepali_currency(total_amount)
     # Context for the template
     context = {
         'bill': bill,
         'bill_items': bill_items,
-        'total': sum(item.total for item in bill_items),
+        'total': total,
+        'total_amount': total_amount,
+        'total_in_words':total_in_words,
+        'discount': discount
     }
 
     # Render the template to HTML

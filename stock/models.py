@@ -112,7 +112,8 @@ class Bill(models.Model):
     bill_no = models.PositiveIntegerField(unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField()
-
+    discount = models.IntegerField(default=0)
+    
     def __str__(self):
         return f'Bill No: {self.bill_no}'
 
