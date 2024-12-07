@@ -50,7 +50,6 @@
         #bill-no {
             width: 100%;
             padding: 5px 10px;
-
         }
 
         .pan-section {
@@ -95,13 +94,22 @@
         }
 
         .signature {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 2rem;
             text-align: end;
         }
 
-        .signature-line {
+        #signature-line {
             border-top: 1px solid #000;
-            width: 150px;
-            margin: 5px auto 0;
+            width: 10rem;
+            margin: 5px 15px;
+        }
+
+        #signature-txt {
+            padding-right: 1rem;
         }
 
         .warning {
@@ -189,12 +197,10 @@
             <div class="total-in-words">
                 <p><strong>Total (in words):</strong> One Thousand Eight Hundred Only</p>
             </div>
-
             <div class="signature">
-                <div class="signature-line"></div>
-                <p>Cashier's Signature</p>
+                <div id="signature-line"></div>
+                <div id="signature-txt">Cashier's Signature</div>
             </div>
-
         </div>
         <footer>
             <p>Thank you for your business!</p>
