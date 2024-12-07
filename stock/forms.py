@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'product_code', 'cost_price' ,'selling_price']
+        fields = ['name', 'product_code',]
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
@@ -17,7 +17,7 @@ class PurchaseForm(forms.ModelForm):
         widgets = {
         'date': forms.DateInput(attrs={
         'type': 'date',
-        'class': 'form-control',  # Optional Bootstrap styling
+        'class': 'form-control',  
         'placeholder': 'Select a date'
     }), }
         
@@ -59,7 +59,6 @@ class SaleForm(forms.ModelForm):
         return quantity
 
 
-
 class BillForm(forms.ModelForm):
     class Meta:
         model = Bill
@@ -86,12 +85,31 @@ class DebitForm(forms.ModelForm):
         model = Debit
         fields = ['amount', 'date']
         
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        
+        if amount < 0:
+            raise forms.ValidationError("Amount Cannot be in Negative")
+        
+        return amount
+    
 
 
 
 class CustomerForm(forms.ModelForm):
    
-
     class Meta:
         model = Customer
         fields = ['name', 'phone_number', 'company', ]
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+
+        # Check if the phone number contains only digits and has the correct length
+        if not phone_number.isdigit():
+            raise forms.ValidationError("Please enter a valid phone number (digits only).")
+        
+        if len(phone_number) < 9:
+            raise forms.ValidationError("Phone number must be at least 9 digits long.")
+        
+        return phone_number
