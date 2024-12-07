@@ -1,80 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill {{ bill.bill_no }}</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
         }
-        header {
+
+        .bill-container {
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+            background-color: #ffffff;
+        }
+
+        .bill-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .company-details {
+            width: 100%;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        #company-name {
+            text-transform: uppercase;
+            font-size: x-large;
+            font-weight: bold;
             text-align: center;
-            margin-bottom: 30px;
         }
-        table {
+
+        #company_info {
+            text-align: center;
+        }
+
+        #bill-no {
+            width: 100%;
+            padding: 5px 10px;
+
+        }
+
+        .pan-section {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            padding: 10px 10px 5px;
+        }
+
+        .customer-details {
+            padding: 10px;
+        }
+
+        .bill-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #000;
-        }
-        th, td {
             padding: 10px;
+        }
+
+        .bill-table th,
+        .bill-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
             text-align: center;
         }
+
+        .bill-table th {
+            background-color: #f2f2f2;
+        }
+
+        .total-in-words {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
         footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 14px;
+            margin: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signature {
+            text-align: end;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 150px;
+            margin: 5px auto 0;
+        }
+
+        .warning {
+            margin: 70px;
+            text-align: justify;
+            font-size: 0.8rem;
+            font-style: italic;
         }
     </style>
+    <script>
+        // function to get the today date.
+        function getTodayDate() {
+            const today = new Date();
+            const options = { year: "numeric", month: "short", day: "2-digit" };
+            const formattedDate = today.toLocaleDateString("en-UK", options); // E.g., Dec 01 2024
+            return formattedDate;
+        }
+        document.querySelector(
+            "#bill_date"
+        ).innerHTML = `<strong>Date:</strong> ${getTodayDate()}`;
+    </script>
 </head>
+
 <body>
-    <header>
-        <h1>Company Name</h1>
-        <p>Address | Phone | Email</p>
-    </header>
+    <!DOCTYPE html>
+    <html lang="en">
 
-    <h2>Bill No: {{ bill.bill_no }}</h2>
-    <p>Date: {{ bill.date }}</p>
-    <p>Customer: {{ bill.customer.name }} ({{ bill.customer.company }})</p>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Billing</title>
+        <link rel="stylesheet" href="bill_pdf.css">
+    </head>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Rate</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in bill_items %}
-                {% for product in item.products.all %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ product.product.name }}</td>
-                    <td>{{ product.quantity }}</td>
-                    <td>{{ product.rate }}</td>
-                    <td>{{ product.get_subtotal }}</td>
-                </tr>
-                {% endfor %}
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="4"><strong>Total</strong></td>
-                <td>{{ total }}</td>
-            </tr>
-        </tfoot>
-    </table>
+    <body>
+        <!-- for billing container -->
+        <div class="bill-container">
+            <div class="bill-header">
+                <div class="company-details">
+                    <h1 id="company-name">Tripura Sundari Books and Stationery Center</h1>
+                    <div id="company_info">
+                        <p>Lainchaur Marg, Kathmandu 44600</p>
+                        <p>Email: tripurasundaribooks@gmail.com | Phone: 9841064634</p>
+                    </div>
+                </div>
+                <div class="pan-section">
+                    <div id="pan-no"><strong>PAN No:</strong> 605661758</div>
+                    <div id="bill_date"><strong>Date :</strong> {{ bill.date }}</div>
+                </div>
+                <div id="bill-no"> <strong>Bill No. :</strong> {{ bill.bill_no }}</div>
+                <div class="customer-details">
+                    <p>Customer Name:{{ bill.customer.name }} ({{ bill.customer.company }})</p>
+                </div>
+            </div>
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Particulars</th>
+                        <th>Qty.</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in bill_items %}
+                    {% for product in item.products.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ product.product.name }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.rate }}</td>
+                        <td>{{ product.get_subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><strong>Total</strong></td>
+                        <td>{{ total }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="total-in-words">
+                <p><strong>Total (in words):</strong> One Thousand Eight Hundred Only</p>
+            </div>
 
-    <footer>
-        <p>Thank you for your business!</p>
-    </footer>
-</body>
-</html>
+            <div class="signature">
+                <div class="signature-line"></div>
+                <p>Cashier's Signature</p>
+            </div>
+
+        </div>
+        <footer>
+            <p>Thank you for your business!</p>
+        </footer>
+        <div class="warning">
+            *This is computer generated statement and cannot be used for legal provisions, loan purpose etc.
+        </div>
+    </body>
+
+    </html>
