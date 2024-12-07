@@ -192,10 +192,18 @@
                         <td colspan="4"><strong>Total</strong></td>
                         <td>{{ total }}</td>
                     </tr>
+                    <tr>
+                        <td colspan="4"><strong>Discount</strong></td>
+                        <td>{{ discount }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><strong>Total Amount</strong></td>
+                        <td>{{ total_amount }}</td>
+                    </tr>
                 </tfoot>
             </table>
             <div class="total-in-words">
-                <p><strong>Total (in words):</strong> One Thousand Eight Hundred Only</p>
+                <p><strong>Total (in words):</strong>{{total_in_words}}</p>
             </div>
             <div class="signature">
                 <div id="signature-line"></div>
