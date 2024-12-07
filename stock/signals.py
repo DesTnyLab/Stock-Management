@@ -29,13 +29,12 @@ def update_stock_on_sale(sender, instance, created, **kwargs):
     stock, created_stock = Stock.objects.get_or_create(product=instance.product)
     if created:  # New sale
         stock.total_sold += instance.quantity
-        stock.total_selling_cost = (stock.total_selling_cost or 0) + (instance.price * instance.quantity)
+        stock.total_selling_cost = (stock.total_selling_cost or 0) + float(instance.price * instance.quantity)
     else:  # Existing sale updated
         previous_quantity = Sale.objects.get(id=instance.id).quantity
         stock.total_sold += (instance.quantity - previous_quantity)
-        stock.total_selling_cost = (stock.total_selling_cost or 0) + (instance.price * instance.quantity)
+        stock.total_selling_cost = (stock.total_selling_cost or 0) + float(instance.price * instance.quantity)
     stock.save()
-
 
 
 
