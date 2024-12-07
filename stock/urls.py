@@ -30,4 +30,6 @@ urlpatterns = [
     path(
         "search-product/", view_product_search_ajax, name="view_product_search_ajax"
     ),  
+
+    path('test', test)
 ]

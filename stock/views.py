@@ -263,18 +263,17 @@ def overall_top_sales(request):
     )
 
 
-
 def create_bill(request):
     products = Product.objects.all()
     customers = Customer.objects.all()
     return render(request, 'stock/create_bill.html', {'products': products, 'customers': customers})
 
-
 @csrf_exempt
 def add_bill_item_ajax(request):
     if request.method == 'POST':
-        with transaction.atomic():  # Begin a transaction block
+        with transaction.atomic():  # Start the transaction block
             try:
+                # Extract the data from the request
                 bill_id = request.POST.get('bill_id', None)
                 bill_no = request.POST.get('bill_no')
                 customer_id = request.POST.get('customer_id')
@@ -282,56 +281,62 @@ def add_bill_item_ajax(request):
                 quantity = int(request.POST.get('quantity', 1))
                 rate = float(request.POST.get('rate', 0.0))
 
-                # Ensure customer_id and product_id are provided
+                # Validate required fields
                 if not customer_id or not product_id:
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
-                # Create or get the bill
-                if not bill_id:  # If bill_id is not provided, create a new bill
+                # Create or fetch the Bill instance
+                if not bill_id:
                     bill = Bill.objects.create(
                         bill_no=bill_no,
                         customer_id=customer_id,
                         date=now().date(),
                     )
-                else:  # Retrieve existing bill
+                else:
                     bill = get_object_or_404(Bill, id=bill_id)
 
-                # Create or get the BillItem for this bill
+                # Fetch the product
+                product = get_object_or_404(Product, id=product_id)
+
+                # Create or fetch the BillItem for the given Bill
                 bill_item, created = BillItem.objects.get_or_create(bill=bill)
 
-                # Add a new BillItemProduct
-                product = get_object_or_404(Product, id=product_id)
+                # Create a new BillItemProduct associated with the BillItem
                 bill_item_product = BillItemProduct.objects.create(
                     bill_item=bill_item,
                     product=product,
                     quantity=quantity,
-                    rate=rate  # Ensure rate is Decimal
+                    rate=rate
                 )
 
-                # Update BillItem total
-                bill_item.total += bill_item_product.get_subtotal()  # Convert subtotal to Decimal
+                # Calculate the new subtotal for the BillItem
+                subtotal = bill_item_product.quantity * bill_item_product.rate
+                bill_item.total += subtotal  # Ensure subtotal is a Decimal
                 bill_item.save()
 
-                # Get or create a Credit instance for the given customer
+                # Get or create a Credit instance for the customer
                 customer = get_object_or_404(Customer, id=customer_id)
-                credit, created = Credit.objects.get_or_create(bill=bill, customer=customer)
+                credit, created = Credit.objects.get_or_create(customer=customer, bill=bill)
 
-                # Update the credit amount and date
+                # Update credit amount based on the total of the BillItem
                 credit.amount = bill_item.total
                 credit.date = now().date()
                 credit.save()
 
+                # Prepare the response with the added product and updated bill data
                 return JsonResponse({
                     'bill_id': bill.id,
                     'product_name': product.name,
                     'quantity': bill_item_product.quantity,
                     'rate': bill_item_product.rate,
-                    'subtotal': bill_item_product.get_subtotal(),
+                    'subtotal': subtotal,
                     'total': bill_item.total,
                 })
 
             except Exception as e:
-                # Any exception will roll back the transaction
+                print("hello")
+                print(e)
+                # Rollback the transaction in case of an error
                 return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
@@ -554,3 +559,8 @@ def view_product_search_ajax(request):
     return render(
         request, "stock/view_product_on_search.html", {"products": product}
     )
+
+
+
+def test(request):
+    return render(request, 'test.html')
