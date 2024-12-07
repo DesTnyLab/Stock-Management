@@ -41,6 +41,10 @@ INSTALLED_APPS = [
 
     #installed apps
     'stock',
+
+
+    #third_party_app
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [

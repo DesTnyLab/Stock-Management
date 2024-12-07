@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name']
+        fields = ['name', 'product_code', 'cost_price' ,'selling_price']
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
@@ -50,12 +50,12 @@ class SaleForm(forms.ModelForm):
         quantity = self.cleaned_data['quantity']
         product = self.cleaned_data['product']
         stock = Stock.objects.get(product=product)
-        if stock.total_purchased is None or stock.total_sold is None:
+        if stock.remaining_stock is None or stock.total_sold is None:
             raise forms.ValidationError("Stock data is invalid. Please check the stock record.")
         if quantity < 0:
             raise forms.ValidationError("Sale quantity cannot be negative.")
-        if quantity > stock.total_purchased:
-            raise forms.ValidationError(f"Cannot sell {quantity} units. Only {stock.total_purchased} units available.")
+        if quantity > stock.remaining_stock:
+            raise forms.ValidationError(f"Cannot sell {quantity} units. Only {stock.remaining_stock} units available.")
         return quantity
 
 
@@ -86,3 +86,12 @@ class DebitForm(forms.ModelForm):
         model = Debit
         fields = ['amount', 'date']
         
+
+
+
+class CustomerForm(forms.ModelForm):
+   
+
+    class Meta:
+        model = Customer
+        fields = ['name', 'phone_number', 'company', ]
