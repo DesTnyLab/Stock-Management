@@ -31,5 +31,8 @@ urlpatterns = [
         "search-product/", view_product_search_ajax, name="view_product_search_ajax"
     ),  
 
-    path('test', test)
+    path('bills/clear/<int:billId>/', clear_create_bill, name='clear'),
+
+    path('bills/delete-item/<int:bill_id>/<int:product_id>/', delete_bill_item, name='delete_bill_item'),
+
 ]

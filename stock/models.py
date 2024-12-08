@@ -113,9 +113,15 @@ class Bill(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField()
     discount = models.IntegerField(default=0)
-    
+    total_amount = models.FloatField(default=0.00)
     def __str__(self):
         return f'Bill No: {self.bill_no}'
+    
+    def save(self, *args, **kwargs):
+        # Auto-update particulars for Debit
+        self.total_amount = round(self.total_amount, 2)
+     
+        super(Bill, self).save(*args, **kwargs)
 
 
 class BillItem(models.Model):
@@ -124,7 +130,11 @@ class BillItem(models.Model):
 
     def __str__(self):
         return f'Bill ID: {self.bill.id}'
-
+    def save(self, *args, **kwargs):
+        # Auto-update particulars for Debit
+        self.total = round(self.total, 2)
+     
+        super(BillItem, self).save(*args, **kwargs)
 
 class BillItemProduct(models.Model):
     bill_item = models.ForeignKey(BillItem, on_delete=models.CASCADE, related_name="products")
@@ -133,7 +143,7 @@ class BillItemProduct(models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def get_subtotal(self):
-        return self.quantity * self.rate
+        return round((self.quantity * self.rate),2)
 
     def __str__(self):
         return f"{self.product.name} (Qty: {self.quantity}, Rate: {self.rate}) for {self.bill_item.bill}"
@@ -147,6 +157,9 @@ class Credit(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-update particulars with Bill number
+        discount = self.bill.discount
+        self.amount = self.amount - ((self.amount*discount)/100)
+        self.amount = round(self.amount, 2)
         if not self.particulars:
             self.particulars = f"Bill No: {self.bill.bill_no}"
         super(Credit, self).save(*args, **kwargs)
@@ -163,6 +176,7 @@ class Debit(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-update particulars for Debit
+        self.amount = round(self.amount, 2)
         if not self.particulars:
             self.particulars = "Cheque"
         super(Debit, self).save(*args, **kwargs)

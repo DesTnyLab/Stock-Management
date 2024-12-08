@@ -4,35 +4,31 @@
 
 {% block content %}
 <style>
-    /* Popup container */
+    /* Popup styles */
     .popup {
         position: fixed;
-        bottom: 20px; /* Positioned at the bottom-right corner */
-        right: -300px; /* Start off-screen to the right */
+        bottom: 20px;
+        right: -300px;
         z-index: 1000;
         background-color: rgba(204, 201, 219, 0.9);
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         padding: 15px;
         border-radius: 8px;
-        display: none; /* Initially hidden */
-        border: 3px solid transparent; /* Placeholder for border loading effect */
-        position: relative; /* Necessary for the pseudo-element */
+        display: none;
+        border: 3px solid transparent;
+        position: relative;
     }
 
-    /* Show popup with slide-in animation */
     .popup.show {
         display: block;
-        animation: slideIn 0.5s ease forwards; /* Slide-in animation */
+        animation: slideIn 0.5s ease forwards;
     }
 
-    /* Hide popup with slide-out animation */
     .popup.hide {
-        animation: slideOut 0.5s ease forwards; /* Slide-out animation */
+        animation: slideOut 0.5s ease forwards;
     }
 
-    /* Popup content styles */
     .popup-content {
-        color: #9da6ce;
         font-size: 16px;
     }
 
@@ -41,43 +37,37 @@
     }
 
     .popup-content.error {
-        color: rgb(240, 6, 6);
+        color: red;
     }
 
     .popup-content.info {
         color: blue;
     }
 
-    .popup-content.warning {
-        color: orange;
-    }
-
-    /* Slide-in animation */
     @keyframes slideIn {
         from {
-            transform: translateX(300px); /* Slide in from the right */
-            opacity: 0; /* Start fully transparent */
+            transform: translateX(300px);
+            opacity: 0;
         }
         to {
-            transform: translateX(0); /* Slide into the final position */
-            opacity: 1; /* Fully visible */
+            transform: translateX(0);
+            opacity: 1;
         }
     }
 
-    /* Slide-out animation */
     @keyframes slideOut {
         from {
-            transform: translateX(0); /* Start in the visible position */
-            opacity: 1; /* Fully visible */
+            transform: translateX(0);
+            opacity: 1;
         }
         to {
-            transform: translateX(300px); /* Slide out to the right */
-            opacity: 0; /* Fully transparent */
+            transform: translateX(300px);
+            opacity: 0;
         }
     }
 </style>
 
-<!-- Always include the popup container, even if there are no messages -->
+<!-- Popup -->
 <div id="popup-message" class="popup"></div>
 
 <h1>Create Bill</h1>
@@ -91,9 +81,9 @@
         <option value="{{ customer.id }}">{{ customer.name }}</option>
         {% endfor %}
     </select>
-    <input type="number" id="bill_no" name="bill_no" value="" placeholder="Enter Bill Number" required>
-    <input type="number" id="discount" name="discount" value="" placeholder="Discount Rate" required>
-    <input type="hidden" id="bill_id" name="bill_id" value="">
+    <input type="number" id="bill_no" name="bill_no" placeholder="Enter Bill Number" required>
+    <input type="number" id="discount" name="discount" placeholder="Discount Rate" required>
+    <input type="hidden" id="bill_id" name="bill_id">
 
     <h2>Add Product</h2>
     <label for="product">Product:</label>
@@ -111,12 +101,11 @@
     <input type="number" id="rate" name="rate" step="0.01" required>
 
     <button type="button" id="addProduct">Add Product</button>
-    
 </form>
 
 <hr>
 
-<!-- Section to Display Bill Items -->
+<!-- Bill Summary -->
 <h2>Bill Summary</h2>
 <table border="1" id="billTable">
     <thead>
@@ -125,57 +114,41 @@
             <th>Quantity</th>
             <th>Rate</th>
             <th>Subtotal</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        <!-- Dynamically added rows will appear here -->
+        <!-- Product rows will be added dynamically -->
     </tbody>
     <tfoot>
         <tr>
             <td colspan="3"><strong>Total:</strong></td>
             <td id="billTotal">0.00</td>
+            <td></td>
         </tr>
     </tfoot>
 </table>
 
-<!-- Export Button -->
+<!-- Buttons -->
 <button type="button" id="export" style="display: none;">Export as PDF</button>
 <button type="button" id="clear" style="display: none;">Clear</button>
 
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Function to show the popup
-    function showPopup(messageType, messageText) {
-        // Check if the popup exists
-        const popup = document.getElementById("popup-message");
-        popup.innerHTML = ''; // Clear existing content
-        // Create the message div and set its class and text
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('popup-content', messageType);  // Add class for styling (success, error, etc.)
-        messageDiv.innerText = messageText;
+    // Popup function
+    function showPopup(type, message) {
+        const popup = $('#popup-message');
+        popup.html(`<div class="popup-content ${type}">${message}</div>`);
+        popup.removeClass('hide').addClass('show').show();
 
-        // Append the message div to the popup
-        popup.appendChild(messageDiv);
-
-        popup.classList.remove('hide');
-    popup.style.display = "block";
-
-        // Show the popup with slide-in animation
-        popup.classList.add('show');
-        
-        // After 3 seconds, hide the popup with slide-out animation
         setTimeout(() => {
-            popup.classList.remove('show');
-            popup.classList.add('hide');
-            // After animation finishes, hide the popup container
-            setTimeout(() => {
-                popup.style.display = "none";  // Hides the popup after slide-out
-            }, 500); 
-        }, 3000); // Adjust this time to control how long the popup stays visible
+            popup.removeClass('show').addClass('hide');
+            setTimeout(() => popup.hide(), 500);
+        }, 3000);
     }
 
-  
-
+    // Add product to bill
     $('#addProduct').on('click', function () {
         const billId = $('#bill_id').val();
         const bill_no = $('#bill_no').val();
@@ -184,7 +157,7 @@
         const productId = $('#product').val();
         const quantity = $('#quantity').val();
         const rate = $('#rate').val();
-
+       
         $.ajax({
             url: '{% url "add_bill_item_ajax" %}',
             method: 'POST',
@@ -193,65 +166,101 @@
                 bill_no: bill_no,
                 customer_id: customerId,
                 product_id: productId,
-                discount:discount,
+                discount: discount,
                 quantity: quantity,
                 rate: rate,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function (response) {
+                console.log(response.product_id)
                 if (!billId) {
                     $('#bill_id').val(response.bill_id);
                     $('#export').show();
                     $('#clear').show();
                 }
 
-                // Add product to the bill table
                 $('#billTable tbody').append(`
-                    <tr>
-                        <td>${response.product_name}</td>
-                        <td>${response.quantity}</td>
-                        <td>${response.rate}</td>
-                        <td>${response.subtotal.toFixed(2)}</td>
-                    </tr>
-                `);
-
-                // Update total
+    <tr>
+        <td>${response.product_name}</td>
+        <td>${response.quantity}</td>
+        <td>${response.rate}</td>
+        <td>${response.subtotal.toFixed(2)}</td>
+        <td>
+            <button type="button" class="deleteProduct" data-product-id="${response.product_id}">Delete</button>
+        </td>
+    </tr>
+`);
                 $('#billTotal').text(response.total.toFixed(2));
-                showPopup('success', 'Product added to bill successfully');
+                showPopup('success', 'Product added successfully!');
             },
-            error: function (xhr, status, error) {
-                console.error('Error:', error); // Log the error to the console
-                showPopup('error', 'Failed to add product. Please try again.');
+            error: function () {
+                showPopup('error', 'Failed to add product.');
             }
         });
     });
-    $('#export').on('click', function () {
-    const billID = $('#bill_id').val(); // Capture the bill ID
 
-    if (!billID) {
-        alert('Please ensure the bill ID is correct.');
-        return;
-    }
+    // Delete product from bill
+    $('#billTable').on('click', '.deleteProduct', function () {
+        const row = $(this).closest('tr');
+        const billId = $('#bill_id').val();
+        const productId = $(this).data('product-id');
 
-    // Trigger PDF export with the correct URL
-    window.location.href = `/stock/bills/pdf/${billID}/`;
-});
-
-
-$('#clear').on('click', function () {
-            // Reset all input fields
-            $('#billForm')[0].reset();
-
-            // Clear the table
-            $('#billTable tbody').empty();
-            $('#billTotal').text('0.00');
-
-            // Hide export button
-            $('#export').hide();
-            $('#clear').hide();
-            // Clear hidden bill ID
-            $('#bill_id').val('');
+        $.ajax({
+            url: `/stock/bills/delete-item/${billId}/${productId}/`,
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+                row.remove();
+                $('#billTotal').text(response.total.toFixed(2));
+                showPopup('success', 'Product removed successfully!');
+            },
+            error: function () {
+                showPopup('error', 'Failed to remove product.');
+            }
         });
+    });
+
+    // Export bill as PDF
+    $('#export').on('click', function () {
+        const billID = $('#bill_id').val();
+        if (!billID) {
+            showPopup('warning', 'No bill to export.');
+            return;
+        }
+        window.location.href = `/stock/bills/pdf/${billID}/`;
+    });
+
+    // Clear bill
+    $('#clear').on('click', function () {
+        const billId = $('#bill_id').val();
+        if (!billId) {
+            showPopup('warning', 'No bill ID found to clear.');
+            return;
+        }
+
+        $.ajax({
+            url: `/stock/bills/clear/${billId}/`,
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function () {
+                $('#bill_id, #bill_no, #discount').val('');
+                $('#customer, #product').val('').change();
+                $('#quantity').val(1);
+                $('#rate').val('');
+                $('#billTable tbody').empty();
+                $('#billTotal').text('0.00');
+                $('#export, #clear').hide();
+                showPopup('info', 'Bill cleared successfully.');
+            },
+            error: function () {
+                showPopup('error', 'Failed to clear the bill.');
+            }
+        });
+    });
 </script>
 
 {% endblock %}

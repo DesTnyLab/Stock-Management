@@ -195,7 +195,6 @@ class TodaysTopSalesView(View):
         """Provide the graph as a separate endpoint for reuse."""
         sales_data = self.get_sales_data()
         graph = self.generate_graph(sales_data["top_sales"])
-        print({"graph": graph})
         return JsonResponse({"graph": graph})
 
 
@@ -331,6 +330,7 @@ def add_bill_item_ajax(request):
                 return JsonResponse({
                     'bill_id': bill.id,
                     'product_name': product.name,
+                    'product_id': product.id,
                     'quantity': bill_item_product.quantity,
                     'rate': bill_item_product.rate,
                     'subtotal': subtotal,
@@ -343,6 +343,20 @@ def add_bill_item_ajax(request):
                 return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
+
+
+def clear_create_bill(request, billId):
+  
+    bill = Bill.objects.get(id=billId)
+    bill_item = BillItem.objects.get(bill=bill)
+
+    total = bill_item.total
+    discount = bill.discount
+    total_amount = total - ((total*discount)/100)
+    bill.total_amount = total_amount
+    bill.save()
+  
+    return redirect('create_bill')
 
 
 
@@ -371,7 +385,8 @@ def generate_bill_pdf(request, bill_id):
     total = sum(item.total for item in bill_items)
     discount = bill.discount
     total_amount = total - ((discount*total)/100)
-
+    bill.total_amount = total_amount
+    bill.save()
     total_in_words = convert_to_nepali_currency(total_amount)
     # Context for the template
     context = {
@@ -586,6 +601,31 @@ def view_product_search_ajax(request):
     return render(
         request, "stock/view_product_on_search.html", {"products": product}
     )
+
+
+
+
+
+def delete_bill_item(request, bill_id, product_id):
+    if request.method == "POST":
+        try:
+            # Find and delete the bill item
+            product = Product.objects.get(id= product_id)
+            bill_item = BillItem.objects.get(bill_id=bill_id)
+            bill_item_product = BillItemProduct.objects.get(bill_item=bill_item, product=product)
+            bill_item_product.delete()
+
+            # Recalculate total
+            
+            remaining_items = BillItemProduct.objects.filter(bill_item=bill_item)
+            total = sum(item.quantity * item.rate for item in remaining_items)
+            bill_item.total = total
+            bill_item.save()
+            
+            return JsonResponse({'success': True, 'total': total})
+        except BillItem.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Bill item not found.'}, status=404)
+    return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
 
 
 
