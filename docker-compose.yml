@@ -39,7 +39,7 @@ services:
 networks:
   stock-management_stock:
     driver: bridge
-    external: true # Use existing external network
+    # external: true # Use existing external network
 
 volumes:
   postgres_data:
