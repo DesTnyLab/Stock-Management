@@ -65,3 +65,6 @@ def create_sale_on_bill_item_product(sender, instance, created, **kwargs):
             price=instance.rate,
             date=instance.bill_item.bill.date
         )
+
+
+
