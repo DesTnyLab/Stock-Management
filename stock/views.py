@@ -317,14 +317,14 @@ def add_bill_item_ajax(request):
                 bill_item.total += subtotal  # Ensure subtotal is a Decimal
                 bill_item.save()
 
-                # Get or create a Credit instance for the customer
-                customer = get_object_or_404(Customer, id=customer_id)
-                credit, created = Credit.objects.get_or_create(customer=customer, bill=bill)
+                # # Get or create a Credit instance for the customer
+                # customer = get_object_or_404(Customer, id=customer_id)
+                # credit, created = Credit.objects.get_or_create(customer=customer, bill=bill)
 
-                # Update credit amount based on the total of the BillItem
-                credit.amount = bill_item.total
-                credit.date = now().date()
-                credit.save()
+                # # Update credit amount based on the total of the BillItem
+                # credit.amount = bill_item.total
+                # credit.date = now().date()
+                # credit.save()
 
                 # Prepare the response with the added product and updated bill data
                 return JsonResponse({
@@ -333,6 +333,7 @@ def add_bill_item_ajax(request):
                     'product_id': product.id,
                     'quantity': bill_item_product.quantity,
                     'rate': bill_item_product.rate,
+                    'item_id':bill_item_product.id,
                     'subtotal': subtotal,
                     'total': bill_item.total,
                 })
@@ -355,7 +356,8 @@ def clear_create_bill(request, billId):
     total_amount = total - ((total*discount)/100)
     bill.total_amount = total_amount
     bill.save()
-  
+
+
     return redirect('create_bill')
 
 
@@ -433,11 +435,13 @@ def generate_ledger(request, customer_id):
             'particulars': f"Bill No. {credit.bill.bill_no}" if credit.bill else "Credit",
             'debit': 0.00,
             'credit': credit.amount,
-            'balance': None  # Will calculate later
+            'balance': None,  # Will calculate later
+            'bill_no': credit.bill.bill_no
         })
 
     for debit in debits:
         transactions.append({
+            ''
             'date': debit.date,
             'particulars': "Cheque" if debit.amount > 0 else "Debit",
             'debit': debit.amount,
@@ -473,7 +477,8 @@ def generate_ledger(request, customer_id):
         'transactions': transactions,
         'start_date': start_date,
         'end_date': end_date,
-        'debit_form':debit_form
+        'debit_form':debit_form,
+      
     })
 
 
@@ -606,13 +611,12 @@ def view_product_search_ajax(request):
 
 
 
-def delete_bill_item(request, bill_id, product_id):
+def delete_bill_item(request, bill_id, item_id):
     if request.method == "POST":
         try:
-            # Find and delete the bill item
-            product = Product.objects.get(id= product_id)
+            # Find and delete the bill ite
             bill_item = BillItem.objects.get(bill_id=bill_id)
-            bill_item_product = BillItemProduct.objects.get(bill_item=bill_item, product=product)
+            bill_item_product = BillItemProduct.objects.get(bill_item=bill_item, id=item_id)
             bill_item_product.delete()
 
             # Recalculate total
@@ -621,7 +625,12 @@ def delete_bill_item(request, bill_id, product_id):
             total = sum(item.quantity * item.rate for item in remaining_items)
             bill_item.total = total
             bill_item.save()
-            
+
+            bill = Bill.objects.get(id=bill_id)
+            amount = total -((total * bill.discount)/100)
+            bill.total_amount = amount
+            bill.save()
+
             return JsonResponse({'success': True, 'total': total})
         except BillItem.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Bill item not found.'}, status=404)
@@ -629,5 +638,17 @@ def delete_bill_item(request, bill_id, product_id):
 
 
 
-def test(request):
-    return render(request, 'test.html')
+def test(request, bill_no):
+    bill = Bill.objects.get(bill_no=bill_no)
+    bill_item = BillItem.objects.get(bill = bill)
+    bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
+    context = {
+        'responses' : bill_item_product,
+        'customer': bill.customer,
+        'bill_no': bill.bill_no,
+        'total': bill_item.total,
+        'discount': bill.discount,
+        'total_amount': bill.total_amount
+
+              }
+    return render(request, 'stock/bill_details.html', context=context)
