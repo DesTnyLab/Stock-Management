@@ -120,13 +120,7 @@
     <tbody>
         <!-- Product rows will be added dynamically -->
     </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3"><strong>Total:</strong></td>
-            <td id="billTotal">0.00</td>
-            <td></td>
-        </tr>
-    </tfoot>
+ 
 </table>
 
 <!-- Buttons -->
@@ -186,11 +180,11 @@
         <td>${response.rate}</td>
         <td>${response.subtotal.toFixed(2)}</td>
         <td>
-            <button type="button" class="deleteProduct" data-product-id="${response.product_id}">Delete</button>
+            <button type="button" class="deleteProduct" data-item-id="${response.item_id}">Delete</button>
         </td>
     </tr>
 `);
-                $('#billTotal').text(response.total.toFixed(2));
+                
                 showPopup('success', 'Product added successfully!');
             },
             error: function () {
@@ -203,17 +197,17 @@
     $('#billTable').on('click', '.deleteProduct', function () {
         const row = $(this).closest('tr');
         const billId = $('#bill_id').val();
-        const productId = $(this).data('product-id');
+        const item_id= $(this).data('item-id');
 
         $.ajax({
-            url: `/stock/bills/delete-item/${billId}/${productId}/`,
+            url: `/stock/bills/delete-item/${billId}/${item_id}/`,
             method: 'POST',
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function (response) {
                 row.remove();
-                $('#billTotal').text(response.total.toFixed(2));
+               
                 showPopup('success', 'Product removed successfully!');
             },
             error: function () {

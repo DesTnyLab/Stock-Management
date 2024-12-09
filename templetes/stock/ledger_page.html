@@ -141,10 +141,10 @@
             {% for transaction in transactions %}
             <tr>
                 <td>{{ transaction.date }}</td>
-                <td>{{ transaction.particulars }}</td>
+                <td><a href="{% url 'bill_details' transaction.bill_no %}">{{ transaction.particulars }}</a></td>
                 <td>{{ transaction.debit }}</td>
                 <td>{{ transaction.credit }}</td>
-                <td>{{ transaction.balance }}</td>
+                <td> {{ transaction.balance }} </td>
             </tr>
         {% empty %}
             <tr>
@@ -152,6 +152,7 @@
             </tr>
         {% endfor %}
         </tbody>
+        
     </table>
 
 

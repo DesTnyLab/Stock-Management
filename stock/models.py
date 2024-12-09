@@ -157,8 +157,6 @@ class Credit(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-update particulars with Bill number
-        discount = self.bill.discount
-        self.amount = self.amount - ((self.amount*discount)/100)
         self.amount = round(self.amount, 2)
         if not self.particulars:
             self.particulars = f"Bill No: {self.bill.bill_no}"
