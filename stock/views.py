@@ -638,7 +638,7 @@ def delete_bill_item(request, bill_id, item_id):
 
 
 
-def test(request, bill_no):
+def bill_details(request, bill_no):
     bill = Bill.objects.get(bill_no=bill_no)
     bill_item = BillItem.objects.get(bill = bill)
     bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
@@ -652,3 +652,18 @@ def test(request, bill_no):
 
               }
     return render(request, 'stock/bill_details.html', context=context)
+
+
+
+def delete_product(request, id):
+    try:
+        # Use get_object_or_404 for cleaner error handling
+        product = get_object_or_404(Product, id=id)
+        product.delete()
+        messages.success(request, "Product deleted successfully")
+    except Exception as e:
+        # Log the exception for debugging
+        print(f"Error while deleting product: {e}")
+        messages.error(request, "Failed to delete product")
+    
+    return redirect('manage_product_and_purchase')

@@ -34,5 +34,7 @@ urlpatterns = [
     path('bills/clear/<int:billId>/', clear_create_bill, name='clear'),
 
     path('bills/delete-item/<int:bill_id>/<int:item_id>/', delete_bill_item, name='delete_bill_item'),
-    path('bill_details/<int:bill_no>/', test, name ='bill_details')
+    path('bill_details/<int:bill_no>/', bill_details, name ='bill_details'),
+
+    path('delete/<int:id>/', delete_product, name='delete_product')
 ]

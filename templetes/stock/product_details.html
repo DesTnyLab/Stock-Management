@@ -15,7 +15,7 @@
         </li>
         <li> Selling Price: {{ product.selling_price }}</li>
     </ul>
-    <a href="{% url 'manage_inventory' %}" id="btn" style="
+    <a href="{% url 'delete_product' product.id %}" id="btn" style="
         text-decoration: none;">Delete Product</a>
 </div>
 <div class="history">
