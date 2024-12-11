@@ -8,7 +8,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = [
             "name",
-            "product_code",
+            "SH_code",
         ]
         widgets = {
             "name": forms.TextInput(
@@ -16,7 +16,7 @@ class ProductForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
-            "product_code": forms.TextInput(
+            "SH_code": forms.TextInput(
                 attrs={
                     "class": "form-control",
                 }
@@ -170,6 +170,7 @@ class CustomerForm(forms.ModelForm):
             "name",
             "phone_number",
             "company",
+            'pan_no'
         ]
 
     def clean_phone_number(self):
