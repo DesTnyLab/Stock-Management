@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Stock {% endblock %}
+  
+{% block content %}
+
+<div >
+    <div style="display: flex;  padding-left:20%;">
+        <div>
+        
+        </div>
+        <div style="justify-content: center; padding-left: 20%; padding-bottom: 10px;">
+            <input type="text" id="product-search" placeholder="Search by product name..." />
+            <button id="search-button">Search</button>
+        </div>
+
+    </div>
+
+ 
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Total Purchased</th>
+                <th>Total Sold</th>
+                <th>Remaining Stock</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody id="stock-list">
+            {% for stock in stocks %}
+            <tr>
+        <td>{{ stock.product.name }}</td>
+        <td>{{ stock.total_purchased }}</td>
+        <td>{{ stock.total_sold }}</td>
+        <td>{{ stock.remaining_stock }}</td>
+                <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' stock.product.id %}">View details</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">No stock data available.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+<script>
+    $(document).ready(function() {
+        $('#product-search').on('input', function() {
+            var query = $(this).val();  
+            
+            // Make an AJAX request to fetch the stock information
+            $.ajax({
+                url: '{% url "product_stock_search_ajax" %}',  
+                method: 'GET',
+                data: { 'query': query },  // Send the query to the backend
+                success: function(data) {
+                    $('#stock-list').html(data);
+                }
+            });
+        });
+    
+        // Trigger search when the user clicks the search button
+        $('#search-button').click(function() {
+            var query = $('#product-search').val();  // Get the query
+            $.ajax({
+                url: '{% url "product_stock_search_ajax" %}',  // URL to your AJAX view
+                method: 'GET',
+                data: { 'query': query },  // Send the query
+                success: function(data) {
+                    // Update the stock table with the filtered data
+                    $('#stock-list').html(data);
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Create Bill {% endblock %}
+
+{% block content %}
+<style>
+    /* Popup styles */
+    .popup {
+        position: fixed;
+        bottom: 20px;
+        right: -300px;
+        z-index: 1000;
+        background-color: rgba(204, 201, 219, 0.9);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+        border: 3px solid transparent;
+        position: relative;
+    }
+
+    .popup.show {
+        display: block;
+        animation: slideIn 0.5s ease forwards;
+    }
+
+    .popup.hide {
+        animation: slideOut 0.5s ease forwards;
+    }
+
+    .popup-content {
+        font-size: 16px;
+    }
+
+    .popup-content.success {
+        color: green;
+    }
+
+    .popup-content.error {
+        color: red;
+    }
+
+    .popup-content.info {
+        color: blue;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(300px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(300px);
+            opacity: 0;
+        }
+    }
+</style>
+
+<!-- Popup -->
+<div id="popup-message" class="popup"></div>
+
+<h1>Create Bill</h1>
+
+<!-- Bill Form -->
+<form id="billForm">
+    <label for="customer">Customer:</label>
+    <select id="customer" name="customer_id" required>
+        <option value="" disabled selected>Select a customer</option>
+        {% for customer in customers %}
+        <option value="{{ customer.id }}">{{ customer.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="number" id="bill_no" name="bill_no" placeholder="Enter Bill Number" required>
+    <input type="number" id="discount" name="discount" placeholder="Discount Rate" required>
+    <input type="hidden" id="bill_id" name="bill_id">
+
+    <h2>Add Product</h2>
+    <label for="product">Product:</label>
+    <select id="product" name="product_id" required>
+        <option value="" disabled selected>Select a product</option>
+        {% for product in products %}
+        <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+
+    <label for="rate">Rate:</label>
+    <input type="number" id="rate" name="rate" step="0.01" required>
+
+    <button type="button" id="addProduct">Add Product</button>
+</form>
+
+<hr>
+
+<!-- Bill Summary -->
+<h2>Bill Summary</h2>
+<table border="1" id="billTable">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Rate</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Product rows will be added dynamically -->
+    </tbody>
+ 
+</table>
+
+<!-- Buttons -->
+<button type="button" id="export" style="display: none;">Export as PDF</button>
+<button type="button" id="clear" style="display: none;">Clear</button>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Popup function
+    function showPopup(type, message) {
+        const popup = $('#popup-message');
+        popup.html(`<div class="popup-content ${type}">${message}</div>`);
+        popup.removeClass('hide').addClass('show').show();
+
+        setTimeout(() => {
+            popup.removeClass('show').addClass('hide');
+            setTimeout(() => popup.hide(), 500);
+        }, 3000);
+    }
+
+    // Add product to bill
+    $('#addProduct').on('click', function () {
+        const billId = $('#bill_id').val();
+        const bill_no = $('#bill_no').val();
+        const discount = $('#discount').val();
+        const customerId = $('#customer').val();
+        const productId = $('#product').val();
+        const quantity = $('#quantity').val();
+        const rate = $('#rate').val();
+       
+        $.ajax({
+            url: '{% url "add_bill_item_ajax" %}',
+            method: 'POST',
+            data: {
+                bill_id: billId,
+                bill_no: bill_no,
+                customer_id: customerId,
+                product_id: productId,
+                discount: discount,
+                quantity: quantity,
+                rate: rate,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+                console.log(response.product_id)
+                if (!billId) {
+                    $('#bill_id').val(response.bill_id);
+                    $('#export').show();
+                    $('#clear').show();
+                }
+
+                $('#billTable tbody').append(`
+    <tr>
+        <td>${response.product_name}</td>
+        <td>${response.quantity}</td>
+        <td>${response.rate}</td>
+        <td>${response.subtotal.toFixed(2)}</td>
+        <td>
+            <button type="button" class="deleteProduct" data-item-id="${response.item_id}">Delete</button>
+        </td>
+    </tr>
+`);
+                
+                showPopup('success', 'Product added successfully!');
+            },
+            error: function () {
+                showPopup('error', 'Failed to add product.');
+            }
+        });
+    });
+
+    // Delete product from bill
+    $('#billTable').on('click', '.deleteProduct', function () {
+        const row = $(this).closest('tr');
+        const billId = $('#bill_id').val();
+        const item_id= $(this).data('item-id');
+
+        $.ajax({
+            url: `/stock/bills/delete-item/${billId}/${item_id}/`,
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+                row.remove();
+               
+                showPopup('success', 'Product removed successfully!');
+            },
+            error: function () {
+                showPopup('error', 'Failed to remove product.');
+            }
+        });
+    });
+
+    // Export bill as PDF
+    $('#export').on('click', function () {
+        const billID = $('#bill_id').val();
+        if (!billID) {
+            showPopup('warning', 'No bill to export.');
+            return;
+        }
+        window.location.href = `/stock/bills/pdf/${billID}/`;
+    });
+
+    // Clear bill
+    $('#clear').on('click', function () {
+        const billId = $('#bill_id').val();
+        if (!billId) {
+            showPopup('warning', 'No bill ID found to clear.');
+            return;
+        }
+
+        $.ajax({
+            url: `/stock/bills/clear/${billId}/`,
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function () {
+                $('#bill_id, #bill_no, #discount').val('');
+                $('#customer, #product').val('').change();
+                $('#quantity').val(1);
+                $('#rate').val('');
+                $('#billTable tbody').empty();
+                $('#billTotal').text('0.00');
+                $('#export, #clear').hide();
+                showPopup('info', 'Bill cleared successfully.');
+            },
+            error: function () {
+                showPopup('error', 'Failed to clear the bill.');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

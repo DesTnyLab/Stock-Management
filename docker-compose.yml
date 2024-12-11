@@ -24,7 +24,7 @@ services:
       - stock-management_stock # Use the correct network name
 
   postgres-db:
-    image: postgres:12.0-alpine
+    image: postgres:13.0-alpine
     ports:
       - "5432:5432"
     volumes:
@@ -39,7 +39,7 @@ services:
 networks:
   stock-management_stock:
     driver: bridge
-    # external: true  # Use existing external network
+    # external: true # Use existing external network
 
 volumes:
   postgres_data:

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Purchase, Sale, Stock
+from .models import *
 
 # Register your models here.
 
@@ -8,3 +8,11 @@ admin.site.register(Purchase)
 admin.site.register(Stock)
 admin.site.register(Sale)
 
+admin.site.register(Customer)
+admin.site.register(Bill)
+admin.site.register(BillItem)
+admin.site.register(BillItemProduct)
+
+
+admin.site.register(Credit)
+admin.site.register(Debit)

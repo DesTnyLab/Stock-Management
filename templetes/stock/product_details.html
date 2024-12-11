@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} {{ product.name }}{% endblock %}
+  
+{% block content %}
+<div style=" width: 75%;
+    padding-left:23%">
+<div class="about-product">
+    <ul style="list-style: none;">
+        <li>
+           Name:  {{ product.name }}
+        </li>
+        <li>
+           Cost Price:  {{ product.cost_price }}
+        </li>
+        <li> Selling Price: {{ product.selling_price }}</li>
+    </ul>
+    <a href="{% url 'delete_product' product.id %}" id="btn" style="
+        text-decoration: none;">Delete Product</a>
+</div>
+<div class="history">
+    <div >
+        <h1 >Purchase History for "{{ product.name }}"</h1>
+
+        <table >
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchase_data %}
+                    <tr>
+                        <td>{{ purchase.date }}</td>
+                        <td>{{ purchase.quantity }}</td>
+                        <td>{{ purchase.price }}</td>
+                        <td>{{purchase.get_total_cost}}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No purchases made for this product yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div >
+        <h1 >Sale History for "{{ product.name }}"</h1>
+
+        <table >
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sale_data %}
+                    <tr>
+                        <td>{{ sale.date }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>{{ sale.price }}</td>
+                        <td>{{ sale.get_total_cost }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No purchases made for this product yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'manage_inventory' %}" id="btn" style="
+        text-decoration: none;">Back to Products</a>
+    </div>
+</div>
+</div>
+{% endblock %}
