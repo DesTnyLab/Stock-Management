@@ -8,7 +8,7 @@ class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    product_code = models.CharField(max_length=50, default=' ') 
+    SH_code = models.CharField(max_length=50, default=' ') 
     def __str__(self):
         return self.name
 
@@ -83,24 +83,12 @@ class Stock(models.Model):
 
 
 
-# def validate_nepal_phone_number(value):
-#     """
-#     Validate that the phone number starts with the Nepal country code and has 8 or 9 digits.
-#     """
-#     value_str = str(value)
-#     if not value_str.startswith("+977"):
-#         raise ValidationError("Phone number must start with the Nepal country code (+977).")
-    
-#     # Remove country code and check length
-#     local_number = value_str.replace("+977", "").strip()
-#     if not local_number.isdigit() or len(local_number) not in [8, 9]:
-#         raise ValidationError("Phone number must have 8 or 9 digits after the country code.")
-
 class Customer(models.Model):
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=10)
     company = models.CharField(max_length=50, default=' ')
     total_debit = models.FloatField(default=0.00)
+    pan_no = models.CharField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.name} '
