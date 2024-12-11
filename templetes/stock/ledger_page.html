@@ -141,7 +141,13 @@
             {% for transaction in transactions %}
             <tr>
                 <td>{{ transaction.date }}</td>
-                <td><a href="{% url 'bill_details' transaction.bill_no %}">{{ transaction.particulars }}</a></td>
+                <td>
+                    {% if transaction.bill_no %}
+                        <a href="{% url 'bill_details' transaction.bill_no %}">{{ transaction.particulars }}</a>
+                    {% else %}
+                        {{ transaction.particulars }} 
+                    {% endif %}
+                </td>
                 <td>{{ transaction.debit }}</td>
                 <td>{{ transaction.credit }}</td>
                 <td> {{ transaction.balance }} </td>
