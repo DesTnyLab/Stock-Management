@@ -22,46 +22,58 @@ from num2words import num2words
 
 def manage_inventory(request):
     # Handle sale form submission
-    if request.method == "POST" and "sale_form" in request.POST:
-        sale_form = SaleForm(request.POST)
-        if sale_form.is_valid():
-            sale_form.save()
-            messages.success(request, "Sale added successfully.")
-            return redirect("manage_inventory")
+    try:
+        if request.method == "POST" and "sale_form" in request.POST:
+            sale_form = SaleForm(request.POST)
+            if sale_form.is_valid():
+                sale_form.save()
+                messages.success(request, "Sale added successfully.")
+                return redirect("manage_inventory")
+            else:
+                # Add form errors to messages
+                for field, errors in sale_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in sale_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        sale_form = SaleForm()
+            sale_form = SaleForm()
 
 
-    stocks = Stock.objects.annotate(
-        rem_stock=ExpressionWrapper(
-            F("total_purchased") - F("total_sold"), output_field=IntegerField()
+        stocks = Stock.objects.annotate(
+            rem_stock=ExpressionWrapper(
+                F("total_purchased") - F("total_sold"), output_field=IntegerField()
+            )
+        ).order_by("rem_stock")[
+            :5
+        ]  # Order by remaining_stock and limit to top 10
+
+        # Generate the sales graph using the TodaysTopSalesView class
+        sales_view = TodaysTopSalesView()  # Instantiate the class
+        today = date.today()
+        sale_data = Sale.objects.filter(date=today).select_related("product")  # Fetch sales for today
+        graph = sales_view.get_graph(sale_data)  # Get the graph
+        
+    
+        # Return render with the graph and stocks
+        return render(
+            request,
+            "stock/index.html",
+            {
+                "sale_form": sale_form,
+                "stocks": stocks,
+                "graph": graph,  # Pass graph as base64 string
+            },
         )
-    ).order_by("rem_stock")[
-        :5
-    ]  # Order by remaining_stock and limit to top 10
-
-    # Generate the sales graph using the TodaysTopSalesView class
-    sales_view = TodaysTopSalesView()  # Instantiate the class
-    today = date.today()
-    sale_data = Sale.objects.filter(date=today).select_related("product")  # Fetch sales for today
-    graph = sales_view.get_graph(sale_data)  # Get the graph
-     
-   
-    # Return render with the graph and stocks
-    return render(
-        request,
-        "stock/index.html",
-        {
-            "sale_form": sale_form,
-            "stocks": stocks,
-            "graph": graph,  # Pass graph as base64 string
-        },
-    )
+    except Exception as e:
+        messages.error(request, 'Product not avialable in Stock')
+        return render(
+            request,
+            "stock/index.html",
+            {
+                "sale_form": sale_form,
+                "stocks": stocks,
+                "graph": graph,  # Pass graph as base64 string
+            },
+        )
 
 
 def view_stock(request):
