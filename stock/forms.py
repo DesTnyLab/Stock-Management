@@ -104,20 +104,26 @@ class SaleForm(forms.ModelForm):
         self.fields["product"].empty_label = "Select item to sell"
 
     def clean_quantity(self):
-        quantity = self.cleaned_data["quantity"]
-        product = self.cleaned_data["product"]
-        stock = Stock.objects.get(product=product)
-        if stock.remaining_stock is None or stock.total_sold is None:
-            raise forms.ValidationError(
-                "Stock data is invalid. Please check the stock record."
-            )
-        if quantity < 0:
-            raise forms.ValidationError("Sale quantity cannot be negative.")
-        if quantity > stock.remaining_stock:
-            raise forms.ValidationError(
-                f"Cannot sell {quantity} units. Only {stock.remaining_stock} units available."
-            )
-        return quantity
+            try:   
+                quantity = self.cleaned_data["quantity"]
+                product = self.cleaned_data["product"]
+                stock = Stock.objects.get(product=product)
+            except:
+                 raise forms.ValidationError("Product not avialable in Stock")
+            if stock.remaining_stock is None or stock.total_sold is None:
+                raise forms.ValidationError(
+                    "Stock data is invalid. Please check the stock record."
+                )
+            if quantity < 0:
+                raise forms.ValidationError("Sale quantity cannot be negative.")
+            if quantity > stock.remaining_stock:
+                raise forms.ValidationError(
+                    f"Cannot sell {quantity} units. Only {stock.remaining_stock} units available."
+                )
+            return quantity
+     
+           
+           
 
 
 class BillForm(forms.ModelForm):
