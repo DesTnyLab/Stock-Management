@@ -586,6 +586,7 @@ def view_customer_search_ajax(request):
 
 def manage_product_and_purchase(request):
 
+
     # handel product form submisstion
     if request.method == "POST" and "product_form" in request.POST:
         product_form = ProductForm(request.POST)
@@ -601,9 +602,19 @@ def manage_product_and_purchase(request):
     else:
         product_form = ProductForm()
 
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            product = Product.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(product.values()), safe=False)
+
+
+
+
     # Handle purchase form submission
     if request.method == "POST" and "purchase_form" in request.POST:
         purchase_form = PurchaseForm(request.POST)
+
         if purchase_form.is_valid():
             purchase_form.save()
             messages.success(request, "Purchase added successfully.")
