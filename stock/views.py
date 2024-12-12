@@ -281,12 +281,13 @@ def create_bill(request):
     customers = Customer.objects.all()
     return render(request, 'stock/create_bill.html', {'products': products, 'customers': customers})
 
+
 @csrf_exempt
 def add_bill_item_ajax(request):
     if request.method == 'POST':
         with transaction.atomic():  # Start the transaction block
             try:
-                # Extract the data from the request
+                # Extract data from the request
                 bill_id = request.POST.get('bill_id', None)
                 bill_no = request.POST.get('bill_no')
                 customer_id = request.POST.get('customer_id')
@@ -294,9 +295,10 @@ def add_bill_item_ajax(request):
                 quantity = int(request.POST.get('quantity', 1))
                 rate = float(request.POST.get('rate', 0.0))
                 discount = int(request.POST.get('discount', 0))
+                payment_type = request.POST.get('payment_type')
 
                 # Validate required fields
-                if not customer_id or not product_id:
+                if not (customer_id and product_id):
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
                 # Create or fetch the Bill instance
@@ -306,6 +308,7 @@ def add_bill_item_ajax(request):
                         customer_id=customer_id,
                         discount=discount,
                         date=now().date(),
+                        payment_type=payment_type
                     )
                 else:
                     bill = get_object_or_404(Bill, id=bill_id)
@@ -314,7 +317,7 @@ def add_bill_item_ajax(request):
                 product = get_object_or_404(Product, id=product_id)
 
                 # Create or fetch the BillItem for the given Bill
-                bill_item, created = BillItem.objects.get_or_create(bill=bill)
+                bill_item, _ = BillItem.objects.get_or_create(bill=bill)
 
                 # Create a new BillItemProduct associated with the BillItem
                 bill_item_product = BillItemProduct.objects.create(
@@ -326,17 +329,8 @@ def add_bill_item_ajax(request):
 
                 # Calculate the new subtotal for the BillItem
                 subtotal = bill_item_product.quantity * bill_item_product.rate
-                bill_item.total += subtotal  # Ensure subtotal is a Decimal
+                bill_item.total += subtotal
                 bill_item.save()
-
-                # # Get or create a Credit instance for the customer
-                # customer = get_object_or_404(Customer, id=customer_id)
-                # credit, created = Credit.objects.get_or_create(customer=customer, bill=bill)
-
-                # # Update credit amount based on the total of the BillItem
-                # credit.amount = bill_item.total
-                # credit.date = now().date()
-                # credit.save()
 
                 # Prepare the response with the added product and updated bill data
                 return JsonResponse({
@@ -345,15 +339,15 @@ def add_bill_item_ajax(request):
                     'product_id': product.id,
                     'quantity': bill_item_product.quantity,
                     'rate': bill_item_product.rate,
-                    'item_id':bill_item_product.id,
+                    'item_id': bill_item_product.id,
                     'subtotal': subtotal,
                     'total': bill_item.total,
                 })
 
             except Exception as e:
-             
                 # Rollback the transaction in case of an error
-                return JsonResponse({'error': str(e)}, status=400)
+                # transaction.set_rollback(True)
+                return JsonResponse({'error': f"Error processing request: {str(e)}"}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
 
@@ -435,18 +429,33 @@ def generate_ledger(request, customer_id):
         # Get all credit and debit transactions for the customer
         credits = Credit.objects.filter(customer=customer).order_by('date')
         debits = Debit.objects.filter(customer=customer).order_by('date')
-
+        cashes = BillOnCash.objects.filter(customer=customer).order_by('date')
         # Prepare a list of transactions to display
         transactions = []
 
         # Calculate the opening balance
         current_balance = 0.00
-        # Merge credits and debits into a single list of transactions
+
+        
+        # Merge cash, credits and debits into a single list of transactions
+
+        for cash in cashes:
+            transactions.append({
+                'date': cash.date,
+                'particulars': f"Bill No. {cash.bill.bill_no}" if cash.bill else "Cash",
+                'debit': 0.00,
+                'credit': 0.00,
+                'cash': cash.amount,
+                'balance': None,  # Will calculate later
+                'bill_no': cash.bill.bill_no
+            })
+
         for credit in credits:
             transactions.append({
                 'date': credit.date,
                 'particulars': f"Bill No. {credit.bill.bill_no}" if credit.bill else "Credit",
                 'debit': 0.00,
+                'cash': 0.00,
                 'credit': credit.amount,
                 'balance': None,  # Will calculate later
                 'bill_no': credit.bill.bill_no
@@ -459,6 +468,7 @@ def generate_ledger(request, customer_id):
                 'particulars': "Cheque" if debit.amount > 0 else "Debit",
                 'debit': debit.amount,
                 'credit': 0.00,
+                'cash': 0.00,
                 'balance': None  # Will calculate later
             })
 

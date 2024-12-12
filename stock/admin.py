@@ -16,3 +16,4 @@ admin.site.register(BillItemProduct)
 
 admin.site.register(Credit)
 admin.site.register(Debit)
+admin.site.register(BillOnCash)

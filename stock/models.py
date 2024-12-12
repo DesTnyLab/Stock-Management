@@ -8,7 +8,7 @@ class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    SH_code = models.CharField(max_length=50, default=' ') 
+    SH_code = models.CharField(max_length=50, default='CV ') 
     def __str__(self):
         return self.name
 
@@ -95,21 +95,28 @@ class Customer(models.Model):
 
 
     
-
 class Bill(models.Model):
+    PAYMENT_CHOICES = [
+        ('CASH', 'Cash'),
+        ('CREDIT', 'Credit'),
+    ]
+
     bill_no = models.PositiveIntegerField(unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField()
     discount = models.IntegerField(default=0)
     total_amount = models.FloatField(default=0.00)
+    payment_type = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
+
     def __str__(self):
         return f'Bill No: {self.bill_no}'
-    
+
     def save(self, *args, **kwargs):
-        # Auto-update particulars for Debit
+        # Save the bill
         self.total_amount = round(self.total_amount, 2)
-     
         super(Bill, self).save(*args, **kwargs)
+
+
 
 
 class BillItem(models.Model):
@@ -173,3 +180,19 @@ class Debit(models.Model):
 
 
 
+class BillOnCash(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.00)
+    date = models.DateField(default=now)
+    particulars = models.CharField(max_length=255, editable=False, default=' ')
+    
+    def save(self, *args, **kwargs):
+        # Auto-update particulars with Bill number
+        self.amount = round(self.amount, 2)
+        if not self.particulars:
+            self.particulars = f"Bill No: {self.bill.bill_no}"
+        super(BillOnCash, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.customer} Cash on {self.date}'

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     #installed apps
     'stock',
 
+    #third-party apps
+    'django_select2',
 
 
 ]
