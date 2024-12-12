@@ -73,6 +73,15 @@ class PurchaseForm(forms.ModelForm):
 
         return quantity
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.none()
+
+        if 'product' in self.data:
+            self.fields['product'].queryset = Product.objects.all()
+
+        elif self.instance.pk:
+            self.fields['product'].queryset = Product.objects.all().filter(pk=self.instance.product.pk)
 
 class SaleForm(forms.ModelForm):
     class Meta:
