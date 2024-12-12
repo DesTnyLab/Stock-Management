@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Purchase, Sale, Stock, Product, BillItemProduct, Bill, Credit,Customer
+from .models import Purchase, Sale, Stock, Product, BillItemProduct, Bill, Credit,Customer, BillOnCash
 from django.core.exceptions import ValidationError
 from django.shortcuts import  get_object_or_404
 
@@ -69,12 +69,18 @@ def create_sale_on_bill_item_product(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Bill)
-def update_credit_on_bill_save(sender, instance, created, **kwargs):
-    try:
+def update_payment_on_bill_save(sender, instance, created, **kwargs):
         customer = get_object_or_404(Customer, id=instance.customer.id)
-        credit, created = Credit.objects.get_or_create(customer=customer, bill=instance)
-        credit.amount = instance.total_amount
-        credit.save()
-        print(credit.amount)
-    except Exception as e:
-        print(e)
+
+        if instance.payment_type == 'CREDIT':
+            credit, created = Credit.objects.get_or_create(customer=customer, bill=instance)
+            credit.amount = instance.total_amount
+            credit.save()
+            print(f"Credit updated: {credit.amount}")
+        elif instance.payment_type == 'CASH':
+            cash, created = BillOnCash.objects.get_or_create(customer=customer, bill=instance)
+            cash.amount = instance.total_amount
+            print(cash.amount)
+            cash.save()
+            print(f"Cash bill saved for customer: {customer.id}")
+

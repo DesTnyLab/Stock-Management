@@ -145,7 +145,7 @@
         {% for product in products %}
         <tr>
             <td>{{ product.name }}</td>
-            <td>{{ product.product_code }}</td>
+            <td>{{ product.SH_code }}</td>
             <td>{{ product.cost_price}}</td>
             <td>{{ product.selling_price}}</td>
             <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' product.id %}">View

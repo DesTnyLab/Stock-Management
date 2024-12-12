@@ -132,6 +132,7 @@
             <tr>
                 <th>Date</th>
                 <th>Particulars</th>
+                <th>Cash</th>
                 <th>Debit</th>
                 <th>Credit</th>
                 <th>Balance</th>
@@ -148,6 +149,7 @@
                         {{ transaction.particulars }} 
                     {% endif %}
                 </td>
+                <td>{{ transaction.cash }}</td>
                 <td>{{ transaction.debit }}</td>
                 <td>{{ transaction.credit }}</td>
                 <td> {{ transaction.balance }} </td>

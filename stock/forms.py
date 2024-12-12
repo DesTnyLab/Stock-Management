@@ -1,6 +1,8 @@
 from django import forms
 from .models import *
 from django.forms import inlineformset_factory
+from django_select2.forms import ModelSelect2Widget
+
 
 
 class ProductForm(forms.ModelForm):
@@ -24,14 +26,16 @@ class ProductForm(forms.ModelForm):
         }
 
 
+
 class PurchaseForm(forms.ModelForm):
     class Meta:
         model = Purchase
         fields = ["product", "quantity", "price", "date"]
         widgets = {
-            "product": forms.Select(
+           "product": forms.Select(
                 attrs={
                     "class": "form-control",
+                    "data-placeholder": "Search products...",  # Placeholder
                 }
             ),
             "quantity": forms.NumberInput(
@@ -54,7 +58,6 @@ class PurchaseForm(forms.ModelForm):
                 }
             ),
         }
-
     def clean_quantity(self):
         quantity = self.cleaned_data["quantity"]
         product_name = self.cleaned_data["product"]
@@ -129,7 +132,7 @@ class SaleForm(forms.ModelForm):
 class BillForm(forms.ModelForm):
     class Meta:
         model = Bill
-        fields = ["bill_no", "customer", "date", "discount"]
+        fields = ["bill_no", "customer", "date", "discount", 'payment_type']
 
 
 class BillItemProductForm(forms.ModelForm):

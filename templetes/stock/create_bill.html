@@ -85,6 +85,13 @@
     <input type="number" id="discount" name="discount" placeholder="Discount Rate" required>
     <input type="hidden" id="bill_id" name="bill_id">
 
+    <label for="payment_type">Payment Type:</label>
+    <select id="payment_type" name="payment_type" required>
+        <option value="" disabled selected>Select Payment Type</option>
+        <option value="CASH">Cash</option>
+        <option value="CREDIT">Credit</option>
+    </select>
+
     <h2>Add Product</h2>
     <label for="product">Product:</label>
     <select id="product" name="product_id" required>
@@ -120,7 +127,6 @@
     <tbody>
         <!-- Product rows will be added dynamically -->
     </tbody>
- 
 </table>
 
 <!-- Buttons -->
@@ -148,10 +154,16 @@
         const bill_no = $('#bill_no').val();
         const discount = $('#discount').val();
         const customerId = $('#customer').val();
+        const paymentType = $('#payment_type').val(); // Get payment type
         const productId = $('#product').val();
         const quantity = $('#quantity').val();
         const rate = $('#rate').val();
-       
+
+        if (!paymentType) {
+            showPopup('warning', 'Please select a payment type.');
+            return;
+        }
+
         $.ajax({
             url: '{% url "add_bill_item_ajax" %}',
             method: 'POST',
@@ -159,6 +171,7 @@
                 bill_id: billId,
                 bill_no: bill_no,
                 customer_id: customerId,
+                payment_type: paymentType, // Include payment type
                 product_id: productId,
                 discount: discount,
                 quantity: quantity,
@@ -166,7 +179,6 @@
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function (response) {
-                console.log(response.product_id)
                 if (!billId) {
                     $('#bill_id').val(response.bill_id);
                     $('#export').show();
@@ -174,17 +186,17 @@
                 }
 
                 $('#billTable tbody').append(`
-    <tr>
-        <td>${response.product_name}</td>
-        <td>${response.quantity}</td>
-        <td>${response.rate}</td>
-        <td>${response.subtotal.toFixed(2)}</td>
-        <td>
-            <button type="button" class="deleteProduct" data-item-id="${response.item_id}">Delete</button>
-        </td>
-    </tr>
-`);
-                
+                    <tr>
+                        <td>${response.product_name}</td>
+                        <td>${response.quantity}</td>
+                        <td>${response.rate}</td>
+                        <td>${response.subtotal.toFixed(2)}</td>
+                        <td>
+                            <button type="button" class="deleteProduct" data-item-id="${response.item_id}">Delete</button>
+                        </td>
+                    </tr>
+                `);
+
                 showPopup('success', 'Product added successfully!');
             },
             error: function () {
@@ -197,7 +209,7 @@
     $('#billTable').on('click', '.deleteProduct', function () {
         const row = $(this).closest('tr');
         const billId = $('#bill_id').val();
-        const item_id= $(this).data('item-id');
+        const item_id = $(this).data('item-id');
 
         $.ajax({
             url: `/stock/bills/delete-item/${billId}/${item_id}/`,
@@ -207,7 +219,7 @@
             },
             success: function (response) {
                 row.remove();
-               
+
                 showPopup('success', 'Product removed successfully!');
             },
             error: function () {
@@ -242,16 +254,17 @@
             },
             success: function () {
                 $('#bill_id, #bill_no, #discount').val('');
-                $('#customer, #product').val('').change();
+                $('#customer, #product, #payment_type').val('').change();
                 $('#quantity').val(1);
                 $('#rate').val('');
                 $('#billTable tbody').empty();
-                $('#billTotal').text('0.00');
                 $('#export, #clear').hide();
                 showPopup('info', 'Bill cleared successfully.');
             },
             error: function () {
                 showPopup('error', 'Failed to clear the bill.');
+           
+
             }
         });
     });
