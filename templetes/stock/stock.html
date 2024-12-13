@@ -3,13 +3,65 @@
 {% block title %} Stock {% endblock %}
   
 {% block content %}
+,<style>
+   
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px;
+}
 
+
+.search-bar input[type="text"] {
+    width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+
+.search-bar input[type="text"]:hover,
+.search-bar input[type="text"]:focus {
+    border-color: #007BFF; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #007BFF; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+
+.search-bar button:hover {
+    background-color: #0056b3; 
+}
+
+
+@media (max-width: 600px) {
+    .search-bar input[type="text"] {
+        width: 180px;
+    }
+}
+
+</style>
 <div >
     <div style="display: flex;  padding-left:20%;">
         <div>
         
         </div>
-        <div style="justify-content: center; padding-left: 20%; padding-bottom: 10px;">
+        <div class="search-bar">
             <input type="text" id="product-search" placeholder="Search by product name..." />
             <button id="search-button">Search</button>
         </div>

@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ledger - {{ customer.name }}</title>
+    <style>
+
+    </style>
 </head>
+
 <body>
     <h1>Customer Ledger - {{ customer.name }}</h1>
 
@@ -25,7 +29,7 @@
         <label for="end_date">End Date:</label>
         <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
         
-        <button type="submit">Filter</button>
+        <button type="submit" id="filter-button">Filter</button>
     </form>
 
 
