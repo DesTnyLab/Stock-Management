@@ -285,7 +285,7 @@
     $(document).ready(function () {
         $('#product').select2({
             ajax: {
-                url: "{% url 'manage_inventory' %}",
+                url: "{% url 'form_search_for_product' %}",
                 dataType: 'json',
                 processResults: function (data) {
                     return {
@@ -297,6 +297,22 @@
             },
             minimumInputLength: 1
         });
+
+        $('#customer').select2({
+            ajax: {
+                url: "{% url 'form_search_for_customer' %}",
+                dataType: 'json',
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {id: item.id, text: item.name};
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1
+        });
+    
     });
 </script>
 {% endblock %}

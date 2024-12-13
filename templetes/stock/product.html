@@ -246,7 +246,7 @@ $(document).ready(function() {
     $(document).ready(function () {
         $('#id_product').select2({
             ajax: {
-                url: "{% url 'manage_product_and_purchase' %}",
+                url: "{% url 'form_search_for_product' %}",
                 dataType: 'json',
                 processResults: function (data) {
                     return {
