@@ -60,8 +60,8 @@ class PurchaseForm(forms.ModelForm):
         }
     def clean_quantity(self):
         quantity = self.cleaned_data["quantity"]
-        product_name = self.cleaned_data["product"]
-        product, _ = Product.objects.get_or_create(name=product_name)
+        product= self.cleaned_data["product"]
+  
         stock, _ = Stock.objects.get_or_create(product=product)
 
         if stock.remaining_stock is None:
@@ -73,15 +73,10 @@ class PurchaseForm(forms.ModelForm):
 
         return quantity
 
+   
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.none()
-
-        if 'product' in self.data:
-            self.fields['product'].queryset = Product.objects.all()
-
-        elif self.instance.pk:
-            self.fields['product'].queryset = Product.objects.all().filter(pk=self.instance.product.pk)
+        self.fields["product"].empty_label = "Select item to purchase"
 
 class SaleForm(forms.ModelForm):
     class Meta:
