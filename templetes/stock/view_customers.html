@@ -5,6 +5,124 @@
 {% block content %}
 
 <style>
+ 
+.customer-form {
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.customer-form h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+}
+
+
+.customer-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 14px;
+}
+
+
+.customer-form input {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+
+.customer-form input:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+
+.customer-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.customer-form button:hover {
+    background-color: #0056b3;
+}
+
+    .search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px;
+}
+
+
+.search-bar input[type="text"] {
+    width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+
+.search-bar input[type="text"]:hover,
+.search-bar input[type="text"]:focus {
+    border-color: #007BFF; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #007BFF; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+
+.search-bar button:hover {
+    background-color: #0056b3; 
+}
+
+
+@media (max-width: 600px) {
+    .search-bar input[type="text"] {
+        width: 180px;
+    }
+}
+.customer{
+    margin-bottom: 10px;
+}
+
     /* Popup container */
     .popup {
         position: fixed;
@@ -94,7 +212,7 @@
 
 
 
-<div>
+<div class="customer-form">
     <h2>Add New Customer</h2>
 
 
@@ -123,7 +241,7 @@
         <div>
         
         </div>
-        <div style="justify-content: center; padding-left: 20%; padding-bottom: 10px;">
+        <div class="search-bar">
             <input type="text" id="customer-search" placeholder="Search by customer name..." />
             <button id="search-button">Search</button>
         </div>
@@ -131,7 +249,7 @@
     </div>
 
  
-    <table>
+    <table class="customer">
         <thead>
             <tr>
                 <th>Customer Name</th>
