@@ -21,6 +21,7 @@ body {
 }
 
  h2,h3 {
+    font-size: 20px;
   color: #2c3e50;
   margin-bottom: 20px;
   text-align: center;
@@ -31,7 +32,13 @@ form {
   flex-direction: column;
   gap: 10px;
 }
-
+.form-group input{
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-right: 50px;
+}
 label {
   font-weight: bold;
   color: #34495e;
@@ -43,6 +50,7 @@ input[type="date"] {
   border: 1px solid #dcdcdc;
   border-radius: 4px;
   font-size: 14px;
+  margin-right: 50px;
 }
 
 button {
@@ -72,6 +80,9 @@ button:hover {
 
 input[type="date"] {
   flex: 1;
+}
+.ledger-date{
+    display: flex;
 }
 
     /* Popup container */
@@ -188,12 +199,14 @@ input[type="date"] {
     <h2>Customer Ledger - {{ customer.name }}</h2>
 
     <form method="GET" action="{% url 'generate_ledger' customer.id %}">
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
-        
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
-        
+       <div class="legder-date">
+           <label for="start_date">Start Date:</label>
+           <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
+           
+           <label for="end_date">End Date:</label>
+           <input type="date" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
+           
+        </div>
         <button type="submit">Filter</button>
     </form>
   </div>
