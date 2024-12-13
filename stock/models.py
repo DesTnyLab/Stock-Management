@@ -196,3 +196,9 @@ class BillOnCash(models.Model):
 
     def __str__(self):
         return f'{self.customer} Cash on {self.date}'
+    
+
+
+
+
+
