@@ -23,6 +23,14 @@ from num2words import num2words
 def manage_inventory(request):
     # Handle sale form submission
     try:
+
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            product = Product.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(product.values()), safe=False)
+
+            
+
         if request.method == "POST" and "sale_form" in request.POST:
             sale_form = SaleForm(request.POST)
             if sale_form.is_valid():
@@ -284,9 +292,12 @@ def create_bill(request):
 
 @csrf_exempt
 def add_bill_item_ajax(request):
+    
     if request.method == 'POST':
+        print('hello worls')
         with transaction.atomic():  # Start the transaction block
             try:
+                print('hello worls')
                 # Extract data from the request
                 bill_id = request.POST.get('bill_id', None)
                 bill_no = request.POST.get('bill_no')
@@ -296,7 +307,7 @@ def add_bill_item_ajax(request):
                 rate = float(request.POST.get('rate', 0.0))
                 discount = int(request.POST.get('discount', 0))
                 payment_type = request.POST.get('payment_type')
-
+                print(product_id)
                 # Validate required fields
                 if not (customer_id and product_id):
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)

@@ -7,9 +7,8 @@ from django.shortcuts import  get_object_or_404
 @receiver(post_save, sender=Purchase)
 def update_stock_on_purchase(sender, instance, created, **kwargs):
     """Update stock when a purchase is made."""
-    product = Product.objects.get(name= instance.product)
     
-    stock, created_stock = Stock.objects.get_or_create(product=product)
+    stock, created_stock = Stock.objects.get_or_create(product=instance.product)
     if created:  # New purchase
         stock.total_purchased += instance.quantity
         stock.total_buying_cost = ((stock.total_buying_cost or 0)) + float((instance.price * instance.quantity))
