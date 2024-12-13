@@ -24,13 +24,6 @@ def manage_inventory(request):
     # Handle sale form submission
     try:
 
-        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            term = request.GET.get('term')
-            product = Product.objects.all().filter(name__icontains=term)
-            return JsonResponse(list(product.values()), safe=False)
-
-            
-
         if request.method == "POST" and "sale_form" in request.POST:
             sale_form = SaleForm(request.POST)
             if sale_form.is_valid():
@@ -614,14 +607,6 @@ def manage_product_and_purchase(request):
         product_form = ProductForm()
 
 
-    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            term = request.GET.get('term')
-            product = Product.objects.all().filter(name__icontains=term)
-            return JsonResponse(list(product.values()), safe=False)
-
-
-
-
     # Handle purchase form submission
     if request.method == "POST" and "purchase_form" in request.POST:
         purchase_form = PurchaseForm(request.POST)
@@ -722,3 +707,21 @@ def delete_product(request, id):
         messages.error(request, "Failed to delete product")
     
     return redirect('manage_product_and_purchase')
+
+
+
+
+def form_search_for_product(request):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            product = Product.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(product.values()), safe=False)
+
+
+def form_search_for_customer(request):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            customer = Customer.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(customer.values()), safe=False)

@@ -36,5 +36,9 @@ urlpatterns = [
     path('bills/delete-item/<int:bill_id>/<int:item_id>/', delete_bill_item, name='delete_bill_item'),
     path('bill_details/<int:bill_no>/', bill_details, name ='bill_details'),
 
-    path('delete/<int:id>/', delete_product, name='delete_product')
+    path('delete/<int:id>/', delete_product, name='delete_product'),
+
+
+    path('/select-search-form', form_search_for_product, name='form_search_for_product'),
+    path('/select-search-form2', form_search_for_customer, name='form_search_for_customer')
 ]

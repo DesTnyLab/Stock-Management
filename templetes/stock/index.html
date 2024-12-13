@@ -238,7 +238,7 @@
     $(document).ready(function () {
         $('#id_product').select2({
             ajax: {
-                url: "{% url 'manage_inventory' %}",
+                url: "{% url 'form_search_for_product' %}",
                 dataType: 'json',
                 processResults: function (data) {
                     return {
