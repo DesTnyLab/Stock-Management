@@ -4,23 +4,28 @@
   
 {% block content %}
 <style>
+
+.summary li{
+    color: rgb(38, 111, 5);
+}
     table {
         margin-bottom: 20px;
     }
 </style>
-<div style=" width: 75%;
-    padding-left:23%">
+<div style=" width: 100%;
+    padding-left:5%;
+    padding-right:5%;">
 <div class="about-product">
     <div style="display: flex;">
-        <div>
-            <h3>Overall Profit</h3>
+        <div class="summary">
+            <h3>Overall Summary</h3>
             <ul style="list-style: none;">
                
                 <li>
-                    Total Profit: Npr {{ total_profit }}
+                   <strong> Total Profit:</strong> NRs {{ total_profit }}
                 </li>
                 <li>
-                    Total Revenue : {{total_revenue}}
+                    <strong> Total Revenue:</strong>NRs {{total_revenue}}
                 </li>
           
             </ul>

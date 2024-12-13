@@ -4,6 +4,76 @@
   
 {% block content %}
 <style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+ h2,h3 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: bold;
+  color: #34495e;
+}
+
+input[type="number"],
+input[type="date"] {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.form-section,
+.ledger-section {
+  margin-bottom: 30px;
+}
+
+.ledger-section form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+input[type="date"] {
+  flex: 1;
+}
+
     /* Popup container */
     .popup {
         position: fixed;
@@ -91,7 +161,8 @@
 </div>
 {% endif %}
 
-
+<div class="container">
+    <div class="form-section">
 
     <h3>Add Debit for {{ customer.name }}</h3>
 
@@ -109,10 +180,11 @@
         {% endfor %}
         <button type="submit">Submit</button>
     </form>
+     </div>
     <!-- Filter by Date Range -->
-
  
-
+   <div class="ledger-section">
+    <hr>
     <h2>Customer Ledger - {{ customer.name }}</h2>
 
     <form method="GET" action="{% url 'generate_ledger' customer.id %}">
@@ -124,7 +196,8 @@
         
         <button type="submit">Filter</button>
     </form>
-
+  </div>
+</div>
 
 
     <table border="1">
