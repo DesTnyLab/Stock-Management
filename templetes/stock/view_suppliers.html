@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Suppliers Details {% endblock %}
+  
+{% block content %}
+
+<style>
+ 
+.customer-form {
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.customer-form h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+}
+
+
+.customer-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 14px;
+}
+
+
+.customer-form input {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+
+.customer-form input:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+
+.customer-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.customer-form button:hover {
+    background-color: #0056b3;
+}
+
+    .search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px;
+}
+
+
+.search-bar input[type="text"] {
+    width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+
+.search-bar input[type="text"]:hover,
+.search-bar input[type="text"]:focus {
+    border-color: #007BFF; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #007BFF; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+
+.search-bar button:hover {
+    background-color: #0056b3; 
+}
+
+
+@media (max-width: 600px) {
+    .search-bar input[type="text"] {
+        width: 180px;
+    }
+}
+.customer{
+    margin-bottom: 10px;
+}
+
+    /* Popup container */
+    .popup {
+        position: fixed;
+        bottom: 20px; /* Positioned at the bottom-right corner */
+        right: -300px; /* Start off-screen to the right */
+        z-index: 1000;
+        background-color: rgba(204, 201, 219, 0.9);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        display: none; /* Initially hidden */
+        border: 3px solid transparent; /* Placeholder for border loading effect */
+        position: relative; /* Necessary for the pseudo-element */
+    }
+    
+    /* Show popup with slide-in animation */
+    .popup.show {
+        display: block;
+        animation: slideIn 0.5s ease forwards; /* Slide-in animation */
+    }
+    
+    /* Hide popup with slide-out animation */
+    .popup.hide {
+        animation: slideOut 0.5s ease forwards; /* Slide-out animation */
+    }
+    
+    /* Popup content styles */
+    .popup-content {
+        color: #9da6ce;
+        font-size: 16px;
+    }
+    
+    .popup-content.success {
+        color: green;
+    }
+    
+    .popup-content.error {
+        color: rgb(240, 6, 6);
+    }
+    
+    .popup-content.info {
+        color: blue;
+    }
+    
+    .popup-content.warning {
+        color: orange;
+    }
+  
+    /* Slide-in animation */
+    @keyframes slideIn {
+        from {
+            transform: translateX(300px); /* Slide in from the right */
+            opacity: 0; /* Start fully transparent */
+        }
+        to {
+            transform: translateX(0); /* Slide into the final position */
+            opacity: 1; /* Fully visible */
+        }
+    }
+    
+    /* Slide-out animation */
+    @keyframes slideOut {
+        from {
+            transform: translateX(0); /* Start in the visible position */
+            opacity: 1; /* Fully visible */
+        }
+        to {
+            transform: translateX(300px); /* Slide out to the right */
+            opacity: 0; /* Fully transparent */
+        }
+    }
+    
+    /* Border gradient animation */
+
+    </style>
+    
+    
+{% if messages %}
+<div id="popup-message" class="popup">
+    {% for message in messages %}
+    <div class="popup-content {{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
+<div class="customer-form">
+    <h2>Add New Suppliers</h2>
+
+
+    <form method="post" action="{% url 'suppliers_details' %}">
+        {% csrf_token %}
+        {% for field in suppliers_form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                <!-- Errors for each field (hidden to suppress display) -->
+                <span style="display: none;">{{ field.errors }}</span>
+            </div>
+        {% endfor %}
+    <button type="submit">Add Suppliers</button>
+</form>
+
+
+
+</div>
+
+
+
+<div style=" width: 80%;
+    padding-left:20%">
+    <div style="display: flex;  padding-left:20%;">
+        <div>
+        
+        </div>
+        <div class="search-bar">
+            <input type="text" id="customer-search" placeholder="Search by customer name..." />
+            <button id="search-button">Search</button>
+        </div>
+
+    </div>
+
+ 
+    <table class="customer">
+        <thead>
+            <tr>
+                <th>Suppliers Name</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody id="customer-list">
+            {% for supplier in suppliers %}
+            <tr>
+        <td>{{ supplier.name }}</td>
+        <td>{{ supplier.address }}</td>
+        <td>{{ supplier.phone_number }}</td>
+      
+                <td><a id="btn" style=" text-decoration: none;  " href="">View details</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">No Customer data available.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+<script>
+    $(document).ready(function() {
+       console.log('maderchod')
+        $('#customer-search').on('input', function() {
+            var query = $(this).val();  
+            
+            // Make an AJAX request to fetch the stock information
+            $.ajax({
+                url: '{% url "view_suppliers_search_ajax" %}',  
+                method: 'GET',
+                data: { 'query': query },  // Send the query to the backend
+                success: function(data) {
+                    $('#customer-list').html(data);
+                }
+            });
+        });
+    
+        // Trigger search when the user clicks the search button
+        $('#search-button').click(function() {
+            var query = $('#customer-search').val();  // Get the query
+            $.ajax({
+                url: '{% url "view_suppliers_search_ajax" %}',  // URL to your AJAX view
+                method: 'GET',
+                data: { 'query': query },  // Send the query
+                success: function(data) {
+                    // Update the stock table with the filtered data
+                    $('#customer-list').html(data);
+                }
+            });
+        });
+    });
+    </script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const popup = document.getElementById("popup-message");
+    
+        if (popup) {
+            // Show the popup with slide-in animation
+            popup.classList.add("show");
+    
+            // Wait for 5 seconds, then slide out
+            setTimeout(() => {
+                popup.classList.remove("show");
+                popup.classList.add("hide");
+    
+                // Fully hide the popup after the slide-out animation completes
+                setTimeout(() => {
+                    popup.style.display = "none";
+                }, 500); // Match the duration of the slide-out animation
+            }, 3000); // Adjust duration as needed
+        }
+    });
+    </script>
+{% endblock %}

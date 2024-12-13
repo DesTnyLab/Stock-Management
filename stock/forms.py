@@ -193,3 +193,31 @@ class CustomerForm(forms.ModelForm):
             raise forms.ValidationError("Phone number must be at least 9 digits long.")
 
         return phone_number
+
+
+
+
+class SuppliersForm(forms.ModelForm):
+    class Meta:
+        model = Suppliers
+        fields = [
+            "name",
+            "phone_number",
+            "address",
+            "pan",  # Correct field name based on the model
+        ]
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data["phone_number"]
+
+        # Check if the phone number contains only digits
+        if not phone_number.isdigit():
+            raise forms.ValidationError(
+                "Please enter a valid phone number (digits only)."
+            )
+
+        # Check the length of the phone number
+        if len(phone_number) < 9:
+            raise forms.ValidationError("Phone number must be at least 9 digits long.")
+
+        return phone_number

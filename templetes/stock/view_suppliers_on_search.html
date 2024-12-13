@@ -1,0 +1,14 @@
+<!-- product_stock_search_results.html -->
+{% for supplier in suppliers %}
+    <tr>
+        <td>{{ supplier.name }}</td>
+        <td>{{ supplier.address }}</td>
+        <td>{{ supplier.phone_number }}</td>
+        <td><a id="btn" style=" text-decoration: none;  " href="">View details</a>
+        </td>
+    </tr>
+{% empty %}
+    <tr>
+        <td colspan="4">No Suppliers data available.</td>
+    </tr>
+{% endfor %}
