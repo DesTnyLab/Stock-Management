@@ -725,3 +725,47 @@ def form_search_for_customer(request):
             term = request.GET.get('term')
             customer = Customer.objects.all().filter(name__icontains=term)
             return JsonResponse(list(customer.values()), safe=False)
+
+
+
+
+
+
+
+
+def suppliers_view_and_create(request):
+    if request.method == 'POST':
+        # Handle form submission
+        suppliers_form = SuppliersForm(request.POST)
+
+        if suppliers_form.is_valid():
+            suppliers_form.save()
+            messages.success(request, "Suppliers added successfully.")
+            return redirect('suppliers_details')
+        else:
+            # Add form errors to messages
+            for field, errors in suppliers_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
+    else:
+        # Handle GET request
+        suppliers_form = SuppliersForm()
+
+    # Fetch all customers for listing
+    suppliers = Suppliers.objects.all()
+
+    return render(request, 'stock/view_suppliers.html', {
+        'suppliers': suppliers,
+        'suppliers_form': suppliers_form,
+    })
+
+def view_suppliers_search_ajax(request):
+    """AJAX view to search product stock details."""
+    query = request.GET.get("query", "")
+
+    supplier = Suppliers.objects.filter(name__icontains=query)
+
+    return render(
+        request, "stock/view_suppliers_on_search.html", {"suppliers": supplier}
+    )
+

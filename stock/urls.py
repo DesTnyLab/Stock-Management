@@ -39,6 +39,14 @@ urlpatterns = [
     path('delete/<int:id>/', delete_product, name='delete_product'),
 
 
-    path('/select-search-form', form_search_for_product, name='form_search_for_product'),
-    path('/select-search-form2', form_search_for_customer, name='form_search_for_customer')
+    path('select-search-form/', form_search_for_product, name='form_search_for_product'),
+    path('select-search-form2/', form_search_for_customer, name='form_search_for_customer'),
+
+
+
+      path('suppliers-details', suppliers_view_and_create, name= 'suppliers_details'),
+
+     path(
+        "search-suppliers/", view_suppliers_search_ajax, name="view_suppliers_search_ajax"
+    ), 
 ]
