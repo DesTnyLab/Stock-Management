@@ -888,95 +888,95 @@ def add_order_product(request, order_id):
 
 
 
-def generate_ledger(request, customer_id):
-    try:
-        customer = Suppliers.objects.get(id=customer_id)
+# def generate_ledger(request, customer_id):
+#     try:
+#         customer = Suppliers.objects.get(id=customer_id)
         
-        # Get all credit and debit transactions for the customer
-        credits = Credit.objects.filter(customer=customer).order_by('date')
-        debits = Debit.objects.filter(customer=customer).order_by('date')
-        cashes = BillOnCash.objects.filter(customer=customer).order_by('date')
-        # Prepare a list of transactions to display
-        transactions = []
+#         # Get all credit and debit transactions for the customer
+#         credits = Credit.objects.filter(customer=customer).order_by('date')
+#         debits = Debit.objects.filter(customer=customer).order_by('date')
+#         cashes = BillOnCash.objects.filter(customer=customer).order_by('date')
+#         # Prepare a list of transactions to display
+#         transactions = []
 
-        # Calculate the opening balance
-        current_balance = 0.00
+#         # Calculate the opening balance
+#         current_balance = 0.00
 
         
-        # Merge cash, credits and debits into a single list of transactions
+#         # Merge cash, credits and debits into a single list of transactions
 
-        for cash in cashes:
-            transactions.append({
-                'date': cash.date,
-                'particulars': f"Bill No. {cash.bill.bill_no}" if cash.bill else "Cash",
-                'debit': 0.00,
-                'credit': 0.00,
-                'cash': cash.amount,
-                'balance': None,  # Will calculate later
-                'bill_no': cash.bill.bill_no
-            })
+#         for cash in cashes:
+#             transactions.append({
+#                 'date': cash.date,
+#                 'particulars': f"Bill No. {cash.bill.bill_no}" if cash.bill else "Cash",
+#                 'debit': 0.00,
+#                 'credit': 0.00,
+#                 'cash': cash.amount,
+#                 'balance': None,  # Will calculate later
+#                 'bill_no': cash.bill.bill_no
+#             })
 
-        for credit in credits:
-            transactions.append({
-                'date': credit.date,
-                'particulars': f"Bill No. {credit.bill.bill_no}" if credit.bill else "Credit",
-                'debit': 0.00,
-                'cash': 0.00,
-                'credit': credit.amount,
-                'balance': None,  # Will calculate later
-                'bill_no': credit.bill.bill_no
-            })
+#         for credit in credits:
+#             transactions.append({
+#                 'date': credit.date,
+#                 'particulars': f"Bill No. {credit.bill.bill_no}" if credit.bill else "Credit",
+#                 'debit': 0.00,
+#                 'cash': 0.00,
+#                 'credit': credit.amount,
+#                 'balance': None,  # Will calculate later
+#                 'bill_no': credit.bill.bill_no
+#             })
 
-        for debit in debits:
-            transactions.append({
-                ''
-                'date': debit.date,
-                'particulars': "Cheque" if debit.amount > 0 else "Debit",
-                'debit': debit.amount,
-                'credit': 0.00,
-                'cash': 0.00,
-                'balance': None  # Will calculate later
-            })
+#         for debit in debits:
+#             transactions.append({
+#                 ''
+#                 'date': debit.date,
+#                 'particulars': "Cheque" if debit.amount > 0 else "Debit",
+#                 'debit': debit.amount,
+#                 'credit': 0.00,
+#                 'cash': 0.00,
+#                 'balance': None  # Will calculate later
+#             })
 
-        # Sort transactions by date
-        transactions.sort(key=lambda x: x['date'])
+#         # Sort transactions by date
+#         transactions.sort(key=lambda x: x['date'])
 
-        # Update the balance for each transaction
-        for transaction in transactions:
-            if transaction['credit'] > 0:
-                current_balance += transaction['credit']
-            if transaction['debit'] > 0:
-                current_balance -= transaction['debit']
-            transaction['balance'] = current_balance
+#         # Update the balance for each transaction
+#         for transaction in transactions:
+#             if transaction['credit'] > 0:
+#                 current_balance += transaction['credit']
+#             if transaction['debit'] > 0:
+#                 current_balance -= transaction['debit']
+#             transaction['balance'] = current_balance
 
-        # Date range filtering
-        start_date = request.GET.get('start_date', None)
-        end_date = request.GET.get('end_date', None)
-        if start_date and end_date:
-            try:
-                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-                transactions = [txn for txn in transactions if start_date <= txn['date'] <= end_date]
-            except ValueError:
-                # Handle invalid date input
-                pass
-        debit_form = DebitForm()
-        return render(request, 'stock/ledger_page.html', {
-            'customer': customer,
-            'transactions': transactions,
-            'start_date': start_date,
-            'end_date': end_date,
-            'debit_form':debit_form,
+#         # Date range filtering
+#         start_date = request.GET.get('start_date', None)
+#         end_date = request.GET.get('end_date', None)
+#         if start_date and end_date:
+#             try:
+#                 start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+#                 end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+#                 transactions = [txn for txn in transactions if start_date <= txn['date'] <= end_date]
+#             except ValueError:
+#                 # Handle invalid date input
+#                 pass
+#         debit_form = DebitForm()
+#         return render(request, 'stock/ledger_page.html', {
+#             'customer': customer,
+#             'transactions': transactions,
+#             'start_date': start_date,
+#             'end_date': end_date,
+#             'debit_form':debit_form,
         
-        })
-    except Exception as e:
-        messages.error(request, {e})
-        return render(request, 'stock/ledger_page.html', {
-            'customer': customer,
-            'transactions': transactions,
-            'start_date': start_date,
-            'end_date': end_date,
-            'debit_form':debit_form,
+#         })
+#     except Exception as e:
+#         messages.error(request, {e})
+#         return render(request, 'stock/ledger_page.html', {
+#             'customer': customer,
+#             'transactions': transactions,
+#             'start_date': start_date,
+#             'end_date': end_date,
+#             'debit_form':debit_form,
         
-        })
+#         })
 
