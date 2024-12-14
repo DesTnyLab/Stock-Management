@@ -1,212 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} Create Bill {% endblock %}
+{% block title %}Create Order{% endblock %}
 
 {% block content %}
 <style>
-
-.bill-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
+/* Styling for the Order and Product forms */
+.container {
+    max-width: 1200px;
+    margin: auto;
     padding: 20px;
     font-family: Arial, sans-serif;
 }
 
-
-.bill-box, .product-box {
-    flex: 1;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.form-container1 {
+    margin-bottom: 30px;
 }
 
-
-.bill-box h2, .product-box h2 {
+.form-container1 h2 {
     margin-bottom: 15px;
+    font-size: 20px;
     color: #333;
-    font-size: 18px;
-}
-.product-box h2 {
-    margin-top: auto;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 30px;
 }
 
-.bill-box label, .product-box label {
+form {
+    margin-bottom: 20px;
+}
+
+form label {
     display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-
-.bill-box input, .product-box input,
-.bill-box select, .product-box select {
+form input, form select, form button {
     width: 100%;
-    padding: 8px 10px;
-    margin: 5px 0 10px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
 }
 
-.bill-box input:focus, .product-box input:focus,
-.bill-box select:focus, .product-box select:focus {
-    border-color: #007BFF;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-
-.product-box button {
-    margin-top: 10px;
-    padding: 8px 12px;
+form button {
     background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+    color: white;
     cursor: pointer;
+    font-size: 16px;
+    border: none;
     transition: background-color 0.3s ease;
 }
 
-.product-box button:hover {
+form button:hover {
     background-color: #0056b3;
 }
 
-table{
-    margin-bottom: 20px;
+.table-container {
+    margin-top: 20px;
 }
-#export{
-    display: none;
-     margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #007BFF;
-    color: #fff;
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #180d3f;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-#clear{
-    display: none;
-     margin-top: 10px;
     padding: 8px 12px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 10px;
+    border-radius: 5px;
 }
 
-.deleteProduct {
-  background-color: #007BFF;
-  color: white;            
-  border: none;             
-  padding: 10px 15px;     
-  text-align: center;     
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;         
-  margin: 5px 0;            
-  cursor: pointer;          
-  border-radius: 5px;     
+.delete-btn:hover {
+    background-color: #d32f2f;
 }
-
-
-
-
-    /* Popup styles */
-    .popup {
-        position: fixed;
-        bottom: 20px;
-        right: -300px;
-        z-index: 1000;
-        background-color: rgba(204, 201, 219, 0.9);
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        padding: 15px;
-        border-radius: 8px;
-        display: none;
-        border: 3px solid transparent;
-        position: relative;
-    }
-
-    .popup.show {
-        display: block;
-        animation: slideIn 0.5s ease forwards;
-    }
-
-    .popup.hide {
-        animation: slideOut 0.5s ease forwards;
-    }
-
-    .popup-content {
-        font-size: 16px;
-    }
-
-    .popup-content.success {
-        color: green;
-    }
-
-    .popup-content.error {
-        color: red;
-    }
-
-    .popup-content.info {
-        color: blue;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(300px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(300px);
-            opacity: 0;
-        }
-    }
 </style>
 
-<!-- Popup -->
-<div id="popup-message" class="popup"></div>
-
-
-
+<div class="container">
     <h1>Create Order</h1>
 
     <!-- Order Form -->
-    <form id="order-form">
-        {% csrf_token %}
+    <div class="form-container1" id="order-form-section">
         <h2>Order Details</h2>
-        {{ form.as_p }}
-        <button type="submit">Create Order</button>
-    </form>
-
-    <hr>
+        <form id="order-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Create Order</button>
+        </form>
+    </div>
 
     <!-- Product Form -->
-    <div id="product-section" style="display: none;">
-        <h2>Add Products to Order</h2>
-        <form id="add-product-form">
+    <div class="form-container1" id="product-form-section" style="display: none;">
+        <h2>Add Products</h2>
+        <form id="product-form">
             {% csrf_token %}
             {{ product_form.as_p }}
             <label for="quantity">Quantity:</label>
@@ -215,111 +113,149 @@ table{
             <input type="number" id="rate" name="rate" step="0.01" value="0.00" required>
             <button type="submit">Add Product</button>
         </form>
-
-        
-
     </div>
-    <hr>
 
-    <!-- Bill Summary -->
-    <h2>Bill Summary</h2>
-    <table border="1" id="OrderTable">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Rate</th>
-                <th>Subtotal</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Product rows will be added dynamically -->
-        </tbody>
-    </table>
-    
-    <button type="button" id="clear">Clear</button>
-
-
-
-    <script>
-
-function showPopup(type, message) {
-        const popup = $('#popup-message');
-        popup.html(`<div class="popup-content ${type}">${message}</div>`);
-        popup.removeClass('hide').addClass('show').show();
-
-        setTimeout(() => {
-            popup.removeClass('show').addClass('hide');
-            setTimeout(() => popup.hide(), 500);
-        }, 3000);
-    }
-
-
-        $(document).ready(function () {
-            let orderId = null;
-
-            // Handle Order Form Submission
-            $('#order-form').on('submit', function (e) {
-                e.preventDefault();
-
-                $.ajax({
-                    url: '',
-                    type: 'POST',
-                    data: $(this).serialize() + '&order_submit=1',
-                    success: function (response) {
-                        if (response.success) {
-                            orderId = response.order_id;
-                            alert('Order created successfully! Order ID: ' + orderId);
-                            $('#order-form').hide();
-                            $('#product-section').show();
-                            $('#add-product-form').data('order-id', orderId); // Store the order ID
-                        } else {
-                            alert('Error creating order: ' + JSON.stringify(response.errors));
-                        }
-                    }
-                });
-            });
-
-            // Handle Product Form Submission
-            $('#add-product-form').on('submit', function (e) {
-                e.preventDefault();
-
-                const data = {
-                    product_name: $('#id_name').val(),
-                    hs_code: $('#id_HS_code').val(),
-                    quantity: $('#quantity').val(),
-                    rate: $('#rate').val(),
-                };
-
-                $.ajax({
-    url: `/stock/add-order-product/${orderId}/`, // Add product to the created order
-    type: 'POST',
-    data: JSON.stringify(data),
-    contentType: 'application/json',
-    success: function (response) {
-        if (response.success) {
-            $('#OrderTable tbody').append(`
+    <!-- Order Summary -->
+    <div class="table-container">
+        <h2>Order Summary</h2>
+        <table id="order-summary">
+            <thead>
                 <tr>
-                    <td>${response.product.name}</td>
-                    <td>${response.product.quantity}</td>
-                    <td>${response.product.rate}</td>
-                    <td>${response.product.subtotal}</td>
-                    <td><button class="deleteProduct">Delete</button></td>
+                    <th>Product</th>
+                    <th>HS Code</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
                 </tr>
-            `);
-            showPopup('success', 'Product added successfully!');
-        } else {
-            showPopup('error', 'Error adding product: ' + response.error);
-        }
-    },
-    error: function () {
-        showPopup('error', 'An error occurred while adding the product.');
-    }
-});
-            });
-            
-        
+            </thead>
+            <tbody>
+                <!-- Products will be dynamically added here -->
+            </tbody>
+        </table>
+        <button id="clear-order" style="display: none;">Clear Order</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// JavaScript Section
+$(document).ready(function () {
+    let orderId = null;
+
+    // Handle Order Creation
+    $('#order-form').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "{% url 'create_order' %}",
+            type: "POST",
+            data: $(this).serialize() + "&order_submit=1",
+            success: function (response) {
+                if (response.success) {
+                    orderId = response.order_id;
+                    $('#order-form-section').hide();
+                    $('#product-form-section').show();
+                    alert("Order created successfully!");
+                } else {
+                    alert("Failed to create order. Please check the form.");
+                }
+            },
+            error: function () {
+                alert("Error creating order. Please try again.");
+            }
         });
-    </script>
+    });
+
+    // Handle Adding Products
+    $('#product-form').on('submit', function (e) {
+        e.preventDefault();
+        const data = {
+            product_name: $('#id_name').val(),
+            hs_code: $('#id_HS_code').val(),
+            quantity: $('#quantity').val(),
+            rate: $('#rate').val()
+        };
+
+        $.ajax({
+            url: `/stock/add-order-product/${orderId}/`,
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success) {
+                    const product = response.product;
+                    const row = `
+                        <tr data-product-id="${product.id}">
+                            <td>${product.name}</td>
+                            <td>${product.hs_code}</td>
+                            <td>${product.quantity}</td>
+                            <td>${product.rate}</td>
+                            <td>${(product.quantity * product.rate).toFixed(2)}</td>
+                            <td><button class="delete-btn" data-product-id="${product.id}">Delete</button></td>
+                        </tr>`;
+                    $('#order-summary tbody').append(row);
+                    $('#clear-order').show();
+                    alert("Product added successfully!");
+                } else {
+                    alert("Failed to add product. " + response.error);
+                }
+            },
+            error: function () {
+                alert("Error adding product. Please try again.");
+            }
+        });
+    });
+
+    // Handle Clearing Order
+// Handle Clearing Order
+$('#clear-order').on('click', function () {
+    $.ajax({
+        url: `/stock/order/clear/${orderId}/`,
+        type: "POST",
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+        success: function () {
+            // Clear the Order Summary table
+            $('#order-summary tbody').empty();
+            $('#clear-order').hide();
+
+            // Reset the forms
+            $('#order-form')[0].reset();        // Reset the order form
+            $('#product-form')[0].reset();      // Reset the product form
+
+            // Show the Order Form again and hide the Product Form
+            $('#order-form-section').show();
+            $('#product-form-section').hide();
+
+            // Reset orderId to null for a new order
+            orderId = null;
+
+            alert("Order cleared successfully! Start creating a new order.");
+        },
+        error: function () {
+            alert("Error clearing order. Please try again.");
+        }
+    });
+});
+ 
+
+    // Handle Deleting Product
+    $('#order-summary').on('click', '.delete-btn', function () {
+        const row = $(this).closest('tr');
+        const productId = $(this).data('product-id');
+
+        $.ajax({
+            url: `/order/delete-item/${orderId}/${productId}/`,
+            type: "POST",
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+            success: function () {
+                row.remove();
+                alert("Product deleted successfully!");
+            },
+            error: function () {
+                alert("Error deleting product. Please try again.");
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
