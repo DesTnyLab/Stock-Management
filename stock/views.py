@@ -234,7 +234,7 @@ def overall_top_sales(request):
     )
 
     # Get the top 5 products
-    top_sales = sorted_sales[:10]
+    top_sales = sorted_sales[:5]
     total_revenue = sum(data["revenue"] for data in sales_summary.values())
     # Prepare data for the graph
     product_names = [item[0] for item in top_sales]
@@ -822,11 +822,11 @@ def add_order_product(request, order_id):
                 }
             )
 
-            if not created and product.HS_code != hs_code:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Product with this name already exists with a different HS Code.'
-                })
+            # if not created and product.HS_code != hs_code:
+            #     return JsonResponse({
+            #         'success': False,
+            #         'error': 'Product with this name already exists with a different HS Code.'
+            #     })
 
             # Get the order
             order = get_object_or_404(Order, id=order_id)
@@ -1051,3 +1051,21 @@ def delete_order_item(request, order_id, item_id):
         except OrderItem.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Bill item not found.'}, status=404)
     return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
+
+
+
+
+
+
+def order_details(request, order_no):
+    order = Order.objects.get(order_no=order_no)
+    order_item = OrderItem.objects.get(order = order)
+    order_item_product = OrderItemProduct.objects.filter(order_item=order_item)
+    context = {
+        'responses' : order_item_product,
+        'suppliers': order.suppliers,
+        'order_no': order.order_no,
+        'total': order.total_amount,
+
+              }
+    return render(request, 'stock/order_details.html', context=context)

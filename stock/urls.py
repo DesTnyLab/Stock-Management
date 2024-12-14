@@ -65,6 +65,6 @@ urlpatterns = [
 
     path('order/delete-item/<int:order_id>/<int:item_id>/', delete_order_item, name='delete_order_item'),
 
-
+  path('order_details/<int:order_no>/', order_details, name ='order_details'),
 
 ]
