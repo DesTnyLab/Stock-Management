@@ -216,16 +216,46 @@ table{
             <button type="submit">Add Product</button>
         </form>
 
-        <!-- Product List -->
-        <h3>Added Products:</h3>
-        <ul id="product-list"></ul>
+        
 
-        <hr>
-        <h3>Summary</h3>
-        <p id="order-summary"></p>
     </div>
+    <hr>
+
+    <!-- Bill Summary -->
+    <h2>Bill Summary</h2>
+    <table border="1" id="OrderTable">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Product rows will be added dynamically -->
+        </tbody>
+    </table>
+    
+    <button type="button" id="clear">Clear</button>
+
+
 
     <script>
+
+function showPopup(type, message) {
+        const popup = $('#popup-message');
+        popup.html(`<div class="popup-content ${type}">${message}</div>`);
+        popup.removeClass('hide').addClass('show').show();
+
+        setTimeout(() => {
+            popup.removeClass('show').addClass('hide');
+            setTimeout(() => popup.hide(), 500);
+        }, 3000);
+    }
+
+
         $(document).ready(function () {
             let orderId = null;
 
@@ -263,37 +293,33 @@ table{
                 };
 
                 $.ajax({
-                    url: `/stock/add-order-product/${orderId}/`, // Add product to the created order
-                    type: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'application/json',
-                    success: function (response) {
-                        if (response.success) {
-                            const product = response.product;
-                            $('#product-list').append(
-                                `<li>${product.name} (HS Code: ${product.hs_code}, Qty: ${product.quantity}, Rate: ${product.rate}, Subtotal: ${product.subtotal})</li>`
-                            );
-                            $('#add-product-form')[0].reset(); // Clear form inputs
-                            updateSummary();
-                        } else {
-                            alert('Error adding product: ' + response.error);
-                        }
-                    },
-                    error: function () {
-                        alert('An error occurred while adding the product.');
-                    }
-                });
+    url: `/stock/add-order-product/${orderId}/`, // Add product to the created order
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    success: function (response) {
+        if (response.success) {
+            $('#OrderTable tbody').append(`
+                <tr>
+                    <td>${response.product.name}</td>
+                    <td>${response.product.quantity}</td>
+                    <td>${response.product.rate}</td>
+                    <td>${response.product.subtotal}</td>
+                    <td><button class="deleteProduct">Delete</button></td>
+                </tr>
+            `);
+            showPopup('success', 'Product added successfully!');
+        } else {
+            showPopup('error', 'Error adding product: ' + response.error);
+        }
+    },
+    error: function () {
+        showPopup('error', 'An error occurred while adding the product.');
+    }
+});
             });
-
-            // Update Order Summary
-            function updateSummary() {
-                let total = 0;
-                $('#product-list li').each(function () {
-                    const subtotal = parseFloat($(this).text().match(/Subtotal: (\d+(\.\d+)?)/)[1]);
-                    total += subtotal;
-                });
-                $('#order-summary').text('Total Order Amount: $' + total.toFixed(2));
-            }
+            
+        
         });
     </script>
 {% endblock %}

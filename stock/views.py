@@ -1010,3 +1010,44 @@ def suppliers_debit(request, suppliers_id):
                     messages.error(request, f"{field.capitalize()}: {error}")
             return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
    
+
+
+
+def clear_create_order(request, orderId):
+  
+    order = Order.objects.get(id=orderId)
+    order_item = OrderItem.objects.get(order=order)
+
+    total = order_item.total
+    order.total_amount = total
+    order.save()
+
+
+    return redirect('create_bill')
+
+
+
+
+def delete_order_item(request, order_id, item_id):
+    if request.method == "POST":
+        try:
+            
+            order_item = OrderItem.objects.get(order_id=order_id)
+            order_item_product = OrderItemProduct.objects.get(bill_item=order_item, id=item_id)
+            order_item_product.delete()
+
+            # Recalculate total
+            
+            remaining_items = OrderItemProduct.objects.filter(order_item=order_item)
+            total = sum(item.quantity * item.rate for item in remaining_items)
+            order_item.total = total
+            order_item.save()
+
+            order = Order.objects.get(id=order_id)
+            order.total_amount = total
+            order.save()
+
+            return JsonResponse({'success': True, 'total': total})
+        except OrderItem.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Bill item not found.'}, status=404)
+    return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
