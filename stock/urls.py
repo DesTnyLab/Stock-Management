@@ -54,4 +54,8 @@ urlpatterns = [
 
      path('create-order/', create_order, name='create_order'),
     path('add-order-product/<int:order_id>/', add_order_product, name='add_order_product'),
+
+
+     path('suppliers/<int:suppliers_id>/transactions/', generate_ledger_of_suppliers, name='generate_ledger_of_suppliers'),
+    path('supliers/debit/<int:suppliers_id>/', suppliers_debit, name="suppliers_debit"),
 ]
