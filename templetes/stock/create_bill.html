@@ -48,6 +48,7 @@
         margin-top: 10px;
         font-size: 14px;
         color: #555;
+        padding-left: 5px;
     }
 
 
@@ -198,6 +199,12 @@
             opacity: 0;
         }
     }
+
+    /* added by basnet */
+    .section_disabled {
+        pointer-events: none;
+
+    }
 </style>
 
 <!-- Popup -->
@@ -215,11 +222,14 @@
                 <option value="{{ customer.id }}">{{ customer.name }}</option>
                 {% endfor %}
             </select>
+            <label for="bill_no">Bill No. :</label>
             <input type="number" id="bill_no" name="bill_no" placeholder="Enter Bill Number" required>
-            <input type="number" id="discount" name="discount" placeholder="Discount Rate in %" required>
+            <label for="discount">Discount :</label>
+            <input type="number" id="discount" name="discount" min="0" value="0" max="100"
+                placeholder="Discount Rate in %" required>
             <input type="hidden" id="bill_id" name="bill_id">
 
-            <label for="payment_type">Payment Type:</label>
+            <label for="payment_type">Payment Method:</label>
             <select id="payment_type" name="payment_type" required>
                 <option value="" disabled selected>Select Payment Type</option>
                 <option value="CASH">Cash</option>
@@ -231,7 +241,7 @@
         <h2>Add Product</h2>
         <label for="product">Product:</label>
         <select id="product" name="product_id" required>
-            <option value="" disabled selected>Select a product</option>
+            <option value="" disabled selected>Search for product</option>
             {% for product in products %}
             <option value="{{ product.id }}">{{ product.name }}</option>
             {% endfor %}
@@ -296,7 +306,7 @@
         const productId = $('#product').val();
         const quantity = $('#quantity').val();
         const rate = $('#rate').val();
-        console.log(productId)
+        // console.log(productId)
 
         if (!paymentType) {
             showPopup('warning', 'Please select a payment type.');
@@ -318,7 +328,7 @@
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function (response) {
-                console.log(response)
+                // console.log(response)
                 if (!billId) {
                     $('#bill_id').val(response.bill_id);
                     $('#export').show();
@@ -452,5 +462,17 @@
         });
 
     });
+</script>
+<script>
+    const billBox = document.querySelector(".bill-box")
+    const release = document.querySelector("#clear")
+    document.querySelector("#addProduct").onclick = (e) => {
+        console.log('clicked');
+        billBox.classList.add("section_disabled");
+
+    }
+    release.addEventListener("click", () => {
+        billBox.classList.remove("section_disabled")
+    })
 </script>
 {% endblock %}
