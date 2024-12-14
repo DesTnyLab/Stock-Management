@@ -6,12 +6,18 @@
 <style>
 /* Styling for the Order and Product forms */
 .container {
-    max-width: 1200px;
-    margin: auto;
+    width: 80%;
+    margin: 20px auto;
     padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-family: Arial, sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
+.container h1{
+    text-align: center;
+}
 .form-container1 {
     margin-bottom: 30px;
 }
@@ -32,7 +38,7 @@ form label {
     font-weight: bold;
 }
 
-form input, form select, form button {
+form input, form select{
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -40,7 +46,15 @@ form input, form select, form button {
     border-radius: 5px;
     font-size: 14px;
 }
-
+form button {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
 form button {
     background-color: #007BFF;
     color: white;
@@ -114,6 +128,7 @@ table th {
             <button type="submit">Add Product</button>
         </form>
     </div>
+    </div>
 
     <!-- Order Summary -->
     <div class="table-container">
@@ -135,7 +150,7 @@ table th {
         </table>
         <button id="clear-order" style="display: none;">Clear Order</button>
     </div>
-</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

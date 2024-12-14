@@ -7,16 +7,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Create Order</h1>
-
-    <!-- Order Form -->
-    <form id="order-form">
-        {% csrf_token %}
-        <h2>Order Details</h2>
-        {{ form.as_p }}
-        <button type="submit">Create Order</button>
-    </form>
-
+        <h1>Create Order</h1>
+        
+        <!-- Order Form -->
+        <form id="order-form">
+            {% csrf_token %}
+            <h2>Order Details</h2>
+            {{ form.as_p }}
+            <button type="submit">Create Order</button>
+        </form>
+        
     <hr>
 
     <!-- Product Form -->
