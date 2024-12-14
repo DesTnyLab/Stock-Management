@@ -1,7 +1,7 @@
 from django import forms
 from .models import *
 from django.forms import inlineformset_factory
-from django_select2.forms import ModelSelect2Widget
+
 
 
 
@@ -10,7 +10,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = [
             "name",
-            "SH_code",
+            "HS_code",
         ]
         widgets = {
             "name": forms.TextInput(
@@ -18,7 +18,7 @@ class ProductForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
-            "SH_code": forms.TextInput(
+            "HS_code": forms.TextInput(
                 attrs={
                     "class": "form-control",
                 }
@@ -221,3 +221,17 @@ class SuppliersForm(forms.ModelForm):
             raise forms.ValidationError("Phone number must be at least 9 digits long.")
 
         return phone_number
+
+
+
+
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['order_no', 'suppliers', 'date', 'payment_type']
+
+class OrderItemProductForm(forms.ModelForm):
+    class Meta:
+        model = OrderItemProduct
+        fields = ['product', 'quantity', 'rate']

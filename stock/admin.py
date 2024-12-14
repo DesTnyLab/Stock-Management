@@ -18,3 +18,8 @@ admin.site.register(Credit)
 admin.site.register(Debit)
 admin.site.register(BillOnCash)
 admin.site.register(Suppliers)
+
+
+admin.site.register(Order)
+admin.site.register(OrderItem)
+admin.site.register(OrderItemProduct)

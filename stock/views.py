@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.db import transaction
 from django.views.generic import View
 from num2words import num2words
+import json
 
 
 def manage_inventory(request):
@@ -769,3 +770,110 @@ def view_suppliers_search_ajax(request):
         request, "stock/view_suppliers_on_search.html", {"suppliers": supplier}
     )
 
+
+
+def create_order(request):
+    if request.method == 'POST':
+        if 'order_submit' in request.POST:  # Handle OrderForm submission
+            form = OrderForm(request.POST)
+            if form.is_valid():
+                order = form.save()
+                return JsonResponse({'success': True, 'order_id': order.id})
+            return JsonResponse({'success': False, 'errors': form.errors})
+
+        elif 'product_submit' in request.POST:  # Handle ProductForm submission
+            product_form = ProductForm(request.POST)
+            if product_form.is_valid():
+                product = product_form.save()
+                return JsonResponse({'success': True, 'product_id': product.id})
+            return JsonResponse({'success': False, 'errors': product_form.errors})
+
+    # Display both forms on GET
+    form = OrderForm()
+    product_form = ProductForm()
+    products = Product.objects.all()
+
+    return render(request, 'create_order.html', {
+        'form': form,
+        'product_form': product_form,
+        'products': products,
+    })
+
+
+@csrf_exempt
+def add_order_product(request, order_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            # Parse input data
+            product_name = data.get('product_name')
+            hs_code = data.get('hs_code', '')
+            quantity = int(data.get('quantity', 1))
+            rate = float(data.get('rate', 0.00))
+
+            # Create or fetch the product
+            product, created = Product.objects.get_or_create(
+                name=product_name,
+                defaults={
+                    'HS_code': hs_code,
+                    'cost_price': rate,
+                    'selling_price': rate,
+                }
+            )
+
+            if not created and product.HS_code != hs_code:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Product with this name already exists with a different HS Code.'
+                })
+
+            # Get the order
+            order = get_object_or_404(Order, id=order_id)
+
+            # Get or create the OrderItem
+            order_item, _ = OrderItem.objects.get_or_create(order=order)
+
+            # Avoid duplicating products in the same order item
+            order_product, order_product_created = OrderItemProduct.objects.get_or_create(
+                order_item=order_item,
+                product=product,
+                defaults={
+                    'quantity': quantity,
+                    'rate': rate,
+                }
+            )
+
+            if not order_product_created:
+                # If the product already exists, update its quantity and rate
+                order_product.quantity += quantity
+                order_product.rate = rate
+                order_product.save()
+
+            # Add to Purchase if it doesn't already exist
+            Purchase.objects.create(
+                product=product,
+               
+                    quantity= quantity,
+                    price=rate,
+                date=now(),
+                
+            )
+          
+
+            return JsonResponse({
+                'success': True,
+                'product': {
+                    'name': product.name,
+                    'hs_code': product.HS_code,
+                    'quantity': order_product.quantity,
+                    'rate': order_product.rate,
+                    'subtotal': order_product.get_subtotal(),
+                    'product_created': created,
+                    'purchase_created': True,
+                }
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
