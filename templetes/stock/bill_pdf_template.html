@@ -177,6 +177,7 @@
                 <thead>
                     <tr>
                         <th>S.No</th>
+                        <th>H.S Code</th>
                         <th>Particulars</th>
                         <th>Qty.</th>
                         <th>Rate</th>
@@ -188,6 +189,7 @@
                     {% for product in item.products.all %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
+                        <td>{{product.product.HS_code}}</td>
                         <td>{{ product.product.name }}</td>
                         <td>{{ product.quantity }}</td>
                         <td>{{ product.rate }}</td>
