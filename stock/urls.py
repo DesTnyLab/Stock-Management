@@ -58,4 +58,13 @@ urlpatterns = [
 
      path('suppliers/<int:suppliers_id>/transactions/', generate_ledger_of_suppliers, name='generate_ledger_of_suppliers'),
     path('supliers/debit/<int:suppliers_id>/', suppliers_debit, name="suppliers_debit"),
+
+
+
+    path('order/clear/<int:orderId>/', clear_create_order, name='clear_order'),
+
+    path('order/delete-item/<int:order_id>/<int:item_id>/', delete_order_item, name='delete_order_item'),
+
+
+
 ]
