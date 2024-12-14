@@ -259,3 +259,8 @@ class OrderItemProduct(models.Model):
 
     def __str__(self):
         return f"{self.product.name} (Qty: {self.quantity}, Rate: {self.rate}) for {self.order_item.order}"
+
+
+
+
+
