@@ -1069,3 +1069,27 @@ def order_details(request, order_no):
 
               }
     return render(request, 'stock/order_details.html', context=context)
+
+
+
+
+
+
+
+
+def edit_product(request, id):
+  
+    product = get_object_or_404(Product, id=id)
+
+    if request.method == 'POST':
+      
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+           
+            return redirect('product_history', id=product.id)
+    else:
+      
+        form = ProductForm(instance=product)
+
+    return render(request, 'stock/edit_product.html', context={'form': form, 'product': product})

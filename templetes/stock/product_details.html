@@ -32,9 +32,13 @@
         <li class="selling-price">
             <strong>Selling Price :</strong> {{ product.selling_price }}</li>
     </ul>
-    <a href="{% url 'delete_product' product.id %}" id="btn" style="
+
+        <a href="{% url 'edit_product' product.id %}" id="btn" style="
         text-decoration: none;
-        ">Delete Product</a>
+        ">Edit Product</a>
+            <a href="{% url 'delete_product' product.id %}" id="btn" style="
+            text-decoration: none; background-color: red;
+            ">Delete Product</a>
 </div>
 <div class="history">
     <div >
