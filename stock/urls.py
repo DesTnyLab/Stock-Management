@@ -49,4 +49,9 @@ urlpatterns = [
      path(
         "search-suppliers/", view_suppliers_search_ajax, name="view_suppliers_search_ajax"
     ), 
+
+
+
+     path('create-order/', create_order, name='create_order'),
+    path('add-order-product/<int:order_id>/', add_order_product, name='add_order_product'),
 ]
