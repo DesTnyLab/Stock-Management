@@ -288,10 +288,10 @@ def create_bill(request):
 def add_bill_item_ajax(request):
     
     if request.method == 'POST':
-        print('hello worls')
+     
         with transaction.atomic():  # Start the transaction block
             try:
-                print('hello worls')
+                
                 # Extract data from the request
                 bill_id = request.POST.get('bill_id', None)
                 bill_no = request.POST.get('bill_no')
@@ -301,13 +301,14 @@ def add_bill_item_ajax(request):
                 rate = float(request.POST.get('rate', 0.0))
                 discount = int(request.POST.get('discount', 0))
                 payment_type = request.POST.get('payment_type')
-                print(product_id)
+               
                 # Validate required fields
                 if not (customer_id and product_id):
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
                 # Create or fetch the Bill instance
                 if not bill_id:
+                    print('hello')
                     bill = Bill.objects.create(
                         bill_no=bill_no,
                         customer_id=customer_id,
@@ -315,6 +316,7 @@ def add_bill_item_ajax(request):
                         date=now().date(),
                         payment_type=payment_type
                     )
+                   
                 else:
                     bill = get_object_or_404(Bill, id=bill_id)
 
