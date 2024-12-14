@@ -3,17 +3,34 @@
 {% block title %} {{ product.name }}{% endblock %}
   
 {% block content %}
-<div style=" width: 75%;
-    padding-left:23%">
+<style>
+      li{
+        font-weight: bold;
+        color: rgb(87, 225, 59);
+    }
+    strong{
+        color: black;
+    }
+    .history h1{
+        color:rgb(24, 103, 222); ;
+    }
+    .name {
+        color: rgb(24, 103, 222);
+    }
+</style>
+<div style=" width: 100%;
+    justify-content: center;
+    align-items: center;">
 <div class="about-product">
     <ul style="list-style: none;">
-        <li>
-           Name:  {{ product.name }}
+        <li class="name">
+           <strong>Name:</strong>  {{ product.name }}
         </li>
-        <li>
-           Cost Price:  {{ product.cost_price }}
+        <li class="cost-price">
+        <strong>Cost Price :</strong> {{ product.cost_price }}
         </li>
-        <li> Selling Price: {{ product.selling_price }}</li>
+        <li class="selling-price">
+            <strong>Selling Price :</strong> {{ product.selling_price }}</li>
     </ul>
     <a href="{% url 'delete_product' product.id %}" id="btn" style="
         text-decoration: none;
@@ -21,7 +38,7 @@
 </div>
 <div class="history">
     <div >
-        <h1 >Purchase History for "{{ product.name }}"</h1>
+        <h1 >Purchase History for  "{{ product.name }}"</h1>
 
         <table >
             <thead>
@@ -53,7 +70,7 @@
     <div >
         <h1 >Sale History for "{{ product.name }}"</h1>
 
-        <table >
+        <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -79,7 +96,9 @@
         </table>
 
         <a href="{% url 'manage_inventory' %}" id="btn" style="
-        text-decoration: none;">Back to Products</a>
+        text-decoration: none;
+        margin-top: 10px;
+        margin-bottom: 10px;">Back to Products</a>
     </div>
 </div>
 </div>
