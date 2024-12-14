@@ -67,4 +67,7 @@ urlpatterns = [
 
   path('order_details/<int:order_no>/', order_details, name ='order_details'),
 
+
+  path('product/<int:id>/edit/', edit_product, name='edit_product'),
+
 ]
