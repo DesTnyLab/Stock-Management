@@ -230,7 +230,7 @@ input[type="date"] {
                 <td>{{ transaction.date }}</td>
                 <td>
                     {% if transaction.order_no %}
-                        <a href="">{{ transaction.particulars }}</a>
+                        <a href="{% url 'order_details' transaction.order_no %}">{{ transaction.particulars }}</a>
                     {% else %}
                         {{ transaction.particulars }} 
                     {% endif %}
