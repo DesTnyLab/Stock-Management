@@ -175,11 +175,11 @@ input[type="date"] {
 <div class="container">
     <div class="form-section">
 
-    <h3>Add Debit for {{ customer.name }}</h3>
+    <h3>Add Debit for {{ suppliers.name }}</h3>
 
  
 
-    <form method="post" action="{% url 'debit' customer.id %}">
+    <form method="post" action="{% url 'suppliers_debit' suppliers.id %}">
         {% csrf_token %}
         {% for field in debit_form %}
             <div class="form-group">
@@ -196,9 +196,9 @@ input[type="date"] {
  
    <div class="ledger-section">
     <hr>
-    <h2>Customer Ledger - {{ customer.name }}</h2>
+    <h2>Suppliers Ledger - {{ suppliers.name }}</h2>
 
-    <form method="GET" action="{% url 'generate_ledger' customer.id %}">
+    <form method="GET" action="{% url 'generate_ledger_of_suppliers' suppliers.id %}">
        <div class="legder-date">
            <label for="start_date">Start Date:</label>
            <input type="date" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
@@ -229,8 +229,8 @@ input[type="date"] {
             <tr>
                 <td>{{ transaction.date }}</td>
                 <td>
-                    {% if transaction.bill_no %}
-                        <a href="{% url 'bill_details' transaction.bill_no %}">{{ transaction.particulars }}</a>
+                    {% if transaction.order_no %}
+                        <a href="">{{ transaction.particulars }}</a>
                     {% else %}
                         {{ transaction.particulars }} 
                     {% endif %}

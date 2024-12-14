@@ -235,3 +235,19 @@ class OrderItemProductForm(forms.ModelForm):
     class Meta:
         model = OrderItemProduct
         fields = ['product', 'quantity', 'rate']
+
+
+
+
+class DebitFormForSuppliers(forms.ModelForm):
+    class Meta:
+        model = Suppliers_debit
+        fields = ["amount", "date"]
+
+    def clean_amount(self):
+        amount = self.cleaned_data["amount"]
+
+        if amount < 0:
+            raise forms.ValidationError("Amount Cannot be in Negative")
+
+        return amount

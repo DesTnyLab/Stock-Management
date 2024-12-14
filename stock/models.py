@@ -205,6 +205,7 @@ class Suppliers(models.Model):
     name = models.CharField(max_length=255) 
     phone_number = models.CharField(max_length=10)  
     pan = models.CharField(max_length=20)
+    total_debit = models.FloatField(default=0.00)
     address = models.CharField(max_length=255)  
     def __str__(self):
         return self.name
@@ -263,4 +264,58 @@ class OrderItemProduct(models.Model):
 
 
 
+class OrderOnCash(models.Model):
+    suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.00)
+    date = models.DateField(default=now)
+    particulars = models.CharField(max_length=255, editable=False, default=' ')
+    
+    def save(self, *args, **kwargs):
+        # Auto-update particulars with Bill number
+        self.amount = round(self.amount, 2)
+        if not self.particulars:
+            self.particulars = f"Order No: {self.order.order_no}"
+        super(OrderOnCash, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.suppliers} Cash on {self.date}'
+    
+
+
+
+
+class Suppliers_credit(models.Model):
+    suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.00)
+    date = models.DateField(default=now)
+    particulars = models.CharField(max_length=255, editable=False, default=' ')  # Auto-filled field
+
+    def save(self, *args, **kwargs):
+        # Auto-update particulars with Bill number
+        self.amount = round(self.amount, 2)
+        if not self.particulars:
+            self.particulars = f"Order no: {self.order.order_no}"
+        super(Suppliers_credit, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.suppliers} credited on {self.date}'
+
+
+class Suppliers_debit(models.Model):
+    suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.00)
+    date = models.DateField(default=now)
+    particulars = models.CharField(max_length=255, editable=False, default='Cheque')  # Auto-filled field
+
+    def save(self, *args, **kwargs):
+        # Auto-update particulars for Debit
+        self.amount = round(self.amount, 2)
+        if not self.particulars:
+            self.particulars = "Cheque"
+        super(Suppliers_debit, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.suppliers} Debited on {self.date}'
 
