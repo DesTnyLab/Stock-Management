@@ -171,5 +171,5 @@ cython_debug/
 #.idea/
 
 
-./stock/migrations
+/stock/migrations
 
