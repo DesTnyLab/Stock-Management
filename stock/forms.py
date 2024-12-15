@@ -138,6 +138,16 @@ class BillForm(forms.ModelForm):
         model = Bill
         fields = ["bill_no", "customer", "date", "discount", 'payment_type']
 
+    def clean_discount(self):
+        try:   
+            discount = self.cleaned_data["discount"]
+            if int(discount) > 100:
+                raise forms.ValidationError('Discont cannot be more then 100%')
+            if int(discount) < 0 :
+                raise forms.ValidationError('Discount cannot be in negative')
+        except Exception as e:
+            raise forms.ValidationError(e)
+        return discount
 
 class BillItemProductForm(forms.ModelForm):
     class Meta:
