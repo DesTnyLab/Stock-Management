@@ -79,15 +79,23 @@ def manage_inventory(request):
 
 
 def view_stock(request):
-    stocks = Stock.objects.all()
+    try: 
+        stocks = Stock.objects.all()
 
-    return render(
-        request,
-        "stock/stock.html",
-        {
-            "stocks": stocks,
-        },
-    )
+        return render(
+            request,
+            "stock/stock.html",
+            {
+                "stocks": stocks,
+            },
+        )
+
+    except Exception as e :
+        messages.error(request, 'Product not avialable in Stock')
+        return redirect('manage_inventory')
+
+
+
 
 
 def product_stock_search_ajax(request):
@@ -102,34 +110,41 @@ def product_stock_search_ajax(request):
 
 
 def view_product_details(request, id):
-    # Get the product object
-    product = get_object_or_404(Product, id=id)
+    try: 
+        product = get_object_or_404(Product, id=id)
 
-    # Filter purchases based on the product name
-    purchase_data = Purchase.objects.filter(product=product)
+        # Filter purchases based on the product name
+        purchase_data = Purchase.objects.filter(product=product)
 
-    sale_data = Sale.objects.filter(product=product)
+        sale_data = Sale.objects.filter(product=product)
 
-    return render(
-        request,
-        "stock/product_details.html",
-        context={
-            "product": product,
-            "purchase_data": purchase_data,
-            "sale_data": sale_data,
-        },
-    )
-
+        return render(
+            request,
+            "stock/product_details.html",
+            context={
+                "product": product,
+                "purchase_data": purchase_data,
+                "sale_data": sale_data,
+            },
+        )
+    except Exception as e :
+         messages.error(request, 'Product details avialable in Stock')
+         return redirect('manage_inventory')
 
 
 def overall_profit(request):
-    stock_data = Stock.objects.all()
-    overall_profit = 0
-    for item in stock_data:
-        profit_data = item.total_selling_cost - item.total_buying_cost
-        overall_profit += profit_data
+    try: 
+        stock_data = Stock.objects.all()
+        overall_profit = 0
+        for item in stock_data:
+            profit_data = item.total_selling_cost - item.total_buying_cost
+            overall_profit += profit_data
 
-    return render(request, "overall_profit.html", {"total_profit": overall_profit})
+        return render(request, "overall_profit.html", {"total_profit": overall_profit})
+    
+    except Exception as e :
+         messages.error(request, e)
+         return redirect('manage_inventory')
 
 
 
@@ -214,69 +229,72 @@ class TodaysTopSalesView(View):
 
 
 def overall_top_sales(request):
+    try: 
     # Fetch all stock data
-    stock_data = Stock.objects.select_related("product").all()
-    overall_profit = 0
-    for item in stock_data:
-        profit_data = item.total_selling_cost - item.total_buying_cost
-        overall_profit += profit_data
+        stock_data = Stock.objects.select_related("product").all()
+        overall_profit = 0
+        for item in stock_data:
+            profit_data = item.total_selling_cost - item.total_buying_cost
+            overall_profit += profit_data
 
-    # Dictionary to aggregate sales data per product
-    sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
+        # Dictionary to aggregate sales data per product
+        sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
 
-    for item in stock_data:
-        sales_summary[item.product.name]["quantity"] += item.total_sold
-        sales_summary[item.product.name]["revenue"] += item.total_selling_cost
+        for item in stock_data:
+            sales_summary[item.product.name]["quantity"] += item.total_sold
+            sales_summary[item.product.name]["revenue"] += item.total_selling_cost
 
-    # Sort products by total revenue in descending order
-    sorted_sales = sorted(
-        sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
-    )
+        # Sort products by total revenue in descending order
+        sorted_sales = sorted(
+            sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
+        )
 
-    # Get the top 5 products
-    top_sales = sorted_sales[:5]
-    total_revenue = sum(data["revenue"] for data in sales_summary.values())
-    # Prepare data for the graph
-    product_names = [item[0] for item in top_sales]
-    quantities = [item[1]["quantity"] for item in top_sales]
+        # Get the top 5 products
+        top_sales = sorted_sales[:5]
+        total_revenue = sum(data["revenue"] for data in sales_summary.values())
+        # Prepare data for the graph
+        product_names = [item[0] for item in top_sales]
+        quantities = [item[1]["quantity"] for item in top_sales]
 
-    # Create a bar graph
-    fig, ax = plt.subplots()
-    ax.bar(product_names, quantities, color="skyblue")
+        # Create a bar graph
+        fig, ax = plt.subplots()
+        ax.bar(product_names, quantities, color="skyblue")
 
-    # Add labels to the bars
-    for i, v in enumerate(quantities):
-        ax.text(
-            i, v + 0.1, str(v), ha="center", va="bottom"
-        )  # Display quantity value above each bar
+        # Add labels to the bars
+        for i, v in enumerate(quantities):
+            ax.text(
+                i, v + 0.1, str(v), ha="center", va="bottom"
+            )  # Display quantity value above each bar
 
-    # Add title and labels
-    ax.set_title("Top 5 Sales Products ")
-    ax.set_xlabel("Product Name")
-    ax.set_ylabel("Quantity Sold")
+        # Add title and labels
+        ax.set_title("Top 5 Sales Products ")
+        ax.set_xlabel("Product Name")
+        ax.set_ylabel("Quantity Sold")
 
-    # Save the plot to a BytesIO object
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
+        # Save the plot to a BytesIO object
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png")
+        buf.seek(0)
 
-    # Convert the image to base64 string
-    img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
+        # Convert the image to base64 string
+        img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
 
-    # Close the plot to release memory
-    plt.close(fig)
+        # Close the plot to release memory
+        plt.close(fig)
 
-    return render(
-        request,
-        "stock/overall_report.html",
-        {
-            "sales_summary": top_sales,
-            "graph": img_str,
-            "total_profit": overall_profit,
-            "total_revenue": total_revenue,
-        },
-    )
-
+        return render(
+            request,
+            "stock/overall_report.html",
+            {
+                "sales_summary": top_sales,
+                "graph": img_str,
+                "total_profit": overall_profit,
+                "total_revenue": total_revenue,
+            },
+        )
+    except Exception as e :
+         messages.error(request, e)
+         return redirect('manage_inventory')
 
 def create_bill(request):
     products = Product.objects.all()
@@ -286,7 +304,6 @@ def create_bill(request):
 
 @csrf_exempt
 def add_bill_item_ajax(request):
-    
     if request.method == 'POST':
      
         with transaction.atomic():  # Start the transaction block
@@ -308,14 +325,17 @@ def add_bill_item_ajax(request):
 
                 # Create or fetch the Bill instance
                 if not bill_id:
-                    print('hello')
-                    bill = Bill.objects.create(
-                        bill_no=bill_no,
-                        customer_id=customer_id,
-                        discount=discount,
-                        date=now().date(),
-                        payment_type=payment_type
-                    )
+                    try:
+                        bill = Bill.objects.create(
+                            bill_no=bill_no,
+                            customer_id=customer_id,
+                            discount=discount,
+                            date=now().date(),
+                            payment_type=payment_type
+                        )
+                    except Exception as e:
+                        
+                        return JsonResponse({'error': 'Bill number Already Exits'}, status=400)
                    
                 else:
                     bill = get_object_or_404(Bill, id=bill_id)
@@ -354,13 +374,13 @@ def add_bill_item_ajax(request):
             except Exception as e:
                 # Rollback the transaction in case of an error
                 # transaction.set_rollback(True)
-                return JsonResponse({'error': f"Error processing request: {str(e)}"}, status=400)
+                return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
 
 
 def clear_create_bill(request, billId):
-  
+  try: 
     bill = Bill.objects.get(id=billId)
     bill_item = BillItem.objects.get(bill=bill)
 
@@ -372,7 +392,10 @@ def clear_create_bill(request, billId):
 
 
     return redirect('create_bill')
-
+  except Exception as e:
+        
+        messages.error(request, e)
+        return redirect('create_bill')
 
 
 def convert_to_nepali_currency(amount):
@@ -394,37 +417,42 @@ def convert_to_nepali_currency(amount):
 
 
 def generate_bill_pdf(request, bill_id):
-    # Fetch the bill and related data
-    bill = Bill.objects.get(id=bill_id)
-    bill_items = bill.billitem_set.prefetch_related('products')
-    total = sum(item.total for item in bill_items)
-    discount = bill.discount
-    total_amount = total - ((discount*total)/100)
-    bill.total_amount = total_amount
-    bill.save()
-    total_in_words = convert_to_nepali_currency(total_amount)
-    # Context for the template
-    context = {
-        'bill': bill,
-        'bill_items': bill_items,
-        'total': total,
-        'total_amount': total_amount,
-        'total_in_words':total_in_words,
-        'discount': discount
-    }
+    try:
+        # Fetch the bill and related data
+        bill = Bill.objects.get(id=bill_id)
+        bill_items = bill.billitem_set.prefetch_related('products')
+        total = sum(item.total for item in bill_items)
+        discount = bill.discount
+        total_amount = total - ((discount*total)/100)
+        bill.total_amount = total_amount
+        bill.save()
+        total_in_words = convert_to_nepali_currency(total_amount)
+        # Context for the template
+        context = {
+            'bill': bill,
+            'bill_items': bill_items,
+            'total': total,
+            'total_amount': total_amount,
+            'total_in_words':total_in_words,
+            'discount': discount
+        }
 
-    # Render the template to HTML
-    html_string = render_to_string('stock/bill_pdf_template.html', context)
+        # Render the template to HTML
+        html_string = render_to_string('stock/bill_pdf_template.html', context)
 
-    # Generate PDF from HTML
-    pdf_file = HTML(string=html_string).write_pdf()
+        # Generate PDF from HTML
+        pdf_file = HTML(string=html_string).write_pdf()
 
-    # Create a response
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
+        # Create a response
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
 
-    return response
-
+        return response
+    
+    except Exception as e:
+        
+        messages.error(request, e)
+        return redirect('create_bill')
 
   
 
@@ -524,27 +552,31 @@ def generate_ledger(request, customer_id):
 
 
 def debit(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
+    try: 
+        customer = get_object_or_404(Customer, id=customer_id)
 
-    if request.method == "POST":
-        debit_form = DebitForm(request.POST)
-        if debit_form.is_valid():
-            debit_instance = debit_form.save(commit=False)
-            debit_instance.customer = customer
-            debit_instance.save()
-            
-            # Update customer total_debit
-            customer.total_debit += debit_instance.amount
-            customer.save()
+        if request.method == "POST":
+            debit_form = DebitForm(request.POST)
+            if debit_form.is_valid():
+                debit_instance = debit_form.save(commit=False)
+                debit_instance.customer = customer
+                debit_instance.save()
+                
+                # Update customer total_debit
+                customer.total_debit += debit_instance.amount
+                customer.save()
 
-            messages.success(request, "Debit added successfully.")
-            return redirect("generate_ledger", customer_id=customer.id)
-        else:
-            # Add form errors to messages
-            for field, errors in debit_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-            return redirect("generate_ledger", customer_id=customer.id)
+                messages.success(request, "Debit added successfully.")
+                return redirect("generate_ledger", customer_id=customer.id)
+            else:
+                # Add form errors to messages
+                for field, errors in debit_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
+                return redirect("generate_ledger", customer_id=customer.id)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('generate_ledger', customer_id=customer.id)
    
 
 
@@ -593,50 +625,53 @@ def view_customer_search_ajax(request):
 
 def manage_product_and_purchase(request):
 
-
-    # handel product form submisstion
-    if request.method == "POST" and "product_form" in request.POST:
-        product_form = ProductForm(request.POST)
-        if product_form.is_valid():
-            product_form.save()
-            messages.success(request, "Product is added successfully.")
-            return redirect("manage_product_and_purchase")
+    try: 
+        # handel product form submisstion
+        if request.method == "POST" and "product_form" in request.POST:
+            product_form = ProductForm(request.POST)
+            if product_form.is_valid():
+                product_form.save()
+                messages.success(request, "Product is added successfully.")
+                return redirect("manage_product_and_purchase")
+            else:
+                # Add form errors to messages
+                for field, errors in product_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in product_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        product_form = ProductForm()
+            product_form = ProductForm()
 
 
-    # Handle purchase form submission
-    if request.method == "POST" and "purchase_form" in request.POST:
-        purchase_form = PurchaseForm(request.POST)
+        # Handle purchase form submission
+        if request.method == "POST" and "purchase_form" in request.POST:
+            purchase_form = PurchaseForm(request.POST)
 
-        if purchase_form.is_valid():
-            purchase_form.save()
-            messages.success(request, "Purchase added successfully.")
-            return redirect("manage_product_and_purchase")
+            if purchase_form.is_valid():
+                purchase_form.save()
+                messages.success(request, "Purchase added successfully.")
+                return redirect("manage_product_and_purchase")
+            else:
+                # Add form errors to messages
+                for field, errors in purchase_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in purchase_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        purchase_form = PurchaseForm()
+            purchase_form = PurchaseForm()
 
-    products =  Product.objects.all()
+        products =  Product.objects.all()
 
-    return render(
-        request,
-        "stock/product.html",
-        {
-            "purchase_form": purchase_form,
-            "product_form": product_form,
-            "products": products,
-        },
-    )
+        return render(
+            request,
+            "stock/product.html",
+            {
+                "purchase_form": purchase_form,
+                "product_form": product_form,
+                "products": products,
+            },
+        )
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
 
 
 
@@ -682,19 +717,23 @@ def delete_bill_item(request, bill_id, item_id):
 
 
 def bill_details(request, bill_no):
-    bill = Bill.objects.get(bill_no=bill_no)
-    bill_item = BillItem.objects.get(bill = bill)
-    bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
-    context = {
-        'responses' : bill_item_product,
-        'customer': bill.customer,
-        'bill_no': bill.bill_no,
-        'total': bill_item.total,
-        'discount': bill.discount,
-        'total_amount': bill.total_amount
+    try: 
+        bill = Bill.objects.get(bill_no=bill_no)
+        bill_item = BillItem.objects.get(bill = bill)
+        bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
+        context = {
+            'responses' : bill_item_product,
+            'customer': bill.customer,
+            'bill_no': bill.bill_no,
+            'total': bill_item.total,
+            'discount': bill.discount,
+            'total_amount': bill.total_amount
 
-              }
-    return render(request, 'stock/bill_details.html', context=context)
+                }
+        return render(request, 'stock/bill_details.html', context=context)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('generate_ledger')
 
 
 
@@ -737,30 +776,34 @@ def form_search_for_customer(request):
 
 
 def suppliers_view_and_create(request):
-    if request.method == 'POST':
-        # Handle form submission
-        suppliers_form = SuppliersForm(request.POST)
+    try: 
+        if request.method == 'POST':
+            # Handle form submission
+            suppliers_form = SuppliersForm(request.POST)
 
-        if suppliers_form.is_valid():
-            suppliers_form.save()
-            messages.success(request, "Suppliers added successfully.")
-            return redirect('suppliers_details')
+            if suppliers_form.is_valid():
+                suppliers_form.save()
+                messages.success(request, "Suppliers added successfully.")
+                return redirect('suppliers_details')
+            else:
+                # Add form errors to messages
+                for field, errors in suppliers_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in suppliers_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        # Handle GET request
-        suppliers_form = SuppliersForm()
+            # Handle GET request
+            suppliers_form = SuppliersForm()
 
-    # Fetch all customers for listing
-    suppliers = Suppliers.objects.all()
+        # Fetch all customers for listing
+        suppliers = Suppliers.objects.all()
 
-    return render(request, 'stock/view_suppliers.html', {
-        'suppliers': suppliers,
-        'suppliers_form': suppliers_form,
-    })
+        return render(request, 'stock/view_suppliers.html', {
+            'suppliers': suppliers,
+            'suppliers_form': suppliers_form,
+        })
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
 
 def view_suppliers_search_ajax(request):
     """AJAX view to search product stock details."""
@@ -990,28 +1033,32 @@ def generate_ledger_of_suppliers(request, suppliers_id):
 
 
 def suppliers_debit(request, suppliers_id):
+  
     suppliers = get_object_or_404(Suppliers, id=suppliers_id)
+    try:
+        if request.method == "POST":
+            debit_form = DebitFormForSuppliers(request.POST)
+            if debit_form.is_valid():
+                debit_instance = debit_form.save(commit=False)
+                debit_instance.suppliers = suppliers
+                debit_instance.save()
+                
+                # Update customer total_debit
+                suppliers.total_debit += debit_instance.amount
+                suppliers.save()
 
-    if request.method == "POST":
-        debit_form = DebitFormForSuppliers(request.POST)
-        if debit_form.is_valid():
-            debit_instance = debit_form.save(commit=False)
-            debit_instance.suppliers = suppliers
-            debit_instance.save()
-            
-            # Update customer total_debit
-            suppliers.total_debit += debit_instance.amount
-            suppliers.save()
-
-            messages.success(request, "Debit added successfully.")
-            return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
-        else:
-            # Add form errors to messages
-            for field, errors in debit_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-            return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
-   
+                messages.success(request, "Debit added successfully.")
+                return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+            else:
+                # Add form errors to messages
+                for field, errors in debit_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
+                return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+    except Exception as e:
+        messages.error(request, e )
+        return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+    
 
 
 
@@ -1060,17 +1107,22 @@ def delete_order_item(request, order_id, item_id):
 
 
 def order_details(request, order_no):
-    order = Order.objects.get(order_no=order_no)
-    order_item = OrderItem.objects.get(order = order)
-    order_item_product = OrderItemProduct.objects.filter(order_item=order_item)
-    context = {
-        'responses' : order_item_product,
-        'suppliers': order.suppliers,
-        'order_no': order.order_no,
-        'total': order.total_amount,
+    try:
+        order = Order.objects.get(order_no=order_no)
+        order_item = OrderItem.objects.get(order = order)
+        order_item_product = OrderItemProduct.objects.filter(order_item=order_item)
+        context = {
+            'responses' : order_item_product,
+            'suppliers': order.suppliers,
+            'order_no': order.order_no,
+            'total': order.total_amount,
 
-              }
-    return render(request, 'stock/order_details.html', context=context)
+                }
+        return render(request, 'stock/order_details.html', context=context)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
+     
 
 
 
@@ -1080,18 +1132,22 @@ def order_details(request, order_no):
 
 
 def edit_product(request, id):
-  
-    product = get_object_or_404(Product, id=id)
+    try:
+        product = get_object_or_404(Product, id=id)
 
-    if request.method == 'POST':
-      
-        form = ProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-           
-            return redirect('product_history', id=product.id)
-    else:
-      
-        form = ProductForm(instance=product)
+        if request.method == 'POST':
+        
+            form = ProductForm(request.POST, instance=product)
+            if form.is_valid():
+                form.save()
+            
+                return redirect('product_history', id=product.id)
+        else:
+        
+            form = ProductForm(instance=product)
 
-    return render(request, 'stock/edit_product.html', context={'form': form, 'product': product})
+        return render(request, 'stock/edit_product.html', context={'form': form, 'product': product})
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
+    

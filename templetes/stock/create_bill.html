@@ -288,7 +288,10 @@ table{
             showPopup('warning', 'Please select a payment type.');
             return;
         }
-
+        if (discount<0 || discount >100) {
+            showPopup('warning', 'Discount must be between 0 to 100.');
+            return;
+        }
         $.ajax({
             url: '{% url "add_bill_item_ajax" %}',
             method: 'POST',
@@ -325,9 +328,14 @@ table{
 
                 showPopup('success', 'Product added successfully!');
             },
-            error: function () {
-                showPopup('error', 'Failed to add product.');
-            }
+            error: function (xhr, status, error) {
+            // Extract the error message from the response
+            const response = JSON.parse(xhr.responseText);
+            const errorMessage = response.error || ' Failed to add product.';
+
+            // Show the error in the popup
+            showPopup('error', errorMessage);
+        }
         });
     });
 
