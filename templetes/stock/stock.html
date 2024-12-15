@@ -1,75 +1,77 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Stock {% endblock %}
-  
+
 {% block content %}
 <style>
-   
-.search-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    margin: 10px;
-}
-
-
-.search-bar input[type="text"] {
-    width: 250px;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-
-.search-bar input[type="text"]:hover,
-.search-bar input[type="text"]:focus {
-    border-color: #007BFF; 
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-
-.search-bar button {
-    padding: 8px 15px;
-    background-color: #007BFF; 
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-
-.search-bar button:hover {
-    background-color: #0056b3; 
-}
-
-
-@media (max-width: 600px) {
-    .search-bar input[type="text"] {
-        width: 180px;
+    .search-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        margin: 10px;
+        width: 55%;
+        height: 5rem;
     }
-}
 
+
+    .search-bar input[type="text"] {
+        height: 50%;
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+
+    .search-bar input[type="text"]:hover,
+    .search-bar input[type="text"]:focus {
+        border-color: #007BFF;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+
+    .search-bar button {
+        height: 49%;
+        padding: 8px 15px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+
+    .search-bar button:hover {
+        background-color: #0056b3;
+    }
+
+
+    @media (max-width: 600px) {
+        .search-bar input[type="text"] {
+            width: 180px;
+        }
+    }
 </style>
-<div >
+<div>
     <div style="display: flex; 
     justify-content: center;">
         <div>
-        
+
         </div>
         <div class="search-bar">
-            <input type="text" id="product-search" placeholder="Search by product name..." />
+            <input type="text" placeholder="Search by product name..." />
             <button id="search-button">Search</button>
         </div>
 
     </div>
 
- 
+
     <table>
         <thead>
             <tr>
@@ -83,51 +85,52 @@
         <tbody id="stock-list">
             {% for stock in stocks %}
             <tr>
-        <td>{{ stock.product.name }}</td>
-        <td>{{ stock.total_purchased }}</td>
-        <td>{{ stock.total_sold }}</td>
-        <td>{{ stock.remaining_stock }}</td>
-                <td><a id="btn" style=" text-decoration: none;  " href="{% url 'product_history' stock.product.id %}">View details</a>
+                <td>{{ stock.product.name }}</td>
+                <td>{{ stock.total_purchased }}</td>
+                <td>{{ stock.total_sold }}</td>
+                <td>{{ stock.remaining_stock }}</td>
+                <td><a id="btn" style=" text-decoration: none;  "
+                        href="{% url 'product_history' stock.product.id %}">View details</a>
                 </td>
             </tr>
-        {% empty %}
+            {% empty %}
             <tr>
                 <td colspan="4">No stock data available.</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
-    
+
 <script>
-    $(document).ready(function() {
-        $('#product-search').on('input', function() {
-            var query = $(this).val();  
-            
+    $(document).ready(function () {
+        $('#product-search').on('input', function () {
+            var query = $(this).val();
+
             // Make an AJAX request to fetch the stock information
             $.ajax({
-                url: '{% url "product_stock_search_ajax" %}',  
+                url: '{% url "product_stock_search_ajax" %}',
                 method: 'GET',
                 data: { 'query': query },  // Send the query to the backend
-                success: function(data) {
+                success: function (data) {
                     $('#stock-list').html(data);
                 }
             });
         });
-    
+
         // Trigger search when the user clicks the search button
-        $('#search-button').click(function() {
+        $('#search-button').click(function () {
             var query = $('#product-search').val();  // Get the query
             $.ajax({
                 url: '{% url "product_stock_search_ajax" %}',  // URL to your AJAX view
                 method: 'GET',
                 data: { 'query': query },  // Send the query
-                success: function(data) {
+                success: function (data) {
                     // Update the stock table with the filtered data
                     $('#stock-list').html(data);
                 }
             });
         });
     });
-    </script>
+</script>
 {% endblock %}
