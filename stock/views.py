@@ -1151,3 +1151,15 @@ def edit_product(request, id):
         messages.error(request, e)
         return redirect('manage_inventory')
     
+
+
+
+def custom_404_view(request, exception):
+    return render(request, '404_error.html', status=404)
+
+def custom_500_view(request):
+    return render(request, '500_error.html', status=500)
+
+
+def test_view(request):
+    raise Exception("This is a test exception!")
