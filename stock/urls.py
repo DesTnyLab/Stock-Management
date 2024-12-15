@@ -70,4 +70,7 @@ urlpatterns = [
 
   path('product/<int:id>/edit/', edit_product, name='edit_product'),
 
+
+  path('test',test_view),
+
 ]

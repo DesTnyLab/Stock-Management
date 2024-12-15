@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 500px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .oops {
+            font-size: 5rem;
+            color: #007bff;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .contact {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .contact li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .contact a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact a:hover {
+            color: #0056b3;
+        }
+
+        .contact .highlight {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        .contact i {
+            margin-right: 8px;
+            color: #007bff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="oops">Oops!</h1>
+        <h2>Unexpected Error Occured</h2>
+        <p>The page you are looking for doesn't exist or an unexpected error occurred. Please contact the developer for assistance.</p>
+        
+        <ul class="contact">
+            <li class="highlight">Developer: Manjil Gautam</li>
+            <li><i class="fab fa-instagram"></i><strong>Instagram:</strong> <a href="https://www.instagram.com/des_tny_/" target="_blank">@des_tny_</a></li>
+            <li><i class="fab fa-linkedin"></i><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/manjil-gautam-2b2226197/" target="_blank">View Profile</a></li>
+            <li><i class="fas fa-envelope"></i><strong>Email:</strong> <a href="mailto:mzldestiny69@gmail.com">mzldestiny69@gmail.com</a></li>
+            <li><i class="fas fa-phone"></i><strong>Phone:</strong> <a href="tel:+9843961197">9843961197</a></li>
+            <li><i class="fas fa-globe"></i><strong>Website:</strong> <a href="https://manjilgautam.com.np" target="_blank">manjilgautam.com.np</a></li>
+        </ul>
+        
+        <a href="{% url 'manage_inventory' %}" class="btn">Go to Homepage</a>
+    </div>
+</body>
+</html>
