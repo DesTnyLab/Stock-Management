@@ -73,7 +73,8 @@ urlpatterns = [
 
   path('product/<int:id>/edit/', edit_product, name='edit_product'),
 
-
+ path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
 
 
 ]
