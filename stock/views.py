@@ -132,19 +132,6 @@ def view_product_details(request, id):
          return redirect('manage_inventory')
 
 
-def overall_profit(request):
-    try: 
-        stock_data = Stock.objects.all()
-        overall_profit = 0
-        for item in stock_data:
-            profit_data = item.total_selling_cost - item.total_buying_cost
-            overall_profit += profit_data
-
-        return render(request, "overall_profit.html", {"total_profit": overall_profit})
-    
-    except Exception as e :
-         messages.error(request, e)
-         return redirect('manage_inventory')
 
 
 
@@ -231,12 +218,17 @@ class TodaysTopSalesView(View):
 def overall_top_sales(request):
     try: 
     # Fetch all stock data
-        stock_data = Stock.objects.select_related("product").all()
-        overall_profit = 0
-        for item in stock_data:
-            profit_data = item.total_selling_cost - item.total_buying_cost
-            overall_profit += profit_data
 
+
+        sell_data = Sale.objects.all()
+        overall_profit = 0
+        total_revenue =0
+        for item in sell_data:
+            overall_profit += (item.price - item.product.cost_price)
+
+        stock_data = Stock.objects.select_related("product").all()
+     
+       
         # Dictionary to aggregate sales data per product
         sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
 
@@ -373,7 +365,7 @@ def add_bill_item_ajax(request):
 
             except Exception as e:
                 # Rollback the transaction in case of an error
-                # transaction.set_rollback(True)
+                transaction.set_rollback(True)
                 return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
@@ -770,6 +762,14 @@ def form_search_for_customer(request):
 
 
 
+def form_search_for_suppliers(request):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            suppliers = Suppliers.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(suppliers.values()), safe=False)
+
+
 
 
 
@@ -848,87 +848,83 @@ def create_order(request):
 @csrf_exempt
 def add_order_product(request, order_id):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
+        with transaction.atomic():
+            try:
+                data = json.loads(request.body)
 
-            # Parse input data
-            product_name = data.get('product_name')
-            hs_code = data.get('hs_code', '')
-            quantity = int(data.get('quantity', 1))
-            rate = float(data.get('rate', 0.00))
+                # Parse input data
+                product_name = data.get('product_name')
+                hs_code = data.get('hs_code', '')
+                quantity = int(data.get('quantity', 1))
+                rate = float(data.get('rate', 0.00))
 
-            # Create or fetch the product
-            product, created = Product.objects.get_or_create(
-                name=product_name,
-                defaults={
-                    'HS_code': hs_code,
-                    'cost_price': rate,
-                    'selling_price': rate,
-                }
-            )
+                # Create or fetch the product
+                product, created = Product.objects.get_or_create(
+                    name=product_name,
+                    defaults={
+                        'HS_code': hs_code,
+                        'cost_price': rate,
+                        'selling_price': rate,
+                    }
+                )
 
-            # if not created and product.HS_code != hs_code:
-            #     return JsonResponse({
-            #         'success': False,
-            #         'error': 'Product with this name already exists with a different HS Code.'
-            #     })
+            
+                order = get_object_or_404(Order, id=order_id)
 
-            # Get the order
-            order = get_object_or_404(Order, id=order_id)
+                # Get or create the OrderItem
+                order_item, _ = OrderItem.objects.get_or_create(order=order)
 
-            # Get or create the OrderItem
-            order_item, _ = OrderItem.objects.get_or_create(order=order)
+                # Avoid duplicating products in the same order item
+                order_product, order_product_created = OrderItemProduct.objects.get_or_create(
+                    order_item=order_item,
+                    product=product,
+                    defaults={
+                        'quantity': quantity,
+                        'rate': rate,
+                    }
+                )
 
-            # Avoid duplicating products in the same order item
-            order_product, order_product_created = OrderItemProduct.objects.get_or_create(
-                order_item=order_item,
-                product=product,
-                defaults={
-                    'quantity': quantity,
-                    'rate': rate,
-                }
-            )
-
-            if not order_product_created:
-                # If the product already exists, update its quantity and rate
-                order_product.quantity += quantity
-                order_product.rate = rate
-                order_product.save()
+                if not order_product_created:
+                    # If the product already exists, update its quantity and rate
+                    order_product.quantity += quantity
+                    order_product.rate = rate
+                    order_product.save()
 
 
 
-            subtotal = order_product.quantity * order_product.rate
-            order_item.total += subtotal
-            order_item.save()
+                subtotal = order_product.quantity * order_product.rate
+                order_item.total += subtotal
+                order_item.save()
 
-            order.total_amount += subtotal
-            order.save()
+                order.total_amount += subtotal
+                order.save()
 
-            # Add to Purchase if it doesn't already exist
-            Purchase.objects.create(
-                product=product,
-               
-                    quantity= quantity,
-                    price=rate,
-                date=now(),
+                # Add to Purchase if it doesn't already exist
+                Purchase.objects.create(
+                    product=product,
                 
-            )
-          
+                        quantity= quantity,
+                        price=rate,
+                    date=now(),
+                    
+                )
+            
 
-            return JsonResponse({
-                'success': True,
-                'product': {
-                    'name': product.name,
-                    'hs_code': product.HS_code,
-                    'quantity': order_product.quantity,
-                    'rate': order_product.rate,
-                    'subtotal': order_product.get_subtotal(),
-                    'product_created': created,
-                    'purchase_created': True,
-                }
-            })
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+                return JsonResponse({
+                    'success': True,
+                    'product': {
+                        'name': product.name,
+                        'hs_code': product.HS_code,
+                        'quantity': order_product.quantity,
+                        'rate': order_product.rate,
+                        'subtotal': order_product.get_subtotal(),
+                        'product_created': created,
+                        'purchase_created': True,
+                    }
+                })
+            except Exception as e:
+                transaction.set_rollback(True)
+                return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
@@ -1160,6 +1156,3 @@ def custom_404_view(request, exception):
 def custom_500_view(request):
     return render(request, '500_error.html', status=500)
 
-
-def test_view(request):
-    raise Exception("This is a test exception!")

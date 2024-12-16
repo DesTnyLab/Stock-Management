@@ -240,6 +240,11 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['order_no', 'suppliers', 'date', 'payment_type']
+        widgets = {
+            "suppliers": forms.Select(attrs={"class": "form-control", 
+                                             "id":"suppliers", 
+                                             "data-placeholder": "Search Suppliers..."}),
+        }
 
 class OrderItemProductForm(forms.ModelForm):
     class Meta:

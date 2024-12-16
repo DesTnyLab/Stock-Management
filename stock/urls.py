@@ -41,6 +41,9 @@ urlpatterns = [
 
     path('select-search-form/', form_search_for_product, name='form_search_for_product'),
     path('select-search-form2/', form_search_for_customer, name='form_search_for_customer'),
+    path('select-search-form3/', form_search_for_suppliers, name='form_search_for_suppliers'),
+
+
 
 
 
@@ -71,6 +74,6 @@ urlpatterns = [
   path('product/<int:id>/edit/', edit_product, name='edit_product'),
 
 
-  path('test',test_view),
+
 
 ]
