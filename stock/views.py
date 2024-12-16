@@ -247,7 +247,7 @@ def overall_top_sales(request):
         overall_profit = 0
         total_revenue =0
         for item in sell_data:
-            overall_profit += (item.price - item.product.cost_price)
+            overall_profit += ((item.price - item.product.cost_price)* item.quantity) 
 
         stock_data = Stock.objects.select_related("product").all()
      
