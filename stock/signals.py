@@ -37,6 +37,49 @@ def update_stock_on_sale(sender, instance, created, **kwargs):
 
 
 
+
+
+@receiver(post_delete, sender=Sale)
+def reduce_stock_on_sale_delete(sender, instance, **kwargs):
+    """Reduce stock when a sale is deleted."""
+
+    try:
+        stock = Stock.objects.get(product=instance.product)
+        stock.total_sold -= instance.quantity
+        stock.total_selling_cost = (stock.total_selling_cost or 0) - float(instance.price * instance.quantity)
+        
+        # Ensure totals do not go negative
+        if stock.total_sold < 0:
+            stock.total_sold = 0
+        if stock.total_selling_cost < 0:
+            stock.total_selling_cost = 0
+        
+        stock.save()
+    except Stock.DoesNotExist:
+        pass  # No stock record exists for this product
+
+
+
+
+
+
+
+@receiver(post_delete, sender=BillItemProduct)
+def delete_sale_on_bill_item_product(instance, **kwargs):
+    """
+    Deletes the most recent Sale object associated with the deleted BillItem's product
+    and matching quantity.
+    """
+    # Retrieve the most recent Sale matching the product and quantity
+    sale = Sale.objects.filter(product=instance.product, quantity=instance.quantity).order_by('-id').first()
+
+    # Delete the Sale object if it exists
+    if sale:
+        sale.delete()
+
+
+
+
 @receiver(post_save, sender=BillItemProduct)
 def create_sale_on_bill_item_product(sender, instance, created, **kwargs):
     """Create a new Sale instance whenever a BillItemProduct is created."""
@@ -75,14 +118,13 @@ def update_payment_on_bill_save(sender, instance, created, **kwargs):
             credit, created = Credit.objects.get_or_create(customer=customer, bill=instance)
             credit.amount = instance.total_amount
             credit.save()
-            print(f"Credit updated: {credit.amount}")
+           
         elif instance.payment_type == 'CASH':
             cash, created = BillOnCash.objects.get_or_create(customer=customer, bill=instance)
             cash.amount = instance.total_amount
             print(cash.amount)
             cash.save()
-            print(f"Cash bill saved for customer: {customer.id}")
-
+           
 
 
 @receiver(post_save, sender=Order)
@@ -93,11 +135,11 @@ def update_payment_on_bill_save(sender, instance, created, **kwargs):
             credit, created = Suppliers_credit.objects.get_or_create(suppliers=supplier, order=instance)
             credit.amount = instance.total_amount
             credit.save()
-            print(f"Credit updated: {credit.amount}")
+          
         elif instance.payment_type == 'CASH':
             cash, created = OrderOnCash.objects.get_or_create(suppliers=supplier, order=instance)
             cash.amount = instance.total_amount
             print(cash.amount)
             cash.save()
-            print(f"Cash bill saved for suppliers: {supplier.id}")
+           
 
