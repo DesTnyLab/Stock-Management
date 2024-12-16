@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+ 
 ]
 
 ROOT_URLCONF = 'tirpura.urls'
@@ -141,3 +142,14 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # Where `collectstatic` will place files
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# Redirect to login page if unauthenticated
+LOGIN_URL = "/stock/login/"
+
+# Optional: Set session expiration when the browser closes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Optional: Set a session timeout (e.g., 6 hours)
+SESSION_COOKIE_AGE = 6 * 60 * 60

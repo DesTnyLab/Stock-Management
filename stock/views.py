@@ -19,8 +19,32 @@ from django.db import transaction
 from django.views.generic import View
 from num2words import num2words
 import json
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        next_url = request.GET.get("next", "/")  # Get the 'next' parameter or default to '/'
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect(next_url)  # Redirect to the next URL or home page
+        else:
+            print('hello world')
+            messages.error(request, "Invalid username or password")
+            return redirect('login')
+    return render(request, "login.html")
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+@login_required
 def manage_inventory(request):
     # Handle sale form submission
     try:
@@ -77,7 +101,7 @@ def manage_inventory(request):
             },
         )
 
-
+@login_required
 def view_stock(request):
     try: 
         stocks = Stock.objects.all()
@@ -108,7 +132,7 @@ def product_stock_search_ajax(request):
         request, "stock/product_stock_search_results.html", {"stocks": stocks}
     )
 
-
+@login_required
 def view_product_details(request, id):
     try: 
         product = get_object_or_404(Product, id=id)
@@ -130,7 +154,6 @@ def view_product_details(request, id):
     except Exception as e :
          messages.error(request, 'Product details avialable in Stock')
          return redirect('manage_inventory')
-
 
 
 
@@ -214,7 +237,7 @@ class TodaysTopSalesView(View):
         return JsonResponse({"graph": graph})
 
 
-
+@login_required
 def overall_top_sales(request):
     try: 
     # Fetch all stock data
@@ -287,7 +310,9 @@ def overall_top_sales(request):
     except Exception as e :
          messages.error(request, e)
          return redirect('manage_inventory')
+    
 
+@login_required
 def create_bill(request):
     products = Product.objects.all()
     customers = Customer.objects.all()
@@ -370,7 +395,7 @@ def add_bill_item_ajax(request):
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
 
-
+@login_required
 def clear_create_bill(request, billId):
   try: 
     bill = Bill.objects.get(id=billId)
@@ -388,6 +413,7 @@ def clear_create_bill(request, billId):
         
         messages.error(request, e)
         return redirect('create_bill')
+
 
 
 def convert_to_nepali_currency(amount):
@@ -448,7 +474,7 @@ def generate_bill_pdf(request, bill_id):
 
   
 
-
+@login_required
 def generate_ledger(request, customer_id):
     try:
         customer = Customer.objects.get(id=customer_id)
@@ -542,7 +568,7 @@ def generate_ledger(request, customer_id):
         })
 
 
-
+@login_required
 def debit(request, customer_id):
     try: 
         customer = get_object_or_404(Customer, id=customer_id)
@@ -573,7 +599,7 @@ def debit(request, customer_id):
 
 
 
-
+@login_required
 def customer_view_and_create(request):
     if request.method == 'POST':
         # Handle form submission
@@ -614,7 +640,7 @@ def view_customer_search_ajax(request):
 
 
 
-
+@login_required
 def manage_product_and_purchase(request):
 
     try: 
@@ -666,7 +692,7 @@ def manage_product_and_purchase(request):
         return redirect('manage_inventory')
 
 
-
+@login_required
 def view_product_search_ajax(request):
     """AJAX view to search product sock details."""
     query = request.GET.get("query", "")
@@ -680,7 +706,7 @@ def view_product_search_ajax(request):
 
 
 
-
+@login_required
 def delete_bill_item(request, bill_id, item_id):
     if request.method == "POST":
         try:
@@ -707,7 +733,7 @@ def delete_bill_item(request, bill_id, item_id):
     return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
 
 
-
+@login_required
 def bill_details(request, bill_no):
     try: 
         bill = Bill.objects.get(bill_no=bill_no)
@@ -728,7 +754,7 @@ def bill_details(request, bill_no):
         return redirect('generate_ledger')
 
 
-
+@login_required
 def delete_product(request, id):
     try:
         # Use get_object_or_404 for cleaner error handling
@@ -774,7 +800,7 @@ def form_search_for_suppliers(request):
 
 
 
-
+@login_required
 def suppliers_view_and_create(request):
     try: 
         if request.method == 'POST':
@@ -816,7 +842,7 @@ def view_suppliers_search_ajax(request):
     )
 
 
-
+@login_required
 def create_order(request):
     if request.method == 'POST':
         if 'order_submit' in request.POST:  # Handle OrderForm submission
@@ -932,7 +958,7 @@ def add_order_product(request, order_id):
 
 
 
-
+@login_required
 def generate_ledger_of_suppliers(request, suppliers_id):
     try:
         suppliers = Suppliers.objects.get(id=suppliers_id)
@@ -1027,7 +1053,7 @@ def generate_ledger_of_suppliers(request, suppliers_id):
 
 
 
-
+@login_required
 def suppliers_debit(request, suppliers_id):
   
     suppliers = get_object_or_404(Suppliers, id=suppliers_id)
@@ -1057,7 +1083,7 @@ def suppliers_debit(request, suppliers_id):
     
 
 
-
+@login_required
 def clear_create_order(request, orderId):
   
     order = Order.objects.get(id=orderId)
@@ -1072,7 +1098,7 @@ def clear_create_order(request, orderId):
 
 
 
-
+@login_required
 def delete_order_item(request, order_id, item_id):
     if request.method == "POST":
         try:
@@ -1101,7 +1127,7 @@ def delete_order_item(request, order_id, item_id):
 
 
 
-
+@login_required
 def order_details(request, order_no):
     try:
         order = Order.objects.get(order_no=order_no)
@@ -1126,7 +1152,7 @@ def order_details(request, order_no):
 
 
 
-
+@login_required
 def edit_product(request, id):
     try:
         product = get_object_or_404(Product, id=id)
