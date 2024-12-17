@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 
 class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    selling_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    cost_price = models.FloatField(default=0.00)
+    selling_price = models.FloatField(default=0.00)
     HS_code = models.CharField(max_length=50, default='') 
     def __str__(self):
         return f'{self.name}-{self.HS_code}'
@@ -39,7 +39,7 @@ class Purchase(models.Model):
 class Sale(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    price = models.FloatField(default=0.00)
     date = models.DateField()
 
 
