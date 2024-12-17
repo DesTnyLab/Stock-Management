@@ -21,8 +21,9 @@ from num2words import num2words
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
-
+from django.utils import timezone
+from django.db.models import Sum
+from datetime import timedelta
 
 def login_view(request):
     if request.method == "POST":
@@ -238,79 +239,106 @@ class TodaysTopSalesView(View):
 
 
 @login_required
+
 def overall_top_sales(request):
-    try: 
-    # Fetch all stock data
-
-
+    try:
+        # Fetch all sales data
         sell_data = Sale.objects.all()
         overall_profit = 0
-        total_revenue =0
+        total_revenue = 0
+
+        # Calculate overall revenue and profit
         for item in sell_data:
-            overall_profit += ((item.price - item.product.cost_price)* item.quantity) 
+            revenue = item.price * item.quantity
+            profit = (item.price - item.product.cost_price) * item.quantity
+            total_revenue += revenue
+            overall_profit += profit
 
-        stock_data = Stock.objects.select_related("product").all()
-     
-       
-        # Dictionary to aggregate sales data per product
-        sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
+        # Overall Revenue and Profit Graph
+        fig1, ax1 = plt.subplots()
+        categories = ["Total Revenue", "Total Profit"]
+        values = [total_revenue, overall_profit]
+        ax1.bar(categories, values, color=["skyblue", "orange"])
 
-        for item in stock_data:
-            sales_summary[item.product.name]["quantity"] += item.total_sold
-            sales_summary[item.product.name]["revenue"] += item.total_selling_cost
+        # Add labels
+        for i, v in enumerate(values):
+            ax1.text(i, v + 0.1, f"{v:.2f}", ha="center", va="bottom")
 
-        # Sort products by total revenue in descending order
-        sorted_sales = sorted(
-            sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
+        ax1.set_title("Overall Revenue and Profit")
+        ax1.set_ylabel("Amount ($)")
+
+        # Save first graph to BytesIO
+        buf1 = io.BytesIO()
+        plt.savefig(buf1, format="png")
+        buf1.seek(0)
+        graph1_str = base64.b64encode(buf1.getvalue()).decode("utf-8")
+        plt.close(fig1)
+
+        # Calculate daily sales for the last 7 days
+        today = timezone.now().date()
+        last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]
+        daily_revenue = []
+        daily_profit = []
+
+        for day in last_7_days:
+            # Define the start and end of the day
+            day_start = datetime.combine(day, datetime.min.time())
+            day_end = datetime.combine(day, datetime.max.time())
+
+            # Filter sales for the specific day
+            daily_sales = Sale.objects.filter(date__range=(day_start, day_end))
+            
+            # Calculate daily revenue and profit
+            day_revenue = sum(item.price * item.quantity for item in daily_sales)
+            day_profit = sum(
+                (item.price - item.product.cost_price) * item.quantity
+                for item in daily_sales
+            )
+            daily_revenue.append(day_revenue)
+            daily_profit.append(day_profit)
+
+        # Create a graph for daily revenue and profit
+        fig2, ax2 = plt.subplots()
+        index = range(len(last_7_days))
+        bar_width = 0.35
+
+        ax2.bar(index, daily_revenue, bar_width, label="Revenue", color="skyblue")
+        ax2.bar(
+            [i + bar_width for i in index],
+            daily_profit,
+            bar_width,
+            label="Profit",
+            color="orange",
         )
 
-        # Get the top 5 products
-        top_sales = sorted_sales[:5]
-        total_revenue = sum(data["revenue"] for data in sales_summary.values())
-        # Prepare data for the graph
-        product_names = [item[0] for item in top_sales]
-        quantities = [item[1]["quantity"] for item in top_sales]
+        ax2.set_title("Revenue and Profit for Last 7 Days")
+        ax2.set_xticks([i + bar_width / 2 for i in index])
+        ax2.set_xticklabels([day.strftime("%Y-%m-%d") for day in last_7_days], rotation=45)
+        ax2.set_ylabel("Amount ($)")
+        ax2.legend()
 
-        # Create a bar graph
-        fig, ax = plt.subplots()
-        ax.bar(product_names, quantities, color="skyblue")
-
-        # Add labels to the bars
-        for i, v in enumerate(quantities):
-            ax.text(
-                i, v + 0.1, str(v), ha="center", va="bottom"
-            )  # Display quantity value above each bar
-
-        # Add title and labels
-        ax.set_title("Top 5 Sales Products ")
-        ax.set_xlabel("Product Name")
-        ax.set_ylabel("Quantity Sold")
-
-        # Save the plot to a BytesIO object
-        buf = io.BytesIO()
-        plt.savefig(buf, format="png")
-        buf.seek(0)
-
-        # Convert the image to base64 string
-        img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
-
-        # Close the plot to release memory
-        plt.close(fig)
+        # Save second graph to BytesIO
+        buf2 = io.BytesIO()
+        plt.savefig(buf2, format="png")
+        buf2.seek(0)
+        graph2_str = base64.b64encode(buf2.getvalue()).decode("utf-8")
+        plt.close(fig2)
 
         return render(
             request,
             "stock/overall_report.html",
             {
-                "sales_summary": top_sales,
-                "graph": img_str,
+                "graph1": graph1_str,
+                "graph2": graph2_str,
                 "total_profit": overall_profit,
                 "total_revenue": total_revenue,
+                "daily_sales": zip(last_7_days, daily_revenue, daily_profit),
             },
         )
-    except Exception as e :
-         messages.error(request, e)
-         return redirect('manage_inventory')
-    
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('manage_inventory')
+
 
 @login_required
 def create_bill(request):
