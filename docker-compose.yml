@@ -36,6 +36,24 @@ services:
     networks:
       - stock-management_stock # Use the correct network name
 
+
+  nginx:
+    build:
+      context: ./docker/Nginx
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    ports:
+      - "8080:80"
+    networks:
+      - stock-management_stock
+
+
+
 networks:
   stock-management_stock:
     driver: bridge
