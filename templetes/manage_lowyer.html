@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Lowyer</title>
+</head>
+<body>
+    <h1>Manage Lowyer</h1>
+
+    <!-- Form for creating/updating Lowyer -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+
+    <h2>Lowyer List</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Payment Type</th>
+                <th>Credit Amount</th>
+                <th>Debit Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lowyer in lowyers %}
+            <tr>
+                <td>{{ lowyer.name }}</td>
+                <td>{{ lowyer.amount }}</td>
+                <td>{{ lowyer.payment_type }}</td>
+                <td>{{ lowyer.credit_amount }}</td>
+                <td>{{ lowyer.debit_amount }}</td>
+                <td>
+                    <a href="{% url 'manage_lowyer' lowyer.id %}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

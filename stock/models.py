@@ -319,3 +319,35 @@ class Suppliers_debit(models.Model):
     def __str__(self):
         return f'{self.suppliers} Debited on {self.date}'
 
+
+
+class ExtraSell(models.Model):
+    amount = models.FloatField(default=0.00)
+    date = models.DateField()
+
+
+class Lowyer(models.Model):
+    PAYMENT_TYPE_CHOICES = [
+        ('CREDIT', 'Credit'),
+        ('DEBIT', 'Debit'),
+    ]
+
+    name = models.CharField(max_length=255)
+    amount = models.FloatField()
+    payment_type = models.CharField(
+        max_length=6, choices=PAYMENT_TYPE_CHOICES
+    )
+    credit_amount = models.FloatField(default=0.00)
+    debit_amount = models.FloatField(default=0.00)
+
+    def save(self, *args, **kwargs):
+        if self.payment_type == 'CREDIT':
+            self.credit_amount = self.amount
+            self.debit_amount = 0  # Ensure consistency
+        elif self.payment_type == 'DEBIT':
+            self.debit_amount = self.amount
+            self.credit_amount = 0  # Ensure consistency
+        super().save(*args, **kwargs)
+
+            
+
