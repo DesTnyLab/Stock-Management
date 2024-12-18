@@ -10,8 +10,8 @@ services:
       - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     env_file:
       - .env
     environment:
@@ -48,7 +48,7 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
       - stock-management_stock
 
@@ -57,7 +57,7 @@ services:
 networks:
   stock-management_stock:
     driver: bridge
-    # external: true # Use existing external network
+    #external: true # Use existing external network
 
 volumes:
   postgres_data:
