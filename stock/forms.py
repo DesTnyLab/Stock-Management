@@ -266,3 +266,17 @@ class DebitFormForSuppliers(forms.ModelForm):
             raise forms.ValidationError("Amount Cannot be in Negative")
 
         return amount
+
+
+
+
+class LowyerForm(forms.ModelForm):
+    class Meta:
+        model = Lowyer
+        fields = ['name', 'amount', 'payment_type']
+
+
+class ExtraSaleForm(forms.ModelForm):
+    class Meta: 
+        model = ExtraSell 
+        fields = ['amount', 'date']  

@@ -77,4 +77,9 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
 
 
+
+ path('lowyers/', manage_lowyer, name='lowyer_list'),
+    path('lowyers/<int:lowyer_id>/', manage_lowyer, name='manage_lowyer'),  
+
+
 ]

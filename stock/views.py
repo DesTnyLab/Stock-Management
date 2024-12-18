@@ -1204,6 +1204,33 @@ def edit_product(request, id):
 
 
 
+
+
+def manage_lowyer(request, lowyer_id=None):
+    # If `lowyer_id` is provided, fetch the instance for update
+    if lowyer_id:
+        lowyer = get_object_or_404(Lowyer, id=lowyer_id)
+    else:
+        lowyer = None
+
+    if request.method == 'POST':
+        form = LowyerForm(request.POST, instance=lowyer)
+        if form.is_valid():
+            form.save()
+            return redirect('lowyer_list')  # Redirect to display list
+    else:
+        form = LowyerForm(instance=lowyer)
+
+    # Fetch all Lowyer instances for display
+    lowyers = Lowyer.objects.all()
+
+    return render(request, 'manage_lowyer.html', {
+        'form': form,
+        'lowyers': lowyers,
+    })
+
+
+
 def custom_404_view(request, exception):
     return render(request, '404_error.html', status=404)
 
