@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
-
-
+from django.core.validators import RegexValidator
 
 class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
@@ -16,9 +15,10 @@ class Product(models.Model):
 class Purchase(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.FloatField(default=0.00)
     date = models.DateField()
 
+    @property
     def get_total_cost(self):
         return self.quantity*self.price
     def __str__(self):
@@ -43,9 +43,14 @@ class Sale(models.Model):
     date = models.DateField()
 
 
+    @property
     def get_total_cost(self):
         return self.quantity*self.price
     
+    @property
+    def profit(self):
+        return (self.price - self.product.cost_price)*self.quantity
+
     def __str__(self):
         return f"Sale of {self.quantity} {self.product.name}"
 
@@ -321,33 +326,79 @@ class Suppliers_debit(models.Model):
 
 
 
-class ExtraSell(models.Model):
-    amount = models.FloatField(default=0.00)
-    date = models.DateField()
 
-
-class Lowyer(models.Model):
-    PAYMENT_TYPE_CHOICES = [
-        ('CREDIT', 'Credit'),
-        ('DEBIT', 'Debit'),
-    ]
-
-    name = models.CharField(max_length=255)
-    amount = models.FloatField()
-    payment_type = models.CharField(
-        max_length=6, choices=PAYMENT_TYPE_CHOICES
-    )
-    credit_amount = models.FloatField(default=0.00)
-    debit_amount = models.FloatField(default=0.00)
-
-    def save(self, *args, **kwargs):
-        if self.payment_type == 'CREDIT':
-            self.credit_amount = self.amount
-            self.debit_amount = 0  # Ensure consistency
-        elif self.payment_type == 'DEBIT':
-            self.debit_amount = self.amount
-            self.credit_amount = 0  # Ensure consistency
-        super().save(*args, **kwargs)
 
             
 
+
+class Lawyer(models.Model):
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(
+        max_length=10,
+        validators=[
+            RegexValidator(
+                regex=r'^\d{10}$',
+                message="Phone number must be a valid 10-digit number."
+            )
+        ],
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Transaction(models.Model):
+    TRANSACTION_TYPE_CHOICES = [
+        ('DEBIT', 'Debit'),   # Lawyer takes money from you
+        ('CREDIT', 'Credit'), # Lawyer gives money to you
+    ]
+
+    lawyer = models.ForeignKey(Lawyer, on_delete=models.CASCADE, related_name="transactions")
+    transaction_type = models.CharField(
+        max_length=6, choices=TRANSACTION_TYPE_CHOICES
+    )
+    amount = models.FloatField()
+    date = models.DateField(default=now)
+    description = models.TextField(blank=True, null=True)  # Optional field for notes
+
+    def __str__(self):
+        return f"{self.transaction_type} - {self.amount} by {self.lawyer.name}"
+
+
+
+
+
+
+
+class Investment(models.Model):
+    amount = models.FloatField()
+    date = models.DateField(default=now)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Investment of {self.amount} on {self.date}"
+
+
+class OtherRevenue(models.Model):
+    REVENUE_SOURCE_CHOICES = [
+        ('PRINT', 'Printing '),
+        ('FORM', 'Online Form'),
+        ('OTHERS', 'Other Sources'),
+    ]
+
+    source = models.CharField(
+        max_length=20, choices=REVENUE_SOURCE_CHOICES, default='OTHERS'
+    )
+    amount = models.FloatField()
+    date = models.DateField(default=now)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.source} Revenue of {self.amount} on {self.date}"
+
+
+
+class ActualFinance(models.Model):
+    investment = models.FloatField(default=0)
+    revenue = models.FloatField(default=0)
+    profit = models.FloatField(default=0)

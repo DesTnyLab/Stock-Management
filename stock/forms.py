@@ -270,13 +270,78 @@ class DebitFormForSuppliers(forms.ModelForm):
 
 
 
-class LowyerForm(forms.ModelForm):
+
+
+class LawyerForm(forms.ModelForm):
     class Meta:
-        model = Lowyer
-        fields = ['name', 'amount', 'payment_type']
+        model = Lawyer
+        fields = ['name', 'phone_number']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Lawyer Name',
+            'phone_number': 'Phone Number',
+        }
 
 
-class ExtraSaleForm(forms.ModelForm):
-    class Meta: 
-        model = ExtraSell 
-        fields = ['amount', 'date']  
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['lawyer', 'transaction_type', 'amount', 'description']
+        widgets = {
+            'lawyer': forms.Select(attrs={'class': 'form-control'}),
+            'transaction_type': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'transaction_type': 'Transaction Type',
+            'amount': 'Amount',
+            'description': 'Description (Optional)',
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+class InvestmentForm(forms.ModelForm):
+    class Meta:
+        model = Investment
+        fields = ['amount', 'date', 'description']
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'amount': 'Investment Amount',
+            'date': 'Investment Date',
+            'description': 'Description (Optional)',
+        }
+
+
+class OtherRevenueForm(forms.ModelForm):
+    class Meta:
+        model = OtherRevenue
+        fields = ['source', 'amount', 'date', 'description']
+        widgets = {
+            'source': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'source': 'Revenue Source',
+            'amount': 'Revenue Amount',
+            'date': 'Revenue Date',
+            'description': 'Description (Optional)',
+        }

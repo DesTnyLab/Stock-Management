@@ -242,17 +242,19 @@ class TodaysTopSalesView(View):
 
 def overall_top_sales(request):
     try:
+
+
+        actual_finance = ActualFinance.objects.get(id=1)
+
         # Fetch all sales data
         sell_data = Sale.objects.all()
-        overall_profit = 0
-        total_revenue = 0
+        overall_profit = actual_finance.profit
+        total_revenue = actual_finance.revenue
+        total_investment = actual_finance.investment
+        print(total_investment)
 
         # Calculate overall revenue and profit
-        for item in sell_data:
-            revenue = item.price * item.quantity
-            profit = (item.price - item.product.cost_price) * item.quantity
-            total_revenue += revenue
-            overall_profit += profit
+      
 
         # Overall Revenue and Profit Graph
         fig1, ax1 = plt.subplots()
@@ -332,6 +334,7 @@ def overall_top_sales(request):
                 "graph2": graph2_str,
                 "total_profit": overall_profit,
                 "total_revenue": total_revenue,
+                "total_investment":total_investment,
                 "daily_sales": zip(last_7_days, daily_revenue, daily_profit),
             },
         )
@@ -1203,31 +1206,65 @@ def edit_product(request, id):
     
 
 
-
-
-
-def manage_lowyer(request, lowyer_id=None):
-    # If `lowyer_id` is provided, fetch the instance for update
-    if lowyer_id:
-        lowyer = get_object_or_404(Lowyer, id=lowyer_id)
-    else:
-        lowyer = None
+def manage_lawyers(request):
+    lawyers = Lawyer.objects.all()
+    lawyer_form = LawyerForm()
+    transaction_form = TransactionForm()
 
     if request.method == 'POST':
-        form = LowyerForm(request.POST, instance=lowyer)
-        if form.is_valid():
-            form.save()
-            return redirect('lowyer_list')  # Redirect to display list
-    else:
-        form = LowyerForm(instance=lowyer)
+        if 'create_lawyer' in request.POST:
+            lawyer_form = LawyerForm(request.POST)
+            if lawyer_form.is_valid():
+                lawyer_form.save()
+                return redirect('manage_lawyers')
+        elif 'add_transaction' in request.POST:
+            transaction_form = TransactionForm(request.POST)
+            if transaction_form.is_valid():
+                transaction_form.save()
+                return redirect('manage_lawyers')
 
-    # Fetch all Lowyer instances for display
-    lowyers = Lowyer.objects.all()
+    context = {
+        'lawyers': lawyers,
+        'lawyer_form': lawyer_form,
+        'transaction_form': transaction_form,
+    }
+    return render(request, 'stock/manage_lawyers.html', context)
 
-    return render(request, 'manage_lowyer.html', {
-        'form': form,
-        'lowyers': lowyers,
-    })
+
+
+
+
+def manage_finances(request):
+    investments = Investment.objects.all()
+    revenues = OtherRevenue.objects.all()
+
+    investment_form = InvestmentForm()
+    revenue_form = OtherRevenueForm()
+
+    if request.method == 'POST':
+        if 'add_investment' in request.POST:
+            investment_form = InvestmentForm(request.POST)
+            if investment_form.is_valid():
+                investment_form.save()
+                return redirect('manage_finances')
+
+        elif 'add_revenue' in request.POST:
+            revenue_form = OtherRevenueForm(request.POST)
+            if revenue_form.is_valid():
+                revenue_form.save()
+                return redirect('manage_finances')
+
+    context = {
+        'investments': investments,
+        'revenues': revenues,
+        'investment_form': investment_form,
+        'revenue_form': revenue_form,
+    }
+    return render(request, 'stock/manage_finances.html', context)
+
+
+
+
 
 
 
@@ -1236,4 +1273,7 @@ def custom_404_view(request, exception):
 
 def custom_500_view(request):
     return render(request, '500_error.html', status=500)
+
+
+
 

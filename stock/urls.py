@@ -77,9 +77,9 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
 
 
+  path('manage_lawyer/', manage_lawyers, name='manage_lawyers'),
 
- path('lowyers/', manage_lowyer, name='lowyer_list'),
-    path('lowyers/<int:lowyer_id>/', manage_lowyer, name='manage_lowyer'),  
 
+  path('manage_finances/', manage_finances, name='manage_finances'),
 
 ]
