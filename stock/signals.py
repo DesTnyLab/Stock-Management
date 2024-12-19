@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from .models import *
 from django.core.exceptions import ValidationError
@@ -142,4 +142,81 @@ def update_payment_on_bill_save(sender, instance, created, **kwargs):
             print(cash.amount)
             cash.save()
            
+
+
+
+@receiver(post_save, sender=Investment)
+def update_investment(sender, instance, created, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    if created:
+        finance.investment += instance.amount
+    else:
+        previous_investment = sender.objects.filter(id=instance.id).first().amount
+        finance.investment += instance.amount - previous_investment
+
+    finance.save()
+
+
+@receiver(pre_delete, sender=Investment)
+def remove_investment(sender, instance, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    finance.investment -= instance.amount
+    
+    finance.save()
+
+@receiver(post_save, sender=OtherRevenue)
+def update_revenue(sender, instance, created, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    if created:
+        finance.revenue += instance.amount
+        finance.profit += instance.amount
+    else:
+        previous_revenue = sender.objects.filter(id=instance.id).first().amount
+        finance.revenue += instance.amount - previous_revenue
+
+        previous_revenue = sender.objects.filter(id=instance.id).first().amount
+        finance.profit += instance.amount - previous_revenue
+    finance.save()
+
+@receiver(pre_delete, sender=OtherRevenue)
+def remove_revenue(sender, instance, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(pk=1)
+    finance.revenue -= instance.amount
+    finance.profit -= instance.amount
+    finance.save()
+
+
+
+@receiver(post_save, sender=Purchase)
+def update_investment(sender, instance, created, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+   
+    finance.investment += instance.get_total_cost
+    finance.save()
+  
+@receiver(pre_delete, sender=Purchase)
+def remove_investment(sender, instance, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    finance.investment -= instance.get_total_cost
+    finance.save()
+
+
+@receiver(post_save, sender=Sale)
+def update_revenue(sender, instance, created, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    if created:
+        finance.revenue += instance.get_total_cost
+        finance.profit += instance.profit
+    else:
+        previous_revenue = sender.objects.filter(id=instance.id).first().get_total_cost
+        finance.revenue += instance.get_total_cost - previous_revenue
+    finance.save()
+
+
+@receiver(pre_delete, sender=Sale)
+def remove_revenue(sender, instance, **kwargs):
+    finance, _ = ActualFinance.objects.get_or_create(id=1)
+    finance.revenue -= instance.get_total_cost
+    finance.profit -= instance.profit
+    finance.save()
 

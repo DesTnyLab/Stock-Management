@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Manage Finances</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Add Investment</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ investment_form.as_p }}
+                <button type="submit" name="add_investment" class="btn btn-primary">Add Investment</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Add Revenue</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ revenue_form.as_p }}
+                <button type="submit" name="add_revenue" class="btn btn-success">Add Revenue</button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Investments</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for investment in investments %}
+            <tr>
+                <td>{{ investment.amount }}</td>
+                <td>{{ investment.date }}</td>
+                <td>{{ investment.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Other Revenues</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for revenue in revenues %}
+            <tr>
+                <td>{{ revenue.get_source_display }}</td>
+                <td>{{ revenue.amount }}</td>
+                <td>{{ revenue.date }}</td>
+                <td>{{ revenue.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

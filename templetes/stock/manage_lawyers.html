@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Manage Lawyers</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Create Lawyer</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ lawyer_form.as_p }}
+            <button type="submit" name="create_lawyer" class="btn btn-primary">Create Lawyer</button>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        <h3>Add Transaction</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ transaction_form.as_p }}
+            <button type="submit" name="add_transaction" class="btn btn-success">Add Transaction</button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<h3>Lawyer List</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Transactions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lawyer in lawyers %}
+        <tr>
+            <td>{{ lawyer.name }}</td>
+            <td>{{ lawyer.phone_number }}</td>
+            <td>
+                <ul>
+                    {% for transaction in lawyer.transactions.all %}
+                    <li>{{ transaction.transaction_type }}: {{ transaction.amount }} on {{ transaction.date }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
