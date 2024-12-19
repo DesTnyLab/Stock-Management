@@ -22,3 +22,8 @@ urlpatterns = [
     path('stock/', include('stock.urls')),
     path('select2/', include('django_select2.urls')),
 ]
+
+
+# Custom error handlers
+handler404 = 'stock.views.custom_404_view'
+handler500 = 'stock.views.custom_500_view'

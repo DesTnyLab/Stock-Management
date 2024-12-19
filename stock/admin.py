@@ -23,3 +23,6 @@ admin.site.register(Suppliers)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(OrderItemProduct)
+
+
+admin.site.register(ActualFinance)

@@ -19,8 +19,33 @@ from django.db import transaction
 from django.views.generic import View
 from num2words import num2words
 import json
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Sum
+from datetime import timedelta
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        next_url = request.GET.get("next", "/")  # Get the 'next' parameter or default to '/'
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect(next_url)  # Redirect to the next URL or home page
+        else:
+            print('hello world')
+            messages.error(request, "Invalid username or password")
+            return redirect('login')
+    return render(request, "login.html")
 
 
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+@login_required
 def manage_inventory(request):
     # Handle sale form submission
     try:
@@ -77,17 +102,25 @@ def manage_inventory(request):
             },
         )
 
-
+@login_required
 def view_stock(request):
-    stocks = Stock.objects.all()
+    try: 
+        stocks = Stock.objects.all()
 
-    return render(
-        request,
-        "stock/stock.html",
-        {
-            "stocks": stocks,
-        },
-    )
+        return render(
+            request,
+            "stock/stock.html",
+            {
+                "stocks": stocks,
+            },
+        )
+
+    except Exception as e :
+        messages.error(request, 'Product not avialable in Stock')
+        return redirect('manage_inventory')
+
+
+
 
 
 def product_stock_search_ajax(request):
@@ -100,36 +133,29 @@ def product_stock_search_ajax(request):
         request, "stock/product_stock_search_results.html", {"stocks": stocks}
     )
 
-
+@login_required
 def view_product_details(request, id):
-    # Get the product object
-    product = get_object_or_404(Product, id=id)
+    try: 
+        product = get_object_or_404(Product, id=id)
 
-    # Filter purchases based on the product name
-    purchase_data = Purchase.objects.filter(product=product)
+        # Filter purchases based on the product name
+        purchase_data = Purchase.objects.filter(product=product)
 
-    sale_data = Sale.objects.filter(product=product)
+        sale_data = Sale.objects.filter(product=product)
 
-    return render(
-        request,
-        "stock/product_details.html",
-        context={
-            "product": product,
-            "purchase_data": purchase_data,
-            "sale_data": sale_data,
-        },
-    )
+        return render(
+            request,
+            "stock/product_details.html",
+            context={
+                "product": product,
+                "purchase_data": purchase_data,
+                "sale_data": sale_data,
+            },
+        )
+    except Exception as e :
+         messages.error(request, 'Product details avialable in Stock')
+         return redirect('manage_inventory')
 
-
-
-def overall_profit(request):
-    stock_data = Stock.objects.all()
-    overall_profit = 0
-    for item in stock_data:
-        profit_data = item.total_selling_cost - item.total_buying_cost
-        overall_profit += profit_data
-
-    return render(request, "overall_profit.html", {"total_profit": overall_profit})
 
 
 
@@ -212,72 +238,112 @@ class TodaysTopSalesView(View):
         return JsonResponse({"graph": graph})
 
 
+@login_required
 
 def overall_top_sales(request):
-    # Fetch all stock data
-    stock_data = Stock.objects.select_related("product").all()
-    overall_profit = 0
-    for item in stock_data:
-        profit_data = item.total_selling_cost - item.total_buying_cost
-        overall_profit += profit_data
-
-    # Dictionary to aggregate sales data per product
-    sales_summary = defaultdict(lambda: {"quantity": 0, "revenue": 0})
-
-    for item in stock_data:
-        sales_summary[item.product.name]["quantity"] += item.total_sold
-        sales_summary[item.product.name]["revenue"] += item.total_selling_cost
-
-    # Sort products by total revenue in descending order
-    sorted_sales = sorted(
-        sales_summary.items(), key=lambda x: x[1]["revenue"], reverse=True
-    )
-
-    # Get the top 5 products
-    top_sales = sorted_sales[:5]
-    total_revenue = sum(data["revenue"] for data in sales_summary.values())
-    # Prepare data for the graph
-    product_names = [item[0] for item in top_sales]
-    quantities = [item[1]["quantity"] for item in top_sales]
-
-    # Create a bar graph
-    fig, ax = plt.subplots()
-    ax.bar(product_names, quantities, color="skyblue")
-
-    # Add labels to the bars
-    for i, v in enumerate(quantities):
-        ax.text(
-            i, v + 0.1, str(v), ha="center", va="bottom"
-        )  # Display quantity value above each bar
-
-    # Add title and labels
-    ax.set_title("Top 5 Sales Products ")
-    ax.set_xlabel("Product Name")
-    ax.set_ylabel("Quantity Sold")
-
-    # Save the plot to a BytesIO object
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-
-    # Convert the image to base64 string
-    img_str = base64.b64encode(buf.getvalue()).decode("utf-8")
-
-    # Close the plot to release memory
-    plt.close(fig)
-
-    return render(
-        request,
-        "stock/overall_report.html",
-        {
-            "sales_summary": top_sales,
-            "graph": img_str,
-            "total_profit": overall_profit,
-            "total_revenue": total_revenue,
-        },
-    )
+    try:
 
 
+        actual_finance = ActualFinance.objects.get(id=1)
+
+        # Fetch all sales data
+        sell_data = Sale.objects.all()
+        overall_profit = actual_finance.profit
+        total_revenue = actual_finance.revenue
+        total_investment = actual_finance.investment
+        print(total_investment)
+
+        # Calculate overall revenue and profit
+      
+
+        # Overall Revenue and Profit Graph
+        fig1, ax1 = plt.subplots()
+        categories = ["Total Revenue", "Total Profit"]
+        values = [total_revenue, overall_profit]
+        ax1.bar(categories, values, color=["skyblue", "orange"])
+
+        # Add labels
+        for i, v in enumerate(values):
+            ax1.text(i, v + 0.1, f"{v:.2f}", ha="center", va="bottom")
+
+        ax1.set_title("Overall Revenue and Profit")
+        ax1.set_ylabel("Amount ($)")
+
+        # Save first graph to BytesIO
+        buf1 = io.BytesIO()
+        plt.savefig(buf1, format="png")
+        buf1.seek(0)
+        graph1_str = base64.b64encode(buf1.getvalue()).decode("utf-8")
+        plt.close(fig1)
+
+        # Calculate daily sales for the last 7 days
+        today = timezone.now().date()
+        last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]
+        daily_revenue = []
+        daily_profit = []
+
+        for day in last_7_days:
+            # Define the start and end of the day
+            day_start = datetime.combine(day, datetime.min.time())
+            day_end = datetime.combine(day, datetime.max.time())
+
+            # Filter sales for the specific day
+            daily_sales = Sale.objects.filter(date__range=(day_start, day_end))
+            
+            # Calculate daily revenue and profit
+            day_revenue = sum(item.price * item.quantity for item in daily_sales)
+            day_profit = sum(
+                (item.price - item.product.cost_price) * item.quantity
+                for item in daily_sales
+            )
+            daily_revenue.append(day_revenue)
+            daily_profit.append(day_profit)
+
+        # Create a graph for daily revenue and profit
+        fig2, ax2 = plt.subplots()
+        index = range(len(last_7_days))
+        bar_width = 0.35
+
+        ax2.bar(index, daily_revenue, bar_width, label="Revenue", color="skyblue")
+        ax2.bar(
+            [i + bar_width for i in index],
+            daily_profit,
+            bar_width,
+            label="Profit",
+            color="orange",
+        )
+
+        ax2.set_title("Revenue and Profit for Last 7 Days")
+        ax2.set_xticks([i + bar_width / 2 for i in index])
+        ax2.set_xticklabels([day.strftime("%Y-%m-%d") for day in last_7_days], rotation=45)
+        ax2.set_ylabel("Amount ($)")
+        ax2.legend()
+
+        # Save second graph to BytesIO
+        buf2 = io.BytesIO()
+        plt.savefig(buf2, format="png")
+        buf2.seek(0)
+        graph2_str = base64.b64encode(buf2.getvalue()).decode("utf-8")
+        plt.close(fig2)
+
+        return render(
+            request,
+            "stock/overall_report.html",
+            {
+                "graph1": graph1_str,
+                "graph2": graph2_str,
+                "total_profit": overall_profit,
+                "total_revenue": total_revenue,
+                "total_investment":total_investment,
+                "daily_sales": zip(last_7_days, daily_revenue, daily_profit),
+            },
+        )
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('manage_inventory')
+
+
+@login_required
 def create_bill(request):
     products = Product.objects.all()
     customers = Customer.objects.all()
@@ -286,12 +352,11 @@ def create_bill(request):
 
 @csrf_exempt
 def add_bill_item_ajax(request):
-    
     if request.method == 'POST':
-        print('hello worls')
+     
         with transaction.atomic():  # Start the transaction block
             try:
-                print('hello worls')
+                
                 # Extract data from the request
                 bill_id = request.POST.get('bill_id', None)
                 bill_no = request.POST.get('bill_no')
@@ -301,20 +366,25 @@ def add_bill_item_ajax(request):
                 rate = float(request.POST.get('rate', 0.0))
                 discount = int(request.POST.get('discount', 0))
                 payment_type = request.POST.get('payment_type')
-                print(product_id)
+               
                 # Validate required fields
                 if not (customer_id and product_id):
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
                 # Create or fetch the Bill instance
                 if not bill_id:
-                    bill = Bill.objects.create(
-                        bill_no=bill_no,
-                        customer_id=customer_id,
-                        discount=discount,
-                        date=now().date(),
-                        payment_type=payment_type
-                    )
+                    try:
+                        bill = Bill.objects.create(
+                            bill_no=bill_no,
+                            customer_id=customer_id,
+                            discount=discount,
+                            date=now().date(),
+                            payment_type=payment_type
+                        )
+                    except Exception as e:
+                        
+                        return JsonResponse({'error': 'Bill number Already Exits'}, status=400)
+                   
                 else:
                     bill = get_object_or_404(Bill, id=bill_id)
 
@@ -351,14 +421,14 @@ def add_bill_item_ajax(request):
 
             except Exception as e:
                 # Rollback the transaction in case of an error
-                # transaction.set_rollback(True)
-                return JsonResponse({'error': f"Error processing request: {str(e)}"}, status=400)
+                transaction.set_rollback(True)
+                return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
 
-
+@login_required
 def clear_create_bill(request, billId):
-  
+  try: 
     bill = Bill.objects.get(id=billId)
     bill_item = BillItem.objects.get(bill=bill)
 
@@ -370,6 +440,10 @@ def clear_create_bill(request, billId):
 
 
     return redirect('create_bill')
+  except Exception as e:
+        
+        messages.error(request, e)
+        return redirect('create_bill')
 
 
 
@@ -392,41 +466,46 @@ def convert_to_nepali_currency(amount):
 
 
 def generate_bill_pdf(request, bill_id):
-    # Fetch the bill and related data
-    bill = Bill.objects.get(id=bill_id)
-    bill_items = bill.billitem_set.prefetch_related('products')
-    total = sum(item.total for item in bill_items)
-    discount = bill.discount
-    total_amount = total - ((discount*total)/100)
-    bill.total_amount = total_amount
-    bill.save()
-    total_in_words = convert_to_nepali_currency(total_amount)
-    # Context for the template
-    context = {
-        'bill': bill,
-        'bill_items': bill_items,
-        'total': total,
-        'total_amount': total_amount,
-        'total_in_words':total_in_words,
-        'discount': discount
-    }
+    try:
+        # Fetch the bill and related data
+        bill = Bill.objects.get(id=bill_id)
+        bill_items = bill.billitem_set.prefetch_related('products')
+        total = sum(item.total for item in bill_items)
+        discount = bill.discount
+        total_amount = total - ((discount*total)/100)
+        bill.total_amount = total_amount
+        bill.save()
+        total_in_words = convert_to_nepali_currency(total_amount)
+        # Context for the template
+        context = {
+            'bill': bill,
+            'bill_items': bill_items,
+            'total': total,
+            'total_amount': total_amount,
+            'total_in_words':total_in_words,
+            'discount': discount
+        }
 
-    # Render the template to HTML
-    html_string = render_to_string('stock/bill_pdf_template.html', context)
+        # Render the template to HTML
+        html_string = render_to_string('stock/bill_pdf_template.html', context)
 
-    # Generate PDF from HTML
-    pdf_file = HTML(string=html_string).write_pdf()
+        # Generate PDF from HTML
+        pdf_file = HTML(string=html_string).write_pdf()
 
-    # Create a response
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
+        # Create a response
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
 
-    return response
-
+        return response
+    
+    except Exception as e:
+        
+        messages.error(request, e)
+        return redirect('create_bill')
 
   
 
-
+@login_required
 def generate_ledger(request, customer_id):
     try:
         customer = Customer.objects.get(id=customer_id)
@@ -520,34 +599,38 @@ def generate_ledger(request, customer_id):
         })
 
 
-
+@login_required
 def debit(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
+    try: 
+        customer = get_object_or_404(Customer, id=customer_id)
 
-    if request.method == "POST":
-        debit_form = DebitForm(request.POST)
-        if debit_form.is_valid():
-            debit_instance = debit_form.save(commit=False)
-            debit_instance.customer = customer
-            debit_instance.save()
-            
-            # Update customer total_debit
-            customer.total_debit += debit_instance.amount
-            customer.save()
+        if request.method == "POST":
+            debit_form = DebitForm(request.POST)
+            if debit_form.is_valid():
+                debit_instance = debit_form.save(commit=False)
+                debit_instance.customer = customer
+                debit_instance.save()
+                
+                # Update customer total_debit
+                customer.total_debit += debit_instance.amount
+                customer.save()
 
-            messages.success(request, "Debit added successfully.")
-            return redirect("generate_ledger", customer_id=customer.id)
-        else:
-            # Add form errors to messages
-            for field, errors in debit_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-            return redirect("generate_ledger", customer_id=customer.id)
+                messages.success(request, "Debit added successfully.")
+                return redirect("generate_ledger", customer_id=customer.id)
+            else:
+                # Add form errors to messages
+                for field, errors in debit_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
+                return redirect("generate_ledger", customer_id=customer.id)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('generate_ledger', customer_id=customer.id)
    
 
 
 
-
+@login_required
 def customer_view_and_create(request):
     if request.method == 'POST':
         # Handle form submission
@@ -588,56 +671,59 @@ def view_customer_search_ajax(request):
 
 
 
-
+@login_required
 def manage_product_and_purchase(request):
 
-
-    # handel product form submisstion
-    if request.method == "POST" and "product_form" in request.POST:
-        product_form = ProductForm(request.POST)
-        if product_form.is_valid():
-            product_form.save()
-            messages.success(request, "Product is added successfully.")
-            return redirect("manage_product_and_purchase")
+    try: 
+        # handel product form submisstion
+        if request.method == "POST" and "product_form" in request.POST:
+            product_form = ProductForm(request.POST)
+            if product_form.is_valid():
+                product_form.save()
+                messages.success(request, "Product is added successfully.")
+                return redirect("manage_product_and_purchase")
+            else:
+                # Add form errors to messages
+                for field, errors in product_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in product_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        product_form = ProductForm()
+            product_form = ProductForm()
 
 
-    # Handle purchase form submission
-    if request.method == "POST" and "purchase_form" in request.POST:
-        purchase_form = PurchaseForm(request.POST)
+        # Handle purchase form submission
+        if request.method == "POST" and "purchase_form" in request.POST:
+            purchase_form = PurchaseForm(request.POST)
 
-        if purchase_form.is_valid():
-            purchase_form.save()
-            messages.success(request, "Purchase added successfully.")
-            return redirect("manage_product_and_purchase")
+            if purchase_form.is_valid():
+                purchase_form.save()
+                messages.success(request, "Purchase added successfully.")
+                return redirect("manage_product_and_purchase")
+            else:
+                # Add form errors to messages
+                for field, errors in purchase_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in purchase_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        purchase_form = PurchaseForm()
+            purchase_form = PurchaseForm()
 
-    products =  Product.objects.all()
+        products =  Product.objects.all()
 
-    return render(
-        request,
-        "stock/product.html",
-        {
-            "purchase_form": purchase_form,
-            "product_form": product_form,
-            "products": products,
-        },
-    )
+        return render(
+            request,
+            "stock/product.html",
+            {
+                "purchase_form": purchase_form,
+                "product_form": product_form,
+                "products": products,
+            },
+        )
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
 
 
-
+@login_required
 def view_product_search_ajax(request):
     """AJAX view to search product sock details."""
     query = request.GET.get("query", "")
@@ -651,7 +737,7 @@ def view_product_search_ajax(request):
 
 
 
-
+@login_required
 def delete_bill_item(request, bill_id, item_id):
     if request.method == "POST":
         try:
@@ -678,24 +764,28 @@ def delete_bill_item(request, bill_id, item_id):
     return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
 
 
-
+@login_required
 def bill_details(request, bill_no):
-    bill = Bill.objects.get(bill_no=bill_no)
-    bill_item = BillItem.objects.get(bill = bill)
-    bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
-    context = {
-        'responses' : bill_item_product,
-        'customer': bill.customer,
-        'bill_no': bill.bill_no,
-        'total': bill_item.total,
-        'discount': bill.discount,
-        'total_amount': bill.total_amount
+    try: 
+        bill = Bill.objects.get(bill_no=bill_no)
+        bill_item = BillItem.objects.get(bill = bill)
+        bill_item_product = BillItemProduct.objects.filter(bill_item=bill_item)
+        context = {
+            'responses' : bill_item_product,
+            'customer': bill.customer,
+            'bill_no': bill.bill_no,
+            'total': bill_item.total,
+            'discount': bill.discount,
+            'total_amount': bill.total_amount
 
-              }
-    return render(request, 'stock/bill_details.html', context=context)
+                }
+        return render(request, 'stock/bill_details.html', context=context)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('generate_ledger')
 
 
-
+@login_required
 def delete_product(request, id):
     try:
         # Use get_object_or_404 for cleaner error handling
@@ -729,36 +819,48 @@ def form_search_for_customer(request):
 
 
 
+def form_search_for_suppliers(request):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            term = request.GET.get('term')
+            suppliers = Suppliers.objects.all().filter(name__icontains=term)
+            return JsonResponse(list(suppliers.values()), safe=False)
 
 
 
 
 
+
+@login_required
 def suppliers_view_and_create(request):
-    if request.method == 'POST':
-        # Handle form submission
-        suppliers_form = SuppliersForm(request.POST)
+    try: 
+        if request.method == 'POST':
+            # Handle form submission
+            suppliers_form = SuppliersForm(request.POST)
 
-        if suppliers_form.is_valid():
-            suppliers_form.save()
-            messages.success(request, "Suppliers added successfully.")
-            return redirect('suppliers_details')
+            if suppliers_form.is_valid():
+                suppliers_form.save()
+                messages.success(request, "Suppliers added successfully.")
+                return redirect('suppliers_details')
+            else:
+                # Add form errors to messages
+                for field, errors in suppliers_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         else:
-            # Add form errors to messages
-            for field, errors in suppliers_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-    else:
-        # Handle GET request
-        suppliers_form = SuppliersForm()
+            # Handle GET request
+            suppliers_form = SuppliersForm()
 
-    # Fetch all customers for listing
-    suppliers = Suppliers.objects.all()
+        # Fetch all customers for listing
+        suppliers = Suppliers.objects.all()
 
-    return render(request, 'stock/view_suppliers.html', {
-        'suppliers': suppliers,
-        'suppliers_form': suppliers_form,
-    })
+        return render(request, 'stock/view_suppliers.html', {
+            'suppliers': suppliers,
+            'suppliers_form': suppliers_form,
+        })
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
 
 def view_suppliers_search_ajax(request):
     """AJAX view to search product stock details."""
@@ -771,7 +873,7 @@ def view_suppliers_search_ajax(request):
     )
 
 
-
+@login_required
 def create_order(request):
     if request.method == 'POST':
         if 'order_submit' in request.POST:  # Handle OrderForm submission
@@ -803,87 +905,83 @@ def create_order(request):
 @csrf_exempt
 def add_order_product(request, order_id):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
+        with transaction.atomic():
+            try:
+                data = json.loads(request.body)
 
-            # Parse input data
-            product_name = data.get('product_name')
-            hs_code = data.get('hs_code', '')
-            quantity = int(data.get('quantity', 1))
-            rate = float(data.get('rate', 0.00))
+                # Parse input data
+                product_name = data.get('product_name')
+                hs_code = data.get('hs_code', '')
+                quantity = int(data.get('quantity', 1))
+                rate = float(data.get('rate', 0.00))
 
-            # Create or fetch the product
-            product, created = Product.objects.get_or_create(
-                name=product_name,
-                defaults={
-                    'HS_code': hs_code,
-                    'cost_price': rate,
-                    'selling_price': rate,
-                }
-            )
+                # Create or fetch the product
+                product, created = Product.objects.get_or_create(
+                    name=product_name,
+                    defaults={
+                        'HS_code': hs_code,
+                        'cost_price': rate,
+                        'selling_price': rate,
+                    }
+                )
 
-            # if not created and product.HS_code != hs_code:
-            #     return JsonResponse({
-            #         'success': False,
-            #         'error': 'Product with this name already exists with a different HS Code.'
-            #     })
+            
+                order = get_object_or_404(Order, id=order_id)
 
-            # Get the order
-            order = get_object_or_404(Order, id=order_id)
+                # Get or create the OrderItem
+                order_item, _ = OrderItem.objects.get_or_create(order=order)
 
-            # Get or create the OrderItem
-            order_item, _ = OrderItem.objects.get_or_create(order=order)
+                # Avoid duplicating products in the same order item
+                order_product, order_product_created = OrderItemProduct.objects.get_or_create(
+                    order_item=order_item,
+                    product=product,
+                    defaults={
+                        'quantity': quantity,
+                        'rate': rate,
+                    }
+                )
 
-            # Avoid duplicating products in the same order item
-            order_product, order_product_created = OrderItemProduct.objects.get_or_create(
-                order_item=order_item,
-                product=product,
-                defaults={
-                    'quantity': quantity,
-                    'rate': rate,
-                }
-            )
-
-            if not order_product_created:
-                # If the product already exists, update its quantity and rate
-                order_product.quantity += quantity
-                order_product.rate = rate
-                order_product.save()
+                if not order_product_created:
+                    # If the product already exists, update its quantity and rate
+                    order_product.quantity += quantity
+                    order_product.rate = rate
+                    order_product.save()
 
 
 
-            subtotal = order_product.quantity * order_product.rate
-            order_item.total += subtotal
-            order_item.save()
+                subtotal = order_product.quantity * order_product.rate
+                order_item.total += subtotal
+                order_item.save()
 
-            order.total_amount += subtotal
-            order.save()
+                order.total_amount += subtotal
+                order.save()
 
-            # Add to Purchase if it doesn't already exist
-            Purchase.objects.create(
-                product=product,
-               
-                    quantity= quantity,
-                    price=rate,
-                date=now(),
+                # Add to Purchase if it doesn't already exist
+                Purchase.objects.create(
+                    product=product,
                 
-            )
-          
+                        quantity= quantity,
+                        price=rate,
+                    date=now(),
+                    
+                )
+            
 
-            return JsonResponse({
-                'success': True,
-                'product': {
-                    'name': product.name,
-                    'hs_code': product.HS_code,
-                    'quantity': order_product.quantity,
-                    'rate': order_product.rate,
-                    'subtotal': order_product.get_subtotal(),
-                    'product_created': created,
-                    'purchase_created': True,
-                }
-            })
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+                return JsonResponse({
+                    'success': True,
+                    'product': {
+                        'name': product.name,
+                        'hs_code': product.HS_code,
+                        'quantity': order_product.quantity,
+                        'rate': order_product.rate,
+                        'subtotal': order_product.get_subtotal(),
+                        'product_created': created,
+                        'purchase_created': True,
+                    }
+                })
+            except Exception as e:
+                transaction.set_rollback(True)
+                return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
@@ -891,7 +989,7 @@ def add_order_product(request, order_id):
 
 
 
-
+@login_required
 def generate_ledger_of_suppliers(request, suppliers_id):
     try:
         suppliers = Suppliers.objects.get(id=suppliers_id)
@@ -986,33 +1084,37 @@ def generate_ledger_of_suppliers(request, suppliers_id):
 
 
 
-
+@login_required
 def suppliers_debit(request, suppliers_id):
+  
     suppliers = get_object_or_404(Suppliers, id=suppliers_id)
+    try:
+        if request.method == "POST":
+            debit_form = DebitFormForSuppliers(request.POST)
+            if debit_form.is_valid():
+                debit_instance = debit_form.save(commit=False)
+                debit_instance.suppliers = suppliers
+                debit_instance.save()
+                
+                # Update customer total_debit
+                suppliers.total_debit += debit_instance.amount
+                suppliers.save()
 
-    if request.method == "POST":
-        debit_form = DebitFormForSuppliers(request.POST)
-        if debit_form.is_valid():
-            debit_instance = debit_form.save(commit=False)
-            debit_instance.suppliers = suppliers
-            debit_instance.save()
-            
-            # Update customer total_debit
-            suppliers.total_debit += debit_instance.amount
-            suppliers.save()
-
-            messages.success(request, "Debit added successfully.")
-            return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
-        else:
-            # Add form errors to messages
-            for field, errors in debit_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
-            return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
-   
+                messages.success(request, "Debit added successfully.")
+                return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+            else:
+                # Add form errors to messages
+                for field, errors in debit_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
+                return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+    except Exception as e:
+        messages.error(request, e )
+        return redirect("generate_ledger_of_suppliers", suppliers_id=suppliers.id)
+    
 
 
-
+@login_required
 def clear_create_order(request, orderId):
   
     order = Order.objects.get(id=orderId)
@@ -1027,7 +1129,7 @@ def clear_create_order(request, orderId):
 
 
 
-
+@login_required
 def delete_order_item(request, order_id, item_id):
     if request.method == "POST":
         try:
@@ -1056,16 +1158,122 @@ def delete_order_item(request, order_id, item_id):
 
 
 
-
+@login_required
 def order_details(request, order_no):
-    order = Order.objects.get(order_no=order_no)
-    order_item = OrderItem.objects.get(order = order)
-    order_item_product = OrderItemProduct.objects.filter(order_item=order_item)
-    context = {
-        'responses' : order_item_product,
-        'suppliers': order.suppliers,
-        'order_no': order.order_no,
-        'total': order.total_amount,
+    try:
+        order = Order.objects.get(order_no=order_no)
+        order_item = OrderItem.objects.get(order = order)
+        order_item_product = OrderItemProduct.objects.filter(order_item=order_item)
+        context = {
+            'responses' : order_item_product,
+            'suppliers': order.suppliers,
+            'order_no': order.order_no,
+            'total': order.total_amount,
 
-              }
-    return render(request, 'stock/order_details.html', context=context)
+                }
+        return render(request, 'stock/order_details.html', context=context)
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
+     
+
+
+
+
+
+
+
+@login_required
+def edit_product(request, id):
+    try:
+        product = get_object_or_404(Product, id=id)
+
+        if request.method == 'POST':
+        
+            form = ProductForm(request.POST, instance=product)
+            if form.is_valid():
+                form.save()
+            
+                return redirect('product_history', id=product.id)
+        else:
+        
+            form = ProductForm(instance=product)
+
+        return render(request, 'stock/edit_product.html', context={'form': form, 'product': product})
+    except Exception as e:
+        messages.error(request, e)
+        return redirect('manage_inventory')
+    
+
+
+def manage_lawyers(request):
+    lawyers = Lawyer.objects.all()
+    lawyer_form = LawyerForm()
+    transaction_form = TransactionForm()
+
+    if request.method == 'POST':
+        if 'create_lawyer' in request.POST:
+            lawyer_form = LawyerForm(request.POST)
+            if lawyer_form.is_valid():
+                lawyer_form.save()
+                return redirect('manage_lawyers')
+        elif 'add_transaction' in request.POST:
+            transaction_form = TransactionForm(request.POST)
+            if transaction_form.is_valid():
+                transaction_form.save()
+                return redirect('manage_lawyers')
+
+    context = {
+        'lawyers': lawyers,
+        'lawyer_form': lawyer_form,
+        'transaction_form': transaction_form,
+    }
+    return render(request, 'stock/manage_lawyers.html', context)
+
+
+
+
+
+def manage_finances(request):
+    investments = Investment.objects.all()
+    revenues = OtherRevenue.objects.all()
+
+    investment_form = InvestmentForm()
+    revenue_form = OtherRevenueForm()
+
+    if request.method == 'POST':
+        if 'add_investment' in request.POST:
+            investment_form = InvestmentForm(request.POST)
+            if investment_form.is_valid():
+                investment_form.save()
+                return redirect('manage_finances')
+
+        elif 'add_revenue' in request.POST:
+            revenue_form = OtherRevenueForm(request.POST)
+            if revenue_form.is_valid():
+                revenue_form.save()
+                return redirect('manage_finances')
+
+    context = {
+        'investments': investments,
+        'revenues': revenues,
+        'investment_form': investment_form,
+        'revenue_form': revenue_form,
+    }
+    return render(request, 'stock/manage_finances.html', context)
+
+
+
+
+
+
+
+def custom_404_view(request, exception):
+    return render(request, '404_error.html', status=404)
+
+def custom_500_view(request):
+    return render(request, '500_error.html', status=500)
+
+
+
+

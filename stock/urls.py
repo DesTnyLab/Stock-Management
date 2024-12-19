@@ -41,6 +41,9 @@ urlpatterns = [
 
     path('select-search-form/', form_search_for_product, name='form_search_for_product'),
     path('select-search-form2/', form_search_for_customer, name='form_search_for_customer'),
+    path('select-search-form3/', form_search_for_suppliers, name='form_search_for_suppliers'),
+
+
 
 
 
@@ -66,5 +69,17 @@ urlpatterns = [
     path('order/delete-item/<int:order_id>/<int:item_id>/', delete_order_item, name='delete_order_item'),
 
   path('order_details/<int:order_no>/', order_details, name ='order_details'),
+
+
+  path('product/<int:id>/edit/', edit_product, name='edit_product'),
+
+ path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+
+
+  path('manage_lawyer/', manage_lawyers, name='manage_lawyers'),
+
+
+  path('manage_finances/', manage_finances, name='manage_finances'),
 
 ]

@@ -138,6 +138,16 @@ class BillForm(forms.ModelForm):
         model = Bill
         fields = ["bill_no", "customer", "date", "discount", 'payment_type']
 
+    def clean_discount(self):
+        try:   
+            discount = self.cleaned_data["discount"]
+            if int(discount) > 100:
+                raise forms.ValidationError('Discont cannot be more then 100%')
+            if int(discount) < 0 :
+                raise forms.ValidationError('Discount cannot be in negative')
+        except Exception as e:
+            raise forms.ValidationError(e)
+        return discount
 
 class BillItemProductForm(forms.ModelForm):
     class Meta:
@@ -230,6 +240,11 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['order_no', 'suppliers', 'date', 'payment_type']
+        widgets = {
+            "suppliers": forms.Select(attrs={"class": "form-control", 
+                                             "id":"suppliers", 
+                                             "data-placeholder": "Search Suppliers..."}),
+        }
 
 class OrderItemProductForm(forms.ModelForm):
     class Meta:
@@ -251,3 +266,82 @@ class DebitFormForSuppliers(forms.ModelForm):
             raise forms.ValidationError("Amount Cannot be in Negative")
 
         return amount
+
+
+
+
+
+
+class LawyerForm(forms.ModelForm):
+    class Meta:
+        model = Lawyer
+        fields = ['name', 'phone_number']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Lawyer Name',
+            'phone_number': 'Phone Number',
+        }
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['lawyer', 'transaction_type', 'amount', 'description']
+        widgets = {
+            'lawyer': forms.Select(attrs={'class': 'form-control'}),
+            'transaction_type': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'transaction_type': 'Transaction Type',
+            'amount': 'Amount',
+            'description': 'Description (Optional)',
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+class InvestmentForm(forms.ModelForm):
+    class Meta:
+        model = Investment
+        fields = ['amount', 'date', 'description']
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'amount': 'Investment Amount',
+            'date': 'Investment Date',
+            'description': 'Description (Optional)',
+        }
+
+
+class OtherRevenueForm(forms.ModelForm):
+    class Meta:
+        model = OtherRevenue
+        fields = ['source', 'amount', 'date', 'description']
+        widgets = {
+            'source': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        labels = {
+            'source': 'Revenue Source',
+            'amount': 'Revenue Amount',
+            'date': 'Revenue Date',
+            'description': 'Description (Optional)',
+        }

@@ -20,13 +20,17 @@ h3{
         <div class="summary">
             <h3>Overall Summary</h3>
             <ul style="list-style: none;">
-               
                 <li>
-                   <strong> Total Profit:</strong> NRs {{ total_profit }}
+                    <strong> Total Investment:</strong>NRs {{total_investment}}
                 </li>
                 <li>
                     <strong> Total Revenue:</strong>NRs {{total_revenue}}
                 </li>
+                <li>
+                   <strong> Total Profit:</strong> NRs {{ total_profit }}
+                </li>
+               
+               
           
             </ul>
         </div>
@@ -35,28 +39,33 @@ h3{
        
       
         <!-- Display the bar chart -->
-        <img  src="data:image/png;base64,{{ graph }}" alt="Top Sales Graph" />
+        <img  src="data:image/png;base64,{{ graph1 }}" alt="Top Sales Graph" />
 
         </div>
+       
+    </div>
+    <div style="padding-left: 20%;">
+        <h2>Revenue and Profit in the Last 7 Days</h2>
+        <img src="data:image/png;base64,{{ graph2 }}" alt="Daily Revenue and Profit Graph">
     </div>
    
 <div>
-    
-    <h3>Sales Summary</h3>
-    <table border="1">
+ 
+    <h2>Daily Sales Data</h2>
+    <table>
         <thead>
             <tr>
-                <th>Product Name</th>
-                <th>Quantity Sold</th>
-                <th>Revenue</th>
+                <th>Date</th>
+                <th>Revenue (NRs)</th>
+                <th>Profit (NRs)</th>
             </tr>
         </thead>
         <tbody>
-            {% for product, data in sales_summary %}
+            {% for day, revenue, profit in daily_sales %}
             <tr>
-                <td>{{ product }}</td>
-                <td>{{ data.quantity }}</td>
-                <td>{{ data.revenue }}</td>
+                <td>{{ day }}</td>
+                <td>{{ revenue|floatformat:2 }}</td>
+                <td>{{ profit|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -101,3 +101,4 @@ django-phonenumber-field==8.0.0
 num2words==0.5.13
 
 django-select2==8.2.3 
+gunicorn==23.0.0 

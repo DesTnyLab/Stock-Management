@@ -325,6 +325,10 @@
             return;
         }
 
+        if (discount<0 || discount >100) {
+            showPopup('warning', 'Discount must be between 0 to 100.');
+            return;
+        }
 
         $.ajax({
             url: '{% url "add_bill_item_ajax" %}',
@@ -363,9 +367,14 @@
                 showPopup('success', 'Product added successfully!');
 
             },
-            error: function () {
-                showPopup('error', 'Failed to add product.');
-            }
+            error: function (xhr, status, error) {
+            // Extract the error message from the response
+            const response = JSON.parse(xhr.responseText);
+            const errorMessage = response.error || ' Failed to add product.';
+
+            // Show the error in the popup
+            showPopup('error', errorMessage);
+        }
         });
     });
 
@@ -478,16 +487,5 @@
 
     });
 </script>
-<script>
-    // const billBox = document.querySelector(".bill-box")
-    // const release = document.querySelector("#clear")
-    // document.querySelector("#addProduct").onclick = (e) => {
-    //     console.log('clicked');
-    //     billBox.classList.add("section_disabled");
 
-    // }
-    // release.addEventListener("click", () => {
-    //     billBox.classList.remove("section_disabled")
-    // })
-</script>
 {% endblock %}
