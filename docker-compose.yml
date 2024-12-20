@@ -4,7 +4,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/django/Dockerfile
     command: /start
     volumes:
       - .:/app
