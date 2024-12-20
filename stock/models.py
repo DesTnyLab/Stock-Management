@@ -102,7 +102,7 @@ class Customer(models.Model):
     
 class Bill(models.Model):
     PAYMENT_CHOICES = [
-        ('CASH', 'Cash'),
+        ('CASH', 'Cash / QR'),
         ('CREDIT', 'Credit'),
     ]
 

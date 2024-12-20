@@ -24,6 +24,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Sum
 from datetime import timedelta
+import csv
+from django.apps import apps
+
+
 
 def login_view(request):
     if request.method == "POST":
@@ -1206,6 +1210,7 @@ def edit_product(request, id):
     
 
 
+@login_required
 def manage_lawyers(request):
     lawyers = Lawyer.objects.all()
     lawyer_form = LawyerForm()
@@ -1234,6 +1239,7 @@ def manage_lawyers(request):
 
 
 
+@login_required
 def manage_finances(request):
     investments = Investment.objects.all()
     revenues = OtherRevenue.objects.all()
@@ -1261,6 +1267,52 @@ def manage_finances(request):
         'revenue_form': revenue_form,
     }
     return render(request, 'stock/manage_finances.html', context)
+
+
+
+
+
+
+
+@login_required
+def export_to_csv(request):
+    # Specify your app name to filter models
+    app_name = "stock"  # Replace with the name of your app
+
+    # Create the HttpResponse object with appropriate headers
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="models_data.csv"'
+
+    # Create a CSV writer
+    writer = csv.writer(response)
+
+    # Fetch models dynamically from the specified app
+    models = [model for model in apps.get_models() if model._meta.app_label == app_name]
+
+    for model in models:
+        writer.writerow([f"Model: {model._meta.verbose_name}"])  # Write model name as a header
+        fields = [field.name for field in model._meta.fields]
+        writer.writerow(fields)  # Write field names
+
+        # Write each object's data
+        for obj in model.objects.all():
+            row = [getattr(obj, field) for field in fields]
+            writer.writerow(row)
+
+        writer.writerow([])  # Blank line between models
+
+    return response
+
+
+
+
+
+
+
+
+
+
+
 
 
 
