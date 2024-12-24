@@ -235,16 +235,31 @@ class SuppliersForm(forms.ModelForm):
 
 
 
-
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['order_no', 'suppliers', 'date', 'payment_type']
+        fields = [ 'suppliers', 'date', 'payment_type']
         widgets = {
-            "suppliers": forms.Select(attrs={"class": "form-control", 
-                                             "id":"suppliers", 
-                                             "data-placeholder": "Search Suppliers..."}),
+            "suppliers": forms.Select(attrs={
+                "class": "form-control",
+                "id": "suppliers",
+                "data-placeholder": "Search Suppliers..."
+            }),
         }
+
+    def save(self, commit=True):
+        instance = super(OrderForm, self).save(commit=False)
+        
+        # Check if `order_no` is not set
+        if not instance.order_no:
+            last_order = Order.objects.order_by('id').last()
+            instance.order_no = (last_order.order_no + 1) if last_order else 1
+
+        # Save the instance if commit is True
+        if commit:
+            instance.save()
+        return instance
+    
 
 class OrderItemProductForm(forms.ModelForm):
     class Meta:

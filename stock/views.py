@@ -357,38 +357,38 @@ def create_bill(request):
 @csrf_exempt
 def add_bill_item_ajax(request):
     if request.method == 'POST':
-     
-        with transaction.atomic():  # Start the transaction block
+        with transaction.atomic():
             try:
-                
                 # Extract data from the request
-                bill_id = request.POST.get('bill_id', None)
-                bill_no = request.POST.get('bill_no')
+                bill_id = request.POST.get('bill_id')
                 customer_id = request.POST.get('customer_id')
                 product_id = request.POST.get('product_id')
-                quantity = int(request.POST.get('quantity', 1))
-                rate = float(request.POST.get('rate', 0.0))
-                discount = int(request.POST.get('discount', 0))
+                try:
+                    quantity = int(request.POST.get('quantity', 1))
+                    rate = float(request.POST.get('rate', 0.0))
+                    discount = int(request.POST.get('discount', 0))
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid quantity, rate, or discount provided.'}, status=400)
+
                 payment_type = request.POST.get('payment_type')
-               
+
                 # Validate required fields
                 if not (customer_id and product_id):
                     return JsonResponse({'error': 'Customer and product must be provided.'}, status=400)
 
-                # Create or fetch the Bill instance
+                # Get the last Bill and determine the bill_no
+                last_bill = Bill.objects.order_by('-id').first()
+                bill_no = (last_bill.bill_no + 1) if last_bill else 1
+
+                # Create or fetch the Bill
                 if not bill_id:
-                    try:
-                        bill = Bill.objects.create(
-                            bill_no=bill_no,
-                            customer_id=customer_id,
-                            discount=discount,
-                            date=now().date(),
-                            payment_type=payment_type
-                        )
-                    except Exception as e:
-                        
-                        return JsonResponse({'error': 'Bill number Already Exits'}, status=400)
-                   
+                    bill = Bill.objects.create(
+                        bill_no=bill_no,
+                        customer_id=customer_id,
+                        discount=discount,
+                        date=now().date(),
+                        payment_type=payment_type
+                    )
                 else:
                     bill = get_object_or_404(Bill, id=bill_id)
 
@@ -396,9 +396,9 @@ def add_bill_item_ajax(request):
                 product = get_object_or_404(Product, id=product_id)
 
                 # Create or fetch the BillItem for the given Bill
-                bill_item, _ = BillItem.objects.get_or_create(bill=bill)
+                bill_item, created = BillItem.objects.get_or_create(bill=bill)
 
-                # Create a new BillItemProduct associated with the BillItem
+                # Create a new BillItemProduct
                 bill_item_product = BillItemProduct.objects.create(
                     bill_item=bill_item,
                     product=product,
@@ -406,27 +406,24 @@ def add_bill_item_ajax(request):
                     rate=rate
                 )
 
-                # Calculate the new subtotal for the BillItem
-                subtotal = bill_item_product.quantity * bill_item_product.rate
+                # Calculate subtotal and update total
+                subtotal = quantity * rate
                 bill_item.total += subtotal
                 bill_item.save()
 
-                # Prepare the response with the added product and updated bill data
+                # Prepare the response
                 return JsonResponse({
                     'bill_id': bill.id,
                     'product_name': product.name,
                     'product_id': product.id,
-                    'quantity': bill_item_product.quantity,
-                    'rate': bill_item_product.rate,
+                    'quantity': quantity,
+                    'rate': rate,
                     'item_id': bill_item_product.id,
                     'subtotal': subtotal,
                     'total': bill_item.total,
                 })
-
             except Exception as e:
-                # Rollback the transaction in case of an error
-                transaction.set_rollback(True)
-                return JsonResponse({'error': str(e)}, status=400)
+                return JsonResponse({'error': 'An error occurred: {}'.format(str(e))}, status=400)
 
     return JsonResponse({'error': 'Invalid method'}, status=400)
 

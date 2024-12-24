@@ -92,13 +92,18 @@ class Customer(models.Model):
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=10, unique=True)
     company = models.CharField(max_length=50, default=' ')
-    total_debit = models.FloatField(default=0.00)
     pan_no = models.CharField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.name} '
 
-
+    @property
+    def remaning_credit_to_pay(self):
+        credits = Credit.objects.filter(customer=self)
+        total_credit = sum([credit.amount for credit in credits])
+        debits = Debit.objects.filter(customer=self)
+        total_debit = sum([debit.amount for debit in debits])
+        return total_credit - total_debit
     
 class Bill(models.Model):
     PAYMENT_CHOICES = [
