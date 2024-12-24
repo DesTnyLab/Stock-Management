@@ -222,8 +222,8 @@
                 <option value="{{ customer.id }}">{{ customer.name }}</option>
                 {% endfor %}
             </select>
-            <label for="bill_no">Bill No. :</label>
-            <input type="number" id="bill_no" name="bill_no" placeholder="Enter Bill Number" required>
+          
+            <input type="hidden" id="bill_no" name="bill_no" >
             <label for="discount">Discount :</label>
             <input type="number" id="discount" name="discount" min="0" max="100" placeholder="Discount Rate in %"
                 required>
@@ -232,7 +232,7 @@
             <label for="payment_type">Payment Method:</label>
             <select id="payment_type" name="payment_type" required>
                 <option value="" disabled selected>Select Payment Type</option>
-                <option value="CASH">Cash</option>
+                <option value="CASH">Cash / QR</option>
                 <option value="CREDIT">Credit</option>
             </select>
     </div>

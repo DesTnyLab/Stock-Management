@@ -35,10 +35,10 @@ RUN pip install -r requirements.txt
 COPY . $APP_HOME
 
 # Copy and configure entrypoint scripts
-COPY ./entrypoint /entrypoint
+COPY ./docker/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
 
-COPY ./start /start
+COPY ./docker/django/start /start
 RUN sed -i 's/\r$//g' /start && chmod +x /start
 
 # Expose the application port
