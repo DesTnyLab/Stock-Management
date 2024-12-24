@@ -257,6 +257,7 @@
                 <th>Suppliers Name</th>
                 <th>Address</th>
                 <th>Phone Number</th>
+                <th>Remaing Credit</th>
                 <th>Details</th>
             </tr>
         </thead>
@@ -266,6 +267,7 @@
         <td>{{ supplier.name }}</td>
         <td>{{ supplier.address }}</td>
         <td>{{ supplier.phone_number }}</td>
+        <td>{{ supplier.remaning_credit_to_pay }}</td>
       
                 <td><a id="btn" style=" text-decoration: none;  " href="{% url 'generate_ledger_of_suppliers' supplier.id %}">View details</a>
                 </td>

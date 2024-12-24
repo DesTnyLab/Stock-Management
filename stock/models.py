@@ -220,7 +220,13 @@ class Suppliers(models.Model):
     def __str__(self):
         return self.name
 
-
+    @property
+    def remaning_credit_to_pay(self):
+        credits = Suppliers_credit.objects.filter(suppliers=self)
+        total_credit = sum([credit.amount for credit in credits])
+        debits = Suppliers_debit.objects.filter(suppliers=self)
+        total_debit = sum([debit.amount for debit in debits])
+        return total_credit - total_debit
    
 class Order(models.Model):
     PAYMENT_CHOICES = [

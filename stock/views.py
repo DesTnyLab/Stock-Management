@@ -650,8 +650,10 @@ def customer_view_and_create(request):
         # Handle GET request
         customer_form = CustomerForm()
 
-    # Fetch all customers for listing
-    customers = Customer.objects.all()
+    customers = sorted(Customer.objects.all(), 
+                       key=lambda c: c.remaning_credit_to_pay, 
+                       reverse=True)
+
 
     return render(request, 'stock/view_customers.html', {
         'customers': customers,
@@ -853,7 +855,9 @@ def suppliers_view_and_create(request):
             suppliers_form = SuppliersForm()
 
         # Fetch all customers for listing
-        suppliers = Suppliers.objects.all()
+        suppliers = sorted(Suppliers.objects.all(), 
+                           key=lambda c: c.remaning_credit_to_pay, 
+                           reverse=True)
 
         return render(request, 'stock/view_suppliers.html', {
             'suppliers': suppliers,
