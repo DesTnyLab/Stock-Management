@@ -136,7 +136,7 @@ class SaleForm(forms.ModelForm):
 class BillForm(forms.ModelForm):
     class Meta:
         model = Bill
-        fields = ["bill_no", "customer", "date", "discount", 'payment_type']
+        fields = ["customer", "date", "discount", 'payment_type']
 
     def clean_discount(self):
         try:   
@@ -239,7 +239,7 @@ class SuppliersForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['order_no', 'suppliers', 'date', 'payment_type']
+        fields = [ 'suppliers', 'date', 'payment_type']
         widgets = {
             "suppliers": forms.Select(attrs={"class": "form-control", 
                                              "id":"suppliers", 

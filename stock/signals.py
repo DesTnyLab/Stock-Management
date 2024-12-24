@@ -113,7 +113,7 @@ def create_sale_on_bill_item_product(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Bill)
 def update_payment_on_bill_save(sender, instance, created, **kwargs):
         customer = get_object_or_404(Customer, id=instance.customer.id)
-
+       
         if instance.payment_type == 'CREDIT':
             credit, created = Credit.objects.get_or_create(customer=customer, bill=instance)
             credit.amount = instance.total_amount

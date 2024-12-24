@@ -363,7 +363,6 @@ def add_bill_item_ajax(request):
                 
                 # Extract data from the request
                 bill_id = request.POST.get('bill_id', None)
-                bill_no = request.POST.get('bill_no')
                 customer_id = request.POST.get('customer_id')
                 product_id = request.POST.get('product_id')
                 quantity = int(request.POST.get('quantity', 1))
@@ -379,7 +378,6 @@ def add_bill_item_ajax(request):
                 if not bill_id:
                     try:
                         bill = Bill.objects.create(
-                            bill_no=bill_no,
                             customer_id=customer_id,
                             discount=discount,
                             date=now().date(),
@@ -653,8 +651,12 @@ def customer_view_and_create(request):
         # Handle GET request
         customer_form = CustomerForm()
 
-    # Fetch all customers for listing
-    customers = Customer.objects.all()
+    customers = sorted(
+        Customer.objects.all(),
+        key=lambda customer: customer.remaining_balance_to_pay,
+        reverse=True  # Sort by descending order
+    )
+
 
     return render(request, 'stock/view_customers.html', {
         'customers': customers,

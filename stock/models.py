@@ -92,21 +92,29 @@ class Customer(models.Model):
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=10, unique=True)
     company = models.CharField(max_length=50, default=' ')
-    total_debit = models.FloatField(default=0.00)
-    pan_no = models.CharField(blank=True, null=True)
+    pan_no = models.CharField(max_length=9 ,blank=True, null=True)
 
     def __str__(self):
         return f'{self.name} '
 
 
-    
+    @property
+    def remaining_balance_to_pay(self):
+        # Get total credit and debit amounts for the customer
+        total_credit = Credit.objects.filter(customer=self).aggregate(total=models.Sum('amount'))['total'] or 0
+        total_debit = Debit.objects.filter(customer=self).aggregate(total=models.Sum('amount'))['total'] or 0
+
+        # Calculate remaining balance
+        return round(total_credit - total_debit, 2)
+
+
 class Bill(models.Model):
     PAYMENT_CHOICES = [
         ('CASH', 'Cash / QR'),
         ('CREDIT', 'Credit'),
     ]
 
-    bill_no = models.PositiveIntegerField(unique=True)
+    bill_no = models.IntegerField(unique=True, editable=False)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField()
     discount = models.IntegerField(default=0)
@@ -117,8 +125,14 @@ class Bill(models.Model):
         return f'Bill No: {self.bill_no}'
 
     def save(self, *args, **kwargs):
-        # Save the bill
+        # Automatically assign a bill number if it is not already set
+        if not self.bill_no:
+            last_bill = Bill.objects.order_by('bill_no').last()
+            self.bill_no = (last_bill.bill_no + 1) if last_bill else 1
+
+        # Round the total amount
         self.total_amount = round(self.total_amount, 2)
+
         super(Bill, self).save(*args, **kwargs)
 
 
@@ -223,7 +237,7 @@ class Order(models.Model):
         ('CREDIT', 'Credit'),
     ]
 
-    order_no = models.PositiveIntegerField(unique=True)
+    order_no = models.IntegerField(unique=True, editable=False)
     suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
     date = models.DateField()
     total_amount = models.FloatField(default=0.00)
@@ -234,6 +248,9 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         # Save the bill
+        if not self.order_no:
+            last_order = Order.objects.order_by('order_no').last()
+            self.order_no = (last_order.order_no + 1) if last_order else 1
         self.total_amount = round(self.total_amount, 2)
         super(Order, self).save(*args, **kwargs)
 
