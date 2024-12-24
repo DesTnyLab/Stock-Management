@@ -169,6 +169,15 @@ class DebitForm(forms.ModelForm):
     class Meta:
         model = Debit
         fields = ["amount", "date"]
+        widgets = {
+           
+            "date": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date",
+                "id": "date",
+                "value": now().date(),
+            }),
+        }
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]
