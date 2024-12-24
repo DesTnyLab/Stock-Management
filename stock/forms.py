@@ -238,14 +238,21 @@ class SuppliersForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [ 'suppliers', 'date', 'payment_type']
+        fields = ['suppliers', 'date', 'payment_type']
         widgets = {
             "suppliers": forms.Select(attrs={
                 "class": "form-control",
                 "id": "suppliers",
                 "data-placeholder": "Search Suppliers..."
             }),
+            "date": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date",
+                "id": "date",
+                "value": now().date(),
+            }),
         }
+
 
     def save(self, commit=True):
         instance = super(OrderForm, self).save(commit=False)
@@ -273,6 +280,17 @@ class DebitFormForSuppliers(forms.ModelForm):
     class Meta:
         model = Suppliers_debit
         fields = ["amount", "date"]
+        widgets = {
+           
+            "date": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date",
+                "id": "date",
+                "value": now().date(),
+            }),
+        }
+
+
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]
@@ -334,7 +352,7 @@ class InvestmentForm(forms.ModelForm):
         fields = ['amount', 'date', 'description']
         widgets = {
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'value': now().date()}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
@@ -351,7 +369,7 @@ class OtherRevenueForm(forms.ModelForm):
         widgets = {
             'source': forms.Select(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'value': now().date()}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {

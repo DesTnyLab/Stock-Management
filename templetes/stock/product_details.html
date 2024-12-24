@@ -36,9 +36,10 @@
         <a href="{% url 'edit_product' product.id %}" id="btn" style="
         text-decoration: none;
         ">Edit Product</a>
-            <a href="{% url 'delete_product' product.id %}" id="btn" style="
-            text-decoration: none; background-color: red;
-            ">Delete Product</a>
+<a href="{% url 'delete_product' product.id %}" 
+id="btn" 
+style="text-decoration: none; background-color: red; color: white; padding: 5px 10px; border-radius: 5px;"
+onclick="return confirmDelete()">Delete Product</a>
 </div>
 <div class="history">
     <div >
@@ -106,4 +107,13 @@
     </div>
 </div>
 </div>
+
+
+
+<script>
+    function confirmDelete() {
+        // Show a confirmation dialog
+        return confirm("Are you sure you want to delete this product?");
+    }
+</script>
 {% endblock %}
