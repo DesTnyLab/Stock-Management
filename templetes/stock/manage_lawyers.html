@@ -1,10 +1,61 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Manage Lawyers {% endblock %}
 
 {% block content %}
-<h1>Manage Lawyers</h1>
+<style>
+    button {
+        padding: 8px 15px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
 
-<div class="row">
-    <div class="col-md-6">
+    .button:hover {
+        background-color: #0056b3;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: center;
+        gap: 4vmin;
+        margin-bottom: 4vmin;
+    }
+
+    .container h1 {
+        text-align: center;
+    }
+
+    .container-box {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        max-width: 80%;
+        margin: 10px 125px;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+
+    }
+
+    .container-box h3 {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #333;
+    }
+</style>
+
+
+<div class="row container">
+    <h1>Manage Lawyers</h1>
+    <div class="col-md-6 container-box">
         <h3>Create Lawyer</h3>
         <form method="post">
             {% csrf_token %}
@@ -13,7 +64,7 @@
         </form>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 container-box">
         <h3>Add Transaction</h3>
         <form method="post">
             {% csrf_token %}
