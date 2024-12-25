@@ -4,88 +4,95 @@
 
 {% block content %}
 <style>
-/* Styling for the Order and Product forms */
-.container1 {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-}
+    /* Styling for the Order and Product forms */
+    .container1 {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
 
-.form-container1 {
-    margin-bottom: 30px;
-}
+    .form-container1 {
+        margin-bottom: 30px;
+    }
 
-.form-container1 h2 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: #333;
-}
+    .form-container1 h2 {
+        margin-bottom: 15px;
+        font-size: 20px;
+        color: #333;
+    }
 
-form {
-    margin-bottom: 20px;
-}
+    form {
+        margin-bottom: 20px;
+    }
 
-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
+    form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-form input, form select, form button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
+    form input,
+    form select,
+    form button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
 
-form button {
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
+    form button {
+        background-color: #007BFF;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
 
-form button:hover {
-    background-color: #0056b3;
-}
+    form button:hover {
+        background-color: #0056b3;
+    }
 
-.table-container {
-    margin-top: 20px;
-}
+    .table-container {
+        margin-top: 20px;
+    }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-table th, table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
+    table th,
+    table td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
 
-table th {
-    background-color: #180d3f;
-    font-weight: bold;
-}
+    table th {
+        background-color: #180d3f;
+        font-weight: bold;
+    }
 
-.delete-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-}
+    .delete-btn {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 
-.delete-btn:hover {
-    background-color: #d32f2f;
-}
+    .delete-btn:hover {
+        background-color: #d32f2f;
+    }
 </style>
 <div id="popup-message" class="popup"></div>
 <div class="container1">
@@ -115,33 +122,33 @@ table th {
         </form>
     </div>
 </div>
-    <!-- Order Summary -->
-    <div class="table-container">
-        <h2>Order Summary</h2>
-        <table id="order-summary">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>HS Code</th>
-                    <th>Quantity</th>
-                    <th>Rate</th>
-                    <th>Subtotal</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Products will be dynamically added here -->
-            </tbody>
-        </table>
-        <button id="clear-order" style="display: none;">Clear Order</button>
-    </div>
+<!-- Order Summary -->
+<div class="table-container">
+    <h2>Order Summary</h2>
+    <table id="order-summary">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>HS Code</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Products will be dynamically added here -->
+        </tbody>
+    </table>
+    <button id="clear-order" style="display: none;">Clear Order</button>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-// JavaScript Section
+    // JavaScript Section
 
-function showPopup(type, message) {
+    function showPopup(type, message) {
         const popup = $('#popup-message');
         popup.html(`<div class="popup-content ${type}">${message}</div>`);
         popup.removeClass('hide').addClass('show').show();
@@ -152,56 +159,56 @@ function showPopup(type, message) {
         }, 3000);
     }
 
-$(document).ready(function () {
-    let orderId = null;
+    $(document).ready(function () {
+        let orderId = null;
 
-    // Handle Order Creation
-    $('#order-form').on('submit', function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: "{% url 'create_order' %}",
-            type: "POST",
-            data: $(this).serialize() + "&order_submit=1",
-            success: function (response) {
-                if (response.success) {
-                    orderId = response.order_id;
-                    $('#order-form-section').hide();
-                    $('#product-form-section').show();
-                    showPopup("success","Order created successfully!");
-                } else {
-                    showPopup("error","Failed to create order. Order number already exits");
+        // Handle Order Creation
+        $('#order-form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'create_order' %}",
+                type: "POST",
+                data: $(this).serialize() + "&order_submit=1",
+                success: function (response) {
+                    if (response.success) {
+                        orderId = response.order_id;
+                        $('#order-form-section').hide();
+                        $('#product-form-section').show();
+                        showPopup("success", "Order created successfully!");
+                    } else {
+                        showPopup("error", "Failed to create order. Order number already exits");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Extract the error message from the response
+                    const response = JSON.parse(xhr.responseText);
+                    const errorMessage = response.error || ' Failed to add product.';
+
+                    // Show the error in the popup
+                    showPopup('error', errorMessage);
                 }
-            },
-            error: function (xhr, status, error) {
-            // Extract the error message from the response
-            const response = JSON.parse(xhr.responseText);
-            const errorMessage = response.error || ' Failed to add product.';
-
-            // Show the error in the popup
-            showPopup('error', errorMessage);
-            }
+            });
         });
-    });
 
-    // Handle Adding Products
-    $('#product-form').on('submit', function (e) {
-        e.preventDefault();
-        const data = {
-            product_name: $('#id_name').val(),
-            hs_code: $('#id_HS_code').val(),
-            quantity: $('#quantity').val(),
-            rate: $('#rate').val()
-        };
+        // Handle Adding Products
+        $('#product-form').on('submit', function (e) {
+            e.preventDefault();
+            const data = {
+                product_name: $('#id_name').val(),
+                hs_code: $('#id_HS_code').val(),
+                quantity: $('#quantity').val(),
+                rate: $('#rate').val()
+            };
 
-        $.ajax({
-            url: `/stock/add-order-product/${orderId}/`,
-            type: "POST",
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            success: function (response) {
-                if (response.success) {
-                    const product = response.product;
-                    const row = `
+            $.ajax({
+                url: `/stock/add-order-product/${orderId}/`,
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (response) {
+                    if (response.success) {
+                        const product = response.product;
+                        const row = `
                         <tr data-product-id="${product.id}">
                             <td>${product.name}</td>
                             <td>${product.hs_code}</td>
@@ -210,85 +217,85 @@ $(document).ready(function () {
                             <td>${(product.quantity * product.rate).toFixed(2)}</td>
                             <td><button class="delete-btn" data-product-id="${product.id}">Delete</button></td>
                         </tr>`;
-                    $('#order-summary tbody').append(row);
-                    $('#clear-order').show();
-                    showPopup("success","Product added successfully!");
-                } else {
-                    showPopup("error", "Failed to add product. " + response.error);
+                        $('#order-summary tbody').append(row);
+                        $('#clear-order').show();
+                        showPopup("success", "Product added successfully!");
+                    } else {
+                        showPopup("error", "Failed to add product. " + response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Extract the error message from the response
+                    const response = JSON.parse(xhr.responseText);
+                    const errorMessage = response.error || ' Failed to add product.';
+
+                    // Show the error in the popup
+                    showPopup('error', errorMessage);
                 }
-            },
-            error: function (xhr, status, error) {
-            // Extract the error message from the response
-            const response = JSON.parse(xhr.responseText);
-            const errorMessage = response.error || ' Failed to add product.';
+            });
+        });
 
-            // Show the error in the popup
-            showPopup('error', errorMessage);
-            }
+        // Handle Clearing Order
+        // Handle Clearing Order
+        $('#clear-order').on('click', function () {
+            $.ajax({
+                url: `/stock/order/clear/${orderId}/`,
+                type: "POST",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                success: function () {
+                    // Clear the Order Summary table
+                    $('#order-summary tbody').empty();
+                    $('#clear-order').hide();
+
+                    // Reset the forms
+                    $('#order-form')[0].reset();        // Reset the order form
+                    $('#product-form')[0].reset();      // Reset the product form
+
+                    // Show the Order Form again and hide the Product Form
+                    $('#order-form-section').show();
+                    $('#product-form-section').hide();
+
+                    // Reset orderId to null for a new order
+                    orderId = null;
+
+                    showPopup("info", "Order cleared successfully! Start creating a new order.");
+                },
+                error: function (xhr, status, error) {
+                    // Extract the error message from the response
+                    const response = JSON.parse(xhr.responseText);
+                    const errorMessage = response.error || ' Failed to add product.';
+
+                    // Show the error in the popup
+                    showPopup('error', errorMessage);
+                }
+            });
+        });
+
+
+        // Handle Deleting Product
+        $('#order-summary').on('click', '.delete-btn', function () {
+            const row = $(this).closest('tr');
+            const productId = $(this).data('product-id');
+
+            $.ajax({
+                url: `/order/delete-item/${orderId}/${productId}/`,
+                type: "POST",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                success: function () {
+                    row.remove();
+                    showPopup("warning", "Product deleted successfully!");
+                },
+                error: function (xhr, status, error) {
+                    // Extract the error message from the response
+                    const response = JSON.parse(xhr.responseText);
+                    const errorMessage = response.error || ' Failed to add product.';
+
+                    // Show the error in the popup
+                    showPopup('error', errorMessage);
+                }
+            });
         });
     });
-
-    // Handle Clearing Order
-// Handle Clearing Order
-$('#clear-order').on('click', function () {
-    $.ajax({
-        url: `/stock/order/clear/${orderId}/`,
-        type: "POST",
-        data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-        success: function () {
-            // Clear the Order Summary table
-            $('#order-summary tbody').empty();
-            $('#clear-order').hide();
-
-            // Reset the forms
-            $('#order-form')[0].reset();        // Reset the order form
-            $('#product-form')[0].reset();      // Reset the product form
-
-            // Show the Order Form again and hide the Product Form
-            $('#order-form-section').show();
-            $('#product-form-section').hide();
-
-            // Reset orderId to null for a new order
-            orderId = null;
-
-            showPopup("info", "Order cleared successfully! Start creating a new order.");
-        },
-        error: function (xhr, status, error) {
-            // Extract the error message from the response
-            const response = JSON.parse(xhr.responseText);
-            const errorMessage = response.error || ' Failed to add product.';
-
-            // Show the error in the popup
-            showPopup('error', errorMessage);
-            }
-    });
-});
- 
-
-    // Handle Deleting Product
-    $('#order-summary').on('click', '.delete-btn', function () {
-        const row = $(this).closest('tr');
-        const productId = $(this).data('product-id');
-
-        $.ajax({
-            url: `/order/delete-item/${orderId}/${productId}/`,
-            type: "POST",
-            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-            success: function () {
-                row.remove();
-                showPopup("warning","Product deleted successfully!");
-            },
-            error: function (xhr, status, error) {
-            // Extract the error message from the response
-            const response = JSON.parse(xhr.responseText);
-            const errorMessage = response.error || ' Failed to add product.';
-
-            // Show the error in the popup
-            showPopup('error', errorMessage);
-            }
-        });
-    });
-});
 </script>
 {% endblock %}
 
