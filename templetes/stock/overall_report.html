@@ -1,21 +1,34 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Overall Reports {% endblock %}
-  
 {% block content %}
 <style>
-h3{
-    text-align: center;
-}
-.summary li{
-    color: rgb(38, 111, 5);
-}
+    .report-container {
+        width: 100%;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .summary {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        padding: 20px;
+        height: 250px;
+    }
+
+    .summary li {
+        color: rgb(38, 111, 5);
+    }
+
     table {
         margin-bottom: 20px;
     }
 </style>
-<div style=" width: 100%;">
-<div class="about-product">
+<div class="report-container about-product">
     <div style="display: flex;">
         <div class="summary">
             <h3>Overall Summary</h3>
@@ -27,49 +40,38 @@ h3{
                     <strong> Total Revenue:</strong>NRs {{total_revenue}}
                 </li>
                 <li>
-                   <strong> Total Profit:</strong> NRs {{ total_profit }}
+                    <strong> Total Profit:</strong> NRs {{ total_profit }}
                 </li>
-               
-               
-          
             </ul>
         </div>
-        <div style="padding-left: 10%;">
-
-       
-      
-        <!-- Display the bar chart -->
-        <img  src="data:image/png;base64,{{ graph1 }}" alt="Top Sales Graph" />
-
+        <div class="Overall-report" style="padding-left: 10%;">
+            <!-- Display the bar chart -->
+            <img src="data:image/png;base64,{{ graph1 }}" alt="Top Sales Graph" />
         </div>
-       
     </div>
-    <div style="padding-left: 20%;">
+    <div class="weekly-report" style="padding-left: 20%;">
         <h2>Revenue and Profit in the Last 7 Days</h2>
         <img src="data:image/png;base64,{{ graph2 }}" alt="Daily Revenue and Profit Graph">
     </div>
-   
-<div>
- 
-    <h2>Daily Sales Data</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Revenue (NRs)</th>
-                <th>Profit (NRs)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for day, revenue, profit in daily_sales %}
-            <tr>
-                <td>{{ day }}</td>
-                <td>{{ revenue|floatformat:2 }}</td>
-                <td>{{ profit|floatformat:2 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
-
+<h2>Daily Sales Data</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Revenue (NRs)</th>
+            <th>Profit (NRs)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for day, revenue, profit in daily_sales %}
+        <tr>
+            <td>{{ day }}</td>
+            <td>{{ revenue|floatformat:2 }}</td>
+            <td>{{ profit|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
 {% endblock %}
