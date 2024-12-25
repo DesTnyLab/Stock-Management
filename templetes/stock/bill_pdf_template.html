@@ -34,6 +34,7 @@
             border-bottom: 1px solid black;
             padding-bottom: 10px;
             margin-bottom: 10px;
+            line-height: 1.5;
         }
 
         #company-name {
@@ -61,6 +62,11 @@
 
         .customer-details {
             padding: 10px;
+            line-height: 1.5;
+        }
+
+        .sz {
+            font-size: 0.8rem;
         }
 
         .bill-table {
@@ -89,7 +95,7 @@
         footer {
             margin: 50px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
         }
 
@@ -113,7 +119,7 @@
         }
 
         .warning {
-            margin: 70px;
+            margin: 30px 5px;
             text-align: justify;
             font-size: 0.8rem;
             font-style: italic;
@@ -170,7 +176,9 @@
                 </div>
                 <div id="bill-no"> <strong>Bill No. :</strong> {{ bill.bill_no }}</div>
                 <div class="customer-details">
-                    <p>Customer Name:{{ bill.customer.name }} ({{ bill.customer.company }})</p>
+                    <p>Customer : {{ bill.customer.name }} ({{ bill.customer.company }})</p>
+                    <p class="sz">Pan No.: {{ bill.customer.pan_no }}</p>
+                    <p class="sz">Phone No.: {{ bill.customer.phone_number }}</p>
                 </div>
             </div>
             <table class="bill-table">
@@ -197,7 +205,6 @@
                     </tr>
                     {% endfor %}
                     {% endfor %}
-
                     <tr>
                         <td colspan="5"><strong>Total</strong></td>
                         <td>{{ total }}</td>
@@ -214,23 +221,19 @@
             </table>
             <div class="total-in-words">
                 <p><strong style="text-transform: none;">Total (in words):</strong>
-
                     {{total_in_words}} only.</p>
-
             </div>
             <div class="signature">
                 <div id="signature-line"></div>
                 <div id="signature-txt">Cashier's Signature</div>
             </div>
         </div>
-      
         <footer>
-            <p>Thank you for your business!</p>
+            <p style="text-align: center;">Thank you for your business!</p>
             <div class="warning">
                 *This is computer generated statement and cannot be used for legal provisions, loan purpose etc.
             </div>
         </footer>
-        
     </body>
 
     </html>
