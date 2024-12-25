@@ -13,7 +13,25 @@
 
   <!-- inner css for edit by basnet -->
   <style>
-    .form-container {
+     /* Main content styles
+     .main-content {
+      margin-left: 250px; 
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    .sidebar {
+      background-color: #2c3e50;
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed; 
+      left: 0;
+      overflow-y: auto; 
+      scrollbar-width: none;
+    } */
+
+   .form-container {
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
@@ -206,42 +224,10 @@
         transform: translateX(300px);
         opacity: 0;
       }
-    }
-  </style>
-  <script src="{% static '/js/base.js' %}" defer></script>
-  <title> {% block title %} default title {% endblock %}
-  </title>
-  {% block head %} {% endblock %}
-</head>
 
-<body>
-  <div class="main-body">
-    <div class="sidebar">
-      <div class="logo_div">
-        <img id="logo" src="{% static 'images/image.png' %}" alt="">
-      </div>
-      <a href="{% url 'manage_inventory' %}">Dashboard</a>
-      <a href="{% url 'view_stock' %}">Stock </a>
-      <a href="{% url 'manage_product_and_purchase' %}"> Products </a>
-      <a href="{% url 'create_bill' %}"> Create Bill</a>
-      <a href="{% url 'create_order' %}"> Create Order</a>
-      <a href="{% url 'customer_details' %}"> Customers </a>
-      <a href="{% url 'suppliers_details' %}"> Suppliers </a>
-      <a href="{% url 'overall_top_sales' %}">Overall Report</a>
-      <a href="{% url 'manage_finances' %}"> Miscellaneous </a>
-      <a href="{% url 'manage_lawyers' %}">Lawyer Section</a>
-    </div>
-    <div class="main-content">
-      <div class="header">
-        <div class="company_title">
-          Tripurasundari Books and Stationery <br>
-          <div id="address">Thamel, Kathmandu</div>
-        </div>
-        <div type="date" id="today_date">Date:</div>
-      </div>
-      <style>
+    }
         /* Popup container */
-        .popup {
+      .popup {
           position: fixed;
           bottom: 20px;
           /* Positioned at the bottom-right corner */
@@ -329,8 +315,40 @@
           }
         }
 
-        /* Border gradient animation */
-      </style>
+    
+  </style>
+  <script src="{% static '/js/base.js' %}" defer></script>
+  <title> {% block title %} default title {% endblock %}
+  </title>
+  {% block head %} {% endblock %}
+</head>
+
+<body>
+  <div class="main-body">
+    <div class="sidebar">
+      <div class="logo_div">
+        <img id="logo" src="{% static 'images/image.png' %}" alt="">
+      </div>
+      <a href="{% url 'manage_inventory' %}">Dashboard</a>
+      <a href="{% url 'view_stock' %}">Stock </a>
+      <a href="{% url 'manage_product_and_purchase' %}"> Products </a>
+      <a href="{% url 'create_bill' %}"> Create Bill</a>
+      <a href="{% url 'create_order' %}"> Create Order</a>
+      <a href="{% url 'customer_details' %}"> Customers </a>
+      <a href="{% url 'suppliers_details' %}"> Suppliers </a>
+      <a href="{% url 'overall_top_sales' %}">Overall Report</a>
+      <a href="{% url 'manage_finances' %}"> Miscellaneous </a>
+      <a href="{% url 'manage_lawyers' %}">Lawyer Section</a>
+    </div>
+    <div class="main-content" style="width: 85%;">
+      <div class="header">
+        <div class="company_title">
+          Tripurasundari Books and Stationery <br>
+          <div id="address">Thamel, Kathmandu</div>
+        </div>
+        <div type="date" id="today_date">Date:</div>
+      </div>
+
       {% if messages %}
       <div id="popup-message" class="popup">
         {% for message in messages %}
@@ -339,6 +357,7 @@
         </div>
         {% endfor %}
       </div>
+    
       {% endif %}
       {% block content %}
       {% endblock %}
