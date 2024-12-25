@@ -26,7 +26,10 @@ from django.db.models import Sum
 from datetime import timedelta
 import csv
 from django.apps import apps
-
+from django.conf import settings
+from weasyprint import HTML
+import os
+from django.templatetags.static import static
 
 
 def login_view(request):
@@ -466,8 +469,9 @@ def convert_to_nepali_currency(amount):
 
 
 
-def generate_bill_pdf(request, bill_id):
+def  generate_bill_pdf(request, bill_id):
     try:
+       
         # Fetch the bill and related data
         bill = Bill.objects.get(id=bill_id)
         bill_items = bill.billitem_set.prefetch_related('products')
@@ -477,31 +481,58 @@ def generate_bill_pdf(request, bill_id):
         bill.total_amount = total_amount
         bill.save()
         total_in_words = convert_to_nepali_currency(total_amount)
+    
+        logo_path1 = os.path.join(settings.STATIC_ROOT, "images/esewa.jpeg")
+        with open(logo_path1, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        esewa_url = f"data:image/png;base64,{base64_image}"
+
+        logo_path2 = os.path.join(settings.STATIC_ROOT, "images/fonepay.jpeg")
+        with open(logo_path2, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        bank_url = f"data:image/png;base64,{base64_image}"
+
+        logo_path3 = os.path.join(settings.STATIC_ROOT, "images/whatsup.jpeg")
+        with open(logo_path3, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        whatsapp_url = f"data:image/png;base64,{base64_image}"
         # Context for the template
+     
         context = {
             'bill': bill,
             'bill_items': bill_items,
             'total': total,
             'total_amount': total_amount,
             'total_in_words':total_in_words,
-            'discount': discount
+            'discount': discount,
+            'whatsapp_url': whatsapp_url,
+            'esewa_url': esewa_url,
+            'bank_url': bank_url,
         }
 
         # Render the template to HTML
         html_string = render_to_string('stock/bill_pdf_template.html', context)
+        print(html_string)
+        # Generate PDF from HTML
+    
+      
 
         # Generate PDF from HTML
-        pdf_file = HTML(string=html_string).write_pdf()
+        pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
 
         # Create a response
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="Bill_{bill.bill_no}.pdf"'
-
+        
         return response
     
     except Exception as e:
-        
+        print('hello world -> error')
         messages.error(request, e)
+        print(e)
         return redirect('create_bill')
 
   
