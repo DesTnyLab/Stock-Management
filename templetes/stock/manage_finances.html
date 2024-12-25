@@ -1,71 +1,117 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %} Manage Finances {% endblock %}
+
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Manage Finances</h1>
+<style>
+    button {
+        padding: 8px 15px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
 
-    <div class="row">
+    .bttn:hover {
+        background-color: #0056b3;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: center;
+        gap: 4vmin;
+        margin-bottom: 4vmin;
+    }
+
+    .container-box {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        max-width: 80%;
+        margin: 10px 125px;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+
+    }
+
+    .container-box h3 {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #333;
+    }
+</style>
+<div class="container mt-4">
+    <h1 style="text-align: center;">Manage Finances</h1>
+
+    <div class="row container-box">
         <div class="col-md-6">
             <h3>Add Investment</h3>
             <form method="post">
                 {% csrf_token %}
                 {{ investment_form.as_p }}
-                <button type="submit" name="add_investment" class="btn btn-primary">Add Investment</button>
-            </form>
-        </div>
-
-        <div class="col-md-6">
-            <h3>Add Revenue</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ revenue_form.as_p }}
-                <button type="submit" name="add_revenue" class="btn btn-success">Add Revenue</button>
+                <button type="submit" name="add_investment" class="btn btn-primary bttn">Add Investment</button>
             </form>
         </div>
     </div>
+    <div class="col-md-6 container-box">
+        <h3>Add Revenue</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ revenue_form.as_p }}
+            <button type="submit" name="add_revenue" class="btn btn-success bttn">Add Revenue</button>
+        </form>
+    </div>
+</div>
 
-    <hr>
+<hr>
 
-    <h3>Investments</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for investment in investments %}
-            <tr>
-                <td>{{ investment.amount }}</td>
-                <td>{{ investment.date }}</td>
-                <td>{{ investment.description }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h3>Investments</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for investment in investments %}
+        <tr>
+            <td>{{ investment.amount }}</td>
+            <td>{{ investment.date }}</td>
+            <td>{{ investment.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-    <h3>Other Revenues</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Source</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for revenue in revenues %}
-            <tr>
-                <td>{{ revenue.get_source_display }}</td>
-                <td>{{ revenue.amount }}</td>
-                <td>{{ revenue.date }}</td>
-                <td>{{ revenue.description }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h3>Other Revenues</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for revenue in revenues %}
+        <tr>
+            <td>{{ revenue.get_source_display }}</td>
+            <td>{{ revenue.amount }}</td>
+            <td>{{ revenue.date }}</td>
+            <td>{{ revenue.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 {% endblock %}
