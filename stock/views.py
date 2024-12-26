@@ -11,7 +11,6 @@ import base64
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
-from weasyprint import HTML
 from django.template.loader import render_to_string
 from datetime import datetime
 from django.urls import reverse
@@ -27,7 +26,7 @@ from datetime import timedelta
 import csv
 from django.apps import apps
 from django.conf import settings
-from weasyprint import HTML
+from weasyprint import HTML, CSS
 import os
 from django.templatetags.static import static
 
@@ -42,7 +41,7 @@ def login_view(request):
             login(request, user)
             return redirect(next_url)  # Redirect to the next URL or home page
         else:
-            print('hello world')
+        
             messages.error(request, "Invalid username or password")
             return redirect('login')
     return render(request, "login.html")
@@ -258,7 +257,7 @@ def overall_top_sales(request):
         overall_profit = actual_finance.profit
         total_revenue = actual_finance.revenue
         total_investment = actual_finance.investment
-        print(total_investment)
+       
 
         # Calculate overall revenue and profit
       
@@ -515,13 +514,19 @@ def  generate_bill_pdf(request, bill_id):
 
         # Render the template to HTML
         html_string = render_to_string('stock/bill_pdf_template.html', context)
-        print(html_string)
+       
         # Generate PDF from HTML
     
       
 
         # Generate PDF from HTML
-        pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+# Generate PDF from HTML
+        pdf_file = HTML(
+        string=html_string,
+        base_url=request.build_absolute_uri('/')
+        ).write_pdf(stylesheets=[CSS(string='@page { size: A5; margin: 10mm; }'
+                                     )])
+
 
         # Create a response
         response = HttpResponse(pdf_file, content_type='application/pdf')
@@ -530,9 +535,9 @@ def  generate_bill_pdf(request, bill_id):
         return response
     
     except Exception as e:
-        print('hello world -> error')
+       
         messages.error(request, e)
-        print(e)
+    
         return redirect('create_bill')
 
   
@@ -828,7 +833,7 @@ def delete_product(request, id):
         messages.success(request, "Product deleted successfully")
     except Exception as e:
         # Log the exception for debugging
-        print(f"Error while deleting product: {e}")
+       
         messages.error(request, "Failed to delete product")
     
     return redirect('manage_product_and_purchase')
