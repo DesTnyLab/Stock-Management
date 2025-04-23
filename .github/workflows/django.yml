@@ -3,7 +3,7 @@ name: 🚀 Deploy to EC2 with Docker
 on:
   push:
     branches:
-      - main  # Change to your deploy branch if needed
+      - main  # Change to your deploy branch
 
 jobs:
   deploy:
