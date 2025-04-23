@@ -28,8 +28,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $EC2_USER@$EC2_HOST << 'EOF'
             cd /home/ubuntu/stock  # <- CHANGE THIS to your real project path
             git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
           EOF
         env:
           EC2_USER: ${{ secrets.EC2_USER }}
