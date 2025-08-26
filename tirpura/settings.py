@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     #installed apps
     'stock',
+    'inventory_ai',
 
     #third-party apps
     'django_select2',

@@ -102,3 +102,17 @@ num2words==0.5.13
 
 django-select2==8.2.3 
 gunicorn==23.0.0 
+
+
+
+
+pandas>=2.1
+numpy>=1.26
+
+matplotlib>=3.8
+django-chartjs>=1.2
+statsmodels>=0.14.0
+
+prophet>=1.1.4
+
+plotly>=5.15.0

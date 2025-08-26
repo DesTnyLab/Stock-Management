@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Forecast - {{ product.name }}</title>
+</head>
+<body>
+    <h1>Sales Forecast for {{ product.name }}</h1>
+
+    {% if forecast %}
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Forecasted Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in forecast %}
+                    <tr>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.quantity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No sales data available to forecast.</p>
+    {% endif %}
+</body>
+</html>
