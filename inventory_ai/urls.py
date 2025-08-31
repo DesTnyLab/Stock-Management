@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
 
-    path('forecast/<int:product_id>/', views.product_forecast_view, name='product_forecast'),
+    path('product_forecast_ajax/<int:product_id>/', views.product_forecast_ajax, name='product_forecast_ajax'),
 ]

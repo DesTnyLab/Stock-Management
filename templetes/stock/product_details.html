@@ -109,6 +109,32 @@ onclick="return confirmDelete()">Delete Product</a>
 </div>
 
 
+<!-- Placeholder for forecast content -->
+<div id="forecast-container">
+    Loading forecast...
+</div>
+
+<!-- jQuery (you can use a CDN if not already included) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    var productId = "{{ product.id }}";  // pass this from template context if needed
+    console.log("Fetching forecast for product ID:", productId);
+    $.ajax({
+        url: '/ai/product_forecast_ajax/' + productId + '/',  // new URL endpoint
+        type: 'GET',
+        success: function(data) {
+            // Inject returned HTML into the placeholder
+            $('#forecast-container').html(data);
+        },
+        error: function(xhr, status, error) {
+            $('#forecast-container').html('<p>Error loading forecast.</p>');
+            console.error(error);
+        }
+    });
+});
+</script>
 
 <script>
     function confirmDelete() {

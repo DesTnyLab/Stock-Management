@@ -1,31 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sales Forecast - {{ product_name }}</title>
-</head>
-<body>
-    <h1>Next 7 Days Sales Forecast for {{ product_name }}</h1>
+<div>
+    <h3>{{ product_name }} - 7-Day Forecast</h3>
+    <div>{{ plot_div|safe }}</div>
 
-    <!-- Plotly Graph -->
-    {{ plot_div|safe }}
-
-    <!-- Forecast Table -->
-    <h2>Forecast Table</h2>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>Date</th>
-            <th>Forecast (yhat)</th>
-            <th>Lower Bound</th>
-            <th>Upper Bound</th>
-        </tr>
-        {% for row in forecast_table %}
-        <tr>
-            <td>{{ row.ds }}</td>
-            <td>{{ row.yhat }}</td>
-            <td>{{ row.yhat_lower }}</td>
-            <td>{{ row.yhat_upper }}</td>
-        </tr>
-        {% endfor %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Forecast</th>
+                <th>Lower</th>
+                <th>Upper</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in forecast_table %}
+            <tr>
+                <td>{{ row.ds }}</td>
+                <td>{{ row.yhat }}</td>
+                <td>{{ row.yhat_lower }}</td>
+                <td>{{ row.yhat_upper }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-</body>
-</html>
+</div>
