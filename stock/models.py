@@ -7,7 +7,9 @@ class Product(models.Model):
     name = models.CharField( unique=True, max_length=255)
     cost_price = models.FloatField(default=0.00)
     selling_price = models.FloatField(default=0.00)
-    HS_code = models.CharField(max_length=50, default='') 
+    HS_code = models.CharField(max_length=50, default='')
+    supplier_code = models.CharField(max_length=50, default='')
+     
     def __str__(self):
         return f'{self.name}-{self.HS_code}'
 
@@ -91,7 +93,7 @@ class Stock(models.Model):
 class Customer(models.Model):
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=10, unique=True)
-    company = models.CharField(max_length=50, default=' ')
+    company = models.CharField(max_length=50, blank=True, null=True)
     pan_no = models.CharField(max_length=9, blank=True, null=True)
 
     def __str__(self):
@@ -216,7 +218,9 @@ class Suppliers(models.Model):
     phone_number = models.CharField(max_length=10, unique=True)  
     pan = models.CharField(max_length=9, unique=True)
     total_debit = models.FloatField(default=0.00)
-    address = models.CharField(max_length=255)  
+    address = models.CharField(max_length=255)
+    code = models.CharField(max_length=50, unique=True, default='')
+
     def __str__(self):
         return self.name
 

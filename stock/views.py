@@ -718,7 +718,15 @@ def manage_product_and_purchase(request):
         if request.method == "POST" and "product_form" in request.POST:
             product_form = ProductForm(request.POST)
             if product_form.is_valid():
-                product_form.save()
+                product = product_form.save(commit=False)
+                suppliers_code = product_form.cleaned_data.get('supplier_code')
+                suppliers = Suppliers.objects.filter(code=suppliers_code).first()
+                if suppliers:
+                    product.supplier_code = suppliers.code
+                else:
+                    messages.error(request, "Invalid supplier code.")
+                    return redirect("manage_product_and_purchase")
+                product.save()
                 messages.success(request, "Product is added successfully.")
                 return redirect("manage_product_and_purchase")
             else:

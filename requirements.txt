@@ -105,7 +105,6 @@ gunicorn==23.0.0
 
 
 
-
 pandas>=2.1
 numpy>=1.26
 

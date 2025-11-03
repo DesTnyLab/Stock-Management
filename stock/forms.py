@@ -11,6 +11,7 @@ class ProductForm(forms.ModelForm):
         fields = [
             "name",
             "HS_code",
+            "supplier_code",
         ]
         widgets = {
             "name": forms.TextInput(
@@ -19,6 +20,11 @@ class ProductForm(forms.ModelForm):
                 }
             ),
             "HS_code": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "supplier_code": forms.TextInput(
                 attrs={
                     "class": "form-control",
                 }
@@ -223,7 +229,8 @@ class SuppliersForm(forms.ModelForm):
             "name",
             "phone_number",
             "address",
-            "pan",  # Correct field name based on the model
+            "pan",
+            "code",  # Correct field name based on the model
         ]
 
     def clean_phone_number(self):
