@@ -9,6 +9,7 @@ class Product(models.Model):
     selling_price = models.FloatField(default=0.00)
     HS_code = models.CharField(max_length=50, default='')
     supplier_code = models.CharField(max_length=50, default='')
+    
      
     def __str__(self):
         return f'{self.name}-{self.HS_code}'
@@ -220,6 +221,7 @@ class Suppliers(models.Model):
     total_debit = models.FloatField(default=0.00)
     address = models.CharField(max_length=255)
     code = models.CharField(max_length=50, unique=True, default='')
+    email = models.EmailField(max_length=255, blank=True, null=True, default="admin@admin.com")
 
     def __str__(self):
         return self.name
@@ -238,11 +240,13 @@ class Order(models.Model):
         ('CREDIT', 'Credit'),
     ]
 
+    
     order_no = models.PositiveIntegerField(unique=True)
     suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
     date = models.DateField()
     total_amount = models.FloatField(default=0.00)
     payment_type = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
+
 
     def __str__(self):
         return f'Order No: {self.order_no}'
@@ -282,7 +286,20 @@ class OrderItemProduct(models.Model):
         return f"{self.product.name} (Qty: {self.quantity}, Rate: {self.rate}) for {self.order_item.order}"
 
 
+class ProductEmailStatus(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SENT', 'Sent'),
+        ('FAILED', 'Failed'),
+    ]
 
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="email_statuses")
+    supplier = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    last_sent = models.DateTimeField(default=now)
+    
+    def __str__(self):
+        return f"{self.product.name} - {self.supplier.name} - {self.status}"
 
 class OrderOnCash(models.Model):
     suppliers = models.ForeignKey(Suppliers, on_delete=models.CASCADE)
@@ -417,3 +434,6 @@ class ActualFinance(models.Model):
     investment = models.FloatField(default=0)
     revenue = models.FloatField(default=0)
     profit = models.FloatField(default=0)
+
+
+

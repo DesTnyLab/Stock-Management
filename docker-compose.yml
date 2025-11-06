@@ -52,7 +52,29 @@ services:
     networks:
       - stock-management_stock
 
+  redis:
+      image: redis:5-alpine
+      networks:
+          - stock-management_stock
 
+  celery_worker:
+      build:
+          context: .
+          dockerfile: ./docker/django/Dockerfile
+      command: /start-celeryworker
+      volumes:
+          - .:/app
+      env_file:
+          - .env
+      environment:
+          - DJANGO_SETTINGS_MODULE=tirpura.settings
+          - PG_HOST=postgres-db
+          - PG_PORT=5432
+      depends_on:
+          - redis
+          - postgres-db
+      networks:
+          - stock-management_stock
 
 networks:
   stock-management_stock:

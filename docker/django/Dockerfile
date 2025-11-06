@@ -41,6 +41,9 @@ RUN sed -i 's/\r$//g' /entrypoint && chmod +x /entrypoint
 COPY ./docker/django/start /start
 RUN sed -i 's/\r$//g' /start && chmod +x /start
 
+COPY ./docker/django/celery/worker/start /start-celeryworker
+RUN sed -i 's/\r$//g' /start-celeryworker
+RUN chmod +x /start-celeryworker
 # Expose the application port
 EXPOSE 8000
 

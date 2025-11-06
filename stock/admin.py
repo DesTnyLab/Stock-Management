@@ -24,5 +24,7 @@ admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(OrderItemProduct)
 
+admin.site.register(ProductEmailStatus)
+
 
 admin.site.register(ActualFinance)

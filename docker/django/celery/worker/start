@@ -1,0 +1,14 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+
+# Wait for Postgres to be ready
+echo "Waiting for Postgres..."
+until nc -z $POSTGRES_HOST $POSTGRES_PORT; do
+  echo "Postgres is unavailable - sleeping"
+  sleep 2
+done
+echo "Postgres is up - starting Celery with Beat"
+
+# Start Celery worker with embedded Beat and autoreload for development
+watchmedo auto-restart -d tirpura/ -p "*.py" -- celery -A tirpura worker -B --loglevel=info

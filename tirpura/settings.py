@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-k__s*w7)28n9wh8%58%*s2ckg9bq&-a=2s53!p3b^i=0(=o$-a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.119.102.225','127.0.0.1','localhost']
+ALLOWED_HOSTS = ['18.119.102.225','127.0.0.1','localhost', '192.168.1.70']
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     #third-party apps
     'django_select2',
+    'django_celery_beat',
 
 
 ]
@@ -154,3 +155,32 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Optional: Set a session timeout (e.g., 6 hours)
 SESSION_COOKIE_AGE = 6 * 60 * 60
+
+
+
+# Gmail SMTP Settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "manjil.gautam180@gmail.com"  
+EMAIL_HOST_PASSWORD = "kdlrdowasbqgvner"  
+EMAIL_PORT = 465  
+EMAIL_USE_TLS = False  
+EMAIL_USE_SSL = True  
+DEFAULT_FROM_EMAIL = "manjil.gautam180@gmail.com"
+
+# cgdjtyuzsqcuorfi
+
+
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    "daily_stock_check": {
+        "task": "inventory_ai.tasks.run_stock_monitor",
+        "schedule": timedelta(seconds=10),  # every 5 seconds
+    }
+}
+
+
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+

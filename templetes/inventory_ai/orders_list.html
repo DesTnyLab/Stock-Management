@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Order Status {% endblock %}
+{% block head %}
+    <script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
+{% block content %}
+
+    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">Orders Status</h2>
+
+        <table class="min-w-full border border-gray-300 rounded-md overflow-hidden">
+            <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="px-4 py-2 border">Date</th>
+                    <th class="px-4 py-2 border">Supplier</th>
+                    <th class="px-4 py-2 border">Status</th>
+                    <th class="px-4 py-2 border">Details</th>
+                    <th class="px-4 py-2 border">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for order in orders %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 border">{{ order.date }}</td>
+                    <td class="px-4 py-2 border">{{ order.suppliers.name }}</td>
+                    <td class="px-4 py-2 border text-center">
+                        {% if order.status == "PENDING" %}
+                            <span class="text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full text-xs">{{ order.status }}</span>
+                        {% elif order.status == "PROCESSING" %}
+                            <span class="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-xs">{{ order.status }}</span>
+                        {% elif order.status == "COMPLETED" %}
+                            <span class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-xs">{{ order.status }}</span>
+                        {% else %}
+                            <span class="text-red-600 bg-red-100 px-3 py-1 rounded-full text-xs">{{ order.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 border text-center">
+                         <a href="{% url 'order_detail' order.id %}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm mr-1">
+        View
+    </a>
+
+                    </td>
+                    <!-- Action Buttons -->
+                    <td class="px-4 py-2 border text-center">
+                        {% if order.status == "PROCESSING" %}
+                        <!-- Edit Button -->
+                         <a href="{% url 'change_order_status' order.id 'COMPLETED' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm">Marked as Received</a>
+                         {% elif order.status == "COMPLETED" %}
+                            <span class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-xs"> Received </span>
+                        {% else %}
+                            <span class="text-red-600 bg-red-100 px-3 py-1 rounded-full text-xs">Waiting...</span>
+                        {% endif %}
+
+                    </td>
+                     
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

@@ -220,3 +220,5 @@ def remove_revenue(sender, instance, **kwargs):
     finance.profit -= instance.profit
     finance.save()
 
+
+

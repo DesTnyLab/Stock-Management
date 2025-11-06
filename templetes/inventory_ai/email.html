@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Low Stock Alert</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.5; }
+        h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; max-width: 600px; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; color: #333; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background-color: #0a7cff;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .footer { margin-top: 20px; font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+    <h2>Low Stock Alert</h2>
+    <p>Dear {{ supplier_name }},</p>
+    <p>The following products are predicted to have low stock in the next 30 days. We kindly request you to supply them:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Predicted Quantity (Next 30 Days)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in products %}
+            <tr>
+                <td>{{ item.product }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- ✅ Action Link -->
+    <a class="btn" href="{{ order_link }}">View Order</a>
+
+    <p class="footer">Thank you for your prompt action.</p>
+</body>
+</html>
