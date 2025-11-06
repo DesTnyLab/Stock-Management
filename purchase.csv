@@ -1,0 +1,901 @@
+product,quantity,price,date
+Ball Pen,305,208.0,2025-09-25
+Ball Pen,467,202.0,2025-10-26
+Ball Pen,277,212.0,2025-09-18
+Ball Pen,305,210.0,2025-08-14
+Ball Pen,410,202.0,2025-08-27
+Ball Pen,104,205.0,2025-08-14
+Ball Pen,198,210.0,2025-10-12
+Ball Pen,419,202.0,2025-10-01
+Ball Pen,458,200.0,2025-08-27
+Ball Pen,114,203.0,2025-10-07
+Ball Pen,236,202.0,2025-08-28
+Ball Pen,433,210.0,2025-10-22
+Ball Pen,497,201.0,2025-10-18
+Ball Pen,304,207.0,2025-09-23
+Ball Pen,371,197.0,2025-09-30
+Ball Pen,293,198.0,2025-10-07
+Ball Pen,429,212.0,2025-10-06
+Ball Pen,100,211.0,2025-10-10
+Ball Pen,137,211.0,2025-10-10
+Ball Pen,488,202.0,2025-10-17
+Ball Pen,172,201.0,2025-09-18
+Ball Pen,364,205.0,2025-10-16
+Ball Pen,353,199.0,2025-09-13
+Ball Pen,334,211.0,2025-10-29
+Ball Pen,388,211.0,2025-08-31
+Ball Pen,298,206.0,2025-10-19
+Ball Pen,375,198.0,2025-08-19
+Ball Pen,216,209.0,2025-11-02
+Ball Pen,189,207.0,2025-08-15
+Ball Pen,169,212.0,2025-10-08
+Gel Pen,327,196.0,2025-09-22
+Gel Pen,355,187.0,2025-09-14
+Gel Pen,143,196.0,2025-11-01
+Gel Pen,484,187.0,2025-10-26
+Gel Pen,481,185.0,2025-08-27
+Gel Pen,349,197.0,2025-10-13
+Gel Pen,470,193.0,2025-10-11
+Gel Pen,207,197.0,2025-10-11
+Gel Pen,128,183.0,2025-11-02
+Gel Pen,422,181.0,2025-09-11
+Gel Pen,302,195.0,2025-09-27
+Gel Pen,431,191.0,2025-10-09
+Gel Pen,386,185.0,2025-09-23
+Gel Pen,236,191.0,2025-08-24
+Gel Pen,475,182.0,2025-09-11
+Gel Pen,343,191.0,2025-09-01
+Gel Pen,371,188.0,2025-08-23
+Gel Pen,180,195.0,2025-08-13
+Gel Pen,449,180.0,2025-09-07
+Gel Pen,483,196.0,2025-09-20
+Gel Pen,177,184.0,2025-08-23
+Gel Pen,229,196.0,2025-08-22
+Gel Pen,487,197.0,2025-08-31
+Gel Pen,448,186.0,2025-09-07
+Gel Pen,258,191.0,2025-09-09
+Gel Pen,300,197.0,2025-09-12
+Gel Pen,150,195.0,2025-09-08
+Gel Pen,281,192.0,2025-08-17
+Gel Pen,249,186.0,2025-09-13
+Gel Pen,136,189.0,2025-10-12
+Pencil,127,157.0,2025-08-26
+Pencil,312,148.0,2025-10-31
+Pencil,333,162.0,2025-10-03
+Pencil,442,152.0,2025-10-09
+Pencil,422,164.0,2025-09-14
+Pencil,398,156.0,2025-10-15
+Pencil,420,148.0,2025-08-15
+Pencil,101,162.0,2025-10-13
+Pencil,249,164.0,2025-09-14
+Pencil,417,164.0,2025-09-06
+Pencil,375,148.0,2025-10-16
+Pencil,110,150.0,2025-08-30
+Pencil,207,157.0,2025-09-27
+Pencil,371,160.0,2025-09-07
+Pencil,204,153.0,2025-11-01
+Pencil,500,149.0,2025-09-27
+Pencil,224,161.0,2025-10-11
+Pencil,496,164.0,2025-09-10
+Pencil,339,149.0,2025-08-16
+Pencil,254,161.0,2025-08-09
+Pencil,419,160.0,2025-09-11
+Pencil,279,147.0,2025-08-12
+Pencil,479,147.0,2025-11-01
+Pencil,190,156.0,2025-11-01
+Pencil,243,147.0,2025-09-27
+Pencil,211,156.0,2025-09-15
+Pencil,300,162.0,2025-08-29
+Pencil,346,150.0,2025-09-28
+Pencil,257,147.0,2025-09-15
+Pencil,138,149.0,2025-08-15
+Eraser,140,215.0,2025-08-14
+Eraser,258,204.0,2025-09-21
+Eraser,232,201.0,2025-08-25
+Eraser,312,199.0,2025-08-19
+Eraser,349,208.0,2025-09-29
+Eraser,245,208.0,2025-10-14
+Eraser,252,206.0,2025-10-30
+Eraser,319,207.0,2025-08-24
+Eraser,419,211.0,2025-10-08
+Eraser,247,206.0,2025-10-20
+Eraser,393,217.0,2025-09-23
+Eraser,373,206.0,2025-08-08
+Eraser,409,216.0,2025-09-30
+Eraser,142,208.0,2025-09-06
+Eraser,374,203.0,2025-10-04
+Eraser,355,214.0,2025-09-05
+Eraser,325,213.0,2025-09-13
+Eraser,222,212.0,2025-08-10
+Eraser,299,216.0,2025-08-25
+Eraser,478,217.0,2025-10-22
+Eraser,245,213.0,2025-09-06
+Eraser,435,214.0,2025-10-08
+Eraser,419,198.0,2025-10-12
+Eraser,300,199.0,2025-08-22
+Eraser,446,207.0,2025-09-05
+Eraser,488,198.0,2025-10-28
+Eraser,340,213.0,2025-10-15
+Eraser,114,198.0,2025-09-20
+Eraser,324,203.0,2025-08-28
+Eraser,140,212.0,2025-10-09
+Sharpener,166,68.0,2025-10-16
+Sharpener,390,70.0,2025-08-17
+Sharpener,270,67.0,2025-10-22
+Sharpener,374,70.0,2025-08-26
+Sharpener,127,68.0,2025-09-19
+Sharpener,198,61.0,2025-09-08
+Sharpener,405,71.0,2025-08-08
+Sharpener,394,61.0,2025-08-09
+Sharpener,337,75.0,2025-11-05
+Sharpener,288,61.0,2025-10-21
+Sharpener,202,77.0,2025-10-12
+Sharpener,486,72.0,2025-09-30
+Sharpener,375,63.0,2025-10-29
+Sharpener,129,68.0,2025-08-20
+Sharpener,265,66.0,2025-09-06
+Sharpener,413,73.0,2025-10-11
+Sharpener,489,62.0,2025-09-06
+Sharpener,120,59.0,2025-08-16
+Sharpener,409,72.0,2025-10-08
+Sharpener,116,59.0,2025-09-17
+Sharpener,173,61.0,2025-09-10
+Sharpener,345,72.0,2025-11-04
+Sharpener,400,62.0,2025-08-13
+Sharpener,276,71.0,2025-08-27
+Sharpener,164,75.0,2025-10-16
+Sharpener,378,59.0,2025-10-06
+Sharpener,436,60.0,2025-08-18
+Sharpener,425,58.0,2025-10-26
+Sharpener,426,69.0,2025-09-16
+Sharpener,478,74.0,2025-08-25
+Scale,215,123.0,2025-10-27
+Scale,446,118.0,2025-09-18
+Scale,326,121.0,2025-08-14
+Scale,255,111.0,2025-08-13
+Scale,330,110.0,2025-09-19
+Scale,419,113.0,2025-09-17
+Scale,282,113.0,2025-10-27
+Scale,374,112.0,2025-10-14
+Scale,442,121.0,2025-08-27
+Scale,173,124.0,2025-11-03
+Scale,144,122.0,2025-10-15
+Scale,479,122.0,2025-10-08
+Scale,459,110.0,2025-10-05
+Scale,402,115.0,2025-10-31
+Scale,474,118.0,2025-10-27
+Scale,286,114.0,2025-08-08
+Scale,237,126.0,2025-08-22
+Scale,321,118.0,2025-10-07
+Scale,188,124.0,2025-10-03
+Scale,133,122.0,2025-10-18
+Scale,424,112.0,2025-10-26
+Scale,302,112.0,2025-10-15
+Scale,264,119.0,2025-10-12
+Scale,145,114.0,2025-08-10
+Scale,277,121.0,2025-09-10
+Scale,149,126.0,2025-08-26
+Scale,190,120.0,2025-09-15
+Scale,423,116.0,2025-11-02
+Scale,283,109.0,2025-10-04
+Scale,466,122.0,2025-08-22
+Marker,313,183.0,2025-08-28
+Marker,276,185.0,2025-08-31
+Marker,495,183.0,2025-10-09
+Marker,390,185.0,2025-08-15
+Marker,149,185.0,2025-09-26
+Marker,313,169.0,2025-09-29
+Marker,496,187.0,2025-09-26
+Marker,413,169.0,2025-10-21
+Marker,126,187.0,2025-10-12
+Marker,353,185.0,2025-09-18
+Marker,432,169.0,2025-09-05
+Marker,398,170.0,2025-10-30
+Marker,461,171.0,2025-08-17
+Marker,408,180.0,2025-09-25
+Marker,460,184.0,2025-10-08
+Marker,360,185.0,2025-10-07
+Marker,392,185.0,2025-08-13
+Marker,488,185.0,2025-08-15
+Marker,245,187.0,2025-08-08
+Marker,236,178.0,2025-08-27
+Marker,165,176.0,2025-09-05
+Marker,445,170.0,2025-10-23
+Marker,205,184.0,2025-08-20
+Marker,119,172.0,2025-09-30
+Marker,133,169.0,2025-10-13
+Marker,448,184.0,2025-09-10
+Marker,256,170.0,2025-09-25
+Marker,208,185.0,2025-08-16
+Marker,274,180.0,2025-10-25
+Marker,110,187.0,2025-10-24
+Highlighter,140,165.0,2025-08-28
+Highlighter,406,157.0,2025-08-10
+Highlighter,203,166.0,2025-10-17
+Highlighter,152,161.0,2025-09-25
+Highlighter,481,156.0,2025-08-14
+Highlighter,309,150.0,2025-08-23
+Highlighter,164,152.0,2025-08-28
+Highlighter,422,165.0,2025-10-06
+Highlighter,327,151.0,2025-11-05
+Highlighter,208,160.0,2025-10-20
+Highlighter,372,161.0,2025-08-15
+Highlighter,476,166.0,2025-09-28
+Highlighter,358,149.0,2025-10-21
+Highlighter,288,167.0,2025-10-09
+Highlighter,199,153.0,2025-08-18
+Highlighter,247,150.0,2025-08-31
+Highlighter,290,148.0,2025-08-11
+Highlighter,164,166.0,2025-09-16
+Highlighter,436,164.0,2025-09-07
+Highlighter,240,149.0,2025-09-21
+Highlighter,268,158.0,2025-10-12
+Highlighter,188,152.0,2025-10-10
+Highlighter,117,159.0,2025-08-22
+Highlighter,112,150.0,2025-10-08
+Highlighter,217,150.0,2025-08-18
+Highlighter,152,152.0,2025-10-21
+Highlighter,143,152.0,2025-09-17
+Highlighter,102,150.0,2025-09-06
+Highlighter,143,155.0,2025-10-13
+Highlighter,280,159.0,2025-09-05
+Notebook A4,462,118.0,2025-10-26
+Notebook A4,134,106.0,2025-11-05
+Notebook A4,155,116.0,2025-09-17
+Notebook A4,366,111.0,2025-09-12
+Notebook A4,436,109.0,2025-09-24
+Notebook A4,200,117.0,2025-09-11
+Notebook A4,347,103.0,2025-09-29
+Notebook A4,210,110.0,2025-09-17
+Notebook A4,413,120.0,2025-09-27
+Notebook A4,178,118.0,2025-08-08
+Notebook A4,267,102.0,2025-10-15
+Notebook A4,468,120.0,2025-09-19
+Notebook A4,386,104.0,2025-10-21
+Notebook A4,459,116.0,2025-10-01
+Notebook A4,318,107.0,2025-08-21
+Notebook A4,442,120.0,2025-09-10
+Notebook A4,223,108.0,2025-09-10
+Notebook A4,288,114.0,2025-09-14
+Notebook A4,464,115.0,2025-10-11
+Notebook A4,426,112.0,2025-10-26
+Notebook A4,477,110.0,2025-08-18
+Notebook A4,194,116.0,2025-10-24
+Notebook A4,135,113.0,2025-10-12
+Notebook A4,438,106.0,2025-08-29
+Notebook A4,498,102.0,2025-11-02
+Notebook A4,213,121.0,2025-09-07
+Notebook A4,339,104.0,2025-08-29
+Notebook A4,379,103.0,2025-09-15
+Notebook A4,200,116.0,2025-08-21
+Notebook A4,451,110.0,2025-09-26
+Notebook Long,329,90.0,2025-08-16
+Notebook Long,259,91.0,2025-08-29
+Notebook Long,189,104.0,2025-10-25
+Notebook Long,216,90.0,2025-11-03
+Notebook Long,223,104.0,2025-08-29
+Notebook Long,101,102.0,2025-10-05
+Notebook Long,113,100.0,2025-10-03
+Notebook Long,160,88.0,2025-10-14
+Notebook Long,442,97.0,2025-10-16
+Notebook Long,446,91.0,2025-09-25
+Notebook Long,466,95.0,2025-08-26
+Notebook Long,210,100.0,2025-08-20
+Notebook Long,405,90.0,2025-10-15
+Notebook Long,226,95.0,2025-09-10
+Notebook Long,296,96.0,2025-09-23
+Notebook Long,477,97.0,2025-09-12
+Notebook Long,492,107.0,2025-10-24
+Notebook Long,481,99.0,2025-10-22
+Notebook Long,236,103.0,2025-09-15
+Notebook Long,412,105.0,2025-10-16
+Notebook Long,141,105.0,2025-09-21
+Notebook Long,250,93.0,2025-10-25
+Notebook Long,181,106.0,2025-09-15
+Notebook Long,299,104.0,2025-09-10
+Notebook Long,305,105.0,2025-09-04
+Notebook Long,459,97.0,2025-10-13
+Notebook Long,274,97.0,2025-10-02
+Notebook Long,342,88.0,2025-10-06
+Notebook Long,328,94.0,2025-08-18
+Notebook Long,370,102.0,2025-10-27
+Diary,200,74.0,2025-08-27
+Diary,248,68.0,2025-08-22
+Diary,229,70.0,2025-10-18
+Diary,380,73.0,2025-08-17
+Diary,300,73.0,2025-08-15
+Diary,343,67.0,2025-09-26
+Diary,309,77.0,2025-08-21
+Diary,197,75.0,2025-10-01
+Diary,333,76.0,2025-08-13
+Diary,221,78.0,2025-09-11
+Diary,450,80.0,2025-10-17
+Diary,155,78.0,2025-09-02
+Diary,442,61.0,2025-09-08
+Diary,320,62.0,2025-08-29
+Diary,125,75.0,2025-09-14
+Diary,480,69.0,2025-09-28
+Diary,297,62.0,2025-10-12
+Diary,484,78.0,2025-09-08
+Diary,263,76.0,2025-08-29
+Diary,309,67.0,2025-08-12
+Diary,106,79.0,2025-08-23
+Diary,254,61.0,2025-11-03
+Diary,331,64.0,2025-11-03
+Diary,169,74.0,2025-09-03
+Diary,144,69.0,2025-09-12
+Diary,312,61.0,2025-08-27
+Diary,448,68.0,2025-08-28
+Diary,403,61.0,2025-09-05
+Diary,272,75.0,2025-08-23
+Diary,218,65.0,2025-10-26
+Stapler,158,207.0,2025-08-30
+Stapler,303,211.0,2025-10-24
+Stapler,484,206.0,2025-08-23
+Stapler,401,218.0,2025-10-20
+Stapler,327,214.0,2025-11-02
+Stapler,474,204.0,2025-10-19
+Stapler,101,205.0,2025-09-10
+Stapler,304,208.0,2025-08-12
+Stapler,323,219.0,2025-10-26
+Stapler,221,219.0,2025-10-13
+Stapler,237,214.0,2025-10-09
+Stapler,467,208.0,2025-10-22
+Stapler,147,211.0,2025-08-07
+Stapler,374,203.0,2025-09-30
+Stapler,192,207.0,2025-08-15
+Stapler,493,217.0,2025-10-15
+Stapler,412,213.0,2025-09-28
+Stapler,143,215.0,2025-09-01
+Stapler,164,203.0,2025-08-17
+Stapler,295,216.0,2025-10-21
+Stapler,466,215.0,2025-11-05
+Stapler,419,217.0,2025-09-22
+Stapler,110,210.0,2025-10-25
+Stapler,442,216.0,2025-10-25
+Stapler,318,216.0,2025-10-17
+Stapler,332,202.0,2025-08-31
+Stapler,258,205.0,2025-10-30
+Stapler,405,205.0,2025-10-23
+Stapler,104,217.0,2025-08-09
+Stapler,160,203.0,2025-10-21
+Staple Pins,140,145.0,2025-09-30
+Staple Pins,126,133.0,2025-08-27
+Staple Pins,371,132.0,2025-11-03
+Staple Pins,234,132.0,2025-10-10
+Staple Pins,378,134.0,2025-09-26
+Staple Pins,218,147.0,2025-10-27
+Staple Pins,121,130.0,2025-09-12
+Staple Pins,490,131.0,2025-10-22
+Staple Pins,455,129.0,2025-10-05
+Staple Pins,309,140.0,2025-11-04
+Staple Pins,376,141.0,2025-08-11
+Staple Pins,412,129.0,2025-10-23
+Staple Pins,262,129.0,2025-10-10
+Staple Pins,101,141.0,2025-09-29
+Staple Pins,235,147.0,2025-10-28
+Staple Pins,436,131.0,2025-11-03
+Staple Pins,419,141.0,2025-10-04
+Staple Pins,148,134.0,2025-10-17
+Staple Pins,281,140.0,2025-10-04
+Staple Pins,313,136.0,2025-09-14
+Staple Pins,328,134.0,2025-08-26
+Staple Pins,224,146.0,2025-08-25
+Staple Pins,332,132.0,2025-09-07
+Staple Pins,421,137.0,2025-10-03
+Staple Pins,431,130.0,2025-08-25
+Staple Pins,490,129.0,2025-08-22
+Staple Pins,197,136.0,2025-08-29
+Staple Pins,349,142.0,2025-09-16
+Staple Pins,412,145.0,2025-08-27
+Staple Pins,402,135.0,2025-09-11
+Paper Clips,244,82.0,2025-10-13
+Paper Clips,174,80.0,2025-10-16
+Paper Clips,109,69.0,2025-11-02
+Paper Clips,239,68.0,2025-08-17
+Paper Clips,221,79.0,2025-08-27
+Paper Clips,146,68.0,2025-09-22
+Paper Clips,221,65.0,2025-09-28
+Paper Clips,358,67.0,2025-08-22
+Paper Clips,159,69.0,2025-08-09
+Paper Clips,344,81.0,2025-11-03
+Paper Clips,326,84.0,2025-09-03
+Paper Clips,227,70.0,2025-08-24
+Paper Clips,115,79.0,2025-09-12
+Paper Clips,146,66.0,2025-09-03
+Paper Clips,237,79.0,2025-08-07
+Paper Clips,205,68.0,2025-10-07
+Paper Clips,154,79.0,2025-08-23
+Paper Clips,320,78.0,2025-10-27
+Paper Clips,402,74.0,2025-10-31
+Paper Clips,447,76.0,2025-10-29
+Paper Clips,494,72.0,2025-08-27
+Paper Clips,363,70.0,2025-10-16
+Paper Clips,277,79.0,2025-09-17
+Paper Clips,288,69.0,2025-10-18
+Paper Clips,361,72.0,2025-09-19
+Paper Clips,154,76.0,2025-10-30
+Paper Clips,445,67.0,2025-10-13
+Paper Clips,153,69.0,2025-08-25
+Paper Clips,396,84.0,2025-10-22
+Paper Clips,122,74.0,2025-08-27
+Binder Clips,338,125.0,2025-08-27
+Binder Clips,116,121.0,2025-09-24
+Binder Clips,181,128.0,2025-09-30
+Binder Clips,155,132.0,2025-09-16
+Binder Clips,158,130.0,2025-10-26
+Binder Clips,434,119.0,2025-08-12
+Binder Clips,391,120.0,2025-09-28
+Binder Clips,198,128.0,2025-09-04
+Binder Clips,404,129.0,2025-08-12
+Binder Clips,377,127.0,2025-09-17
+Binder Clips,410,130.0,2025-11-01
+Binder Clips,190,136.0,2025-10-10
+Binder Clips,403,129.0,2025-10-11
+Binder Clips,202,126.0,2025-08-09
+Binder Clips,406,137.0,2025-10-14
+Binder Clips,365,135.0,2025-10-14
+Binder Clips,215,121.0,2025-09-27
+Binder Clips,141,120.0,2025-09-06
+Binder Clips,226,118.0,2025-09-30
+Binder Clips,435,136.0,2025-10-10
+Binder Clips,437,130.0,2025-09-29
+Binder Clips,450,123.0,2025-10-26
+Binder Clips,135,135.0,2025-09-06
+Binder Clips,233,127.0,2025-10-11
+Binder Clips,288,135.0,2025-08-10
+Binder Clips,417,132.0,2025-10-15
+Binder Clips,241,123.0,2025-09-10
+Binder Clips,346,122.0,2025-09-18
+Binder Clips,202,119.0,2025-08-22
+Binder Clips,141,135.0,2025-09-24
+Glue Stick,339,83.0,2025-10-09
+Glue Stick,214,93.0,2025-08-15
+Glue Stick,214,89.0,2025-10-26
+Glue Stick,474,94.0,2025-08-08
+Glue Stick,185,87.0,2025-08-23
+Glue Stick,251,86.0,2025-08-07
+Glue Stick,113,81.0,2025-09-29
+Glue Stick,379,82.0,2025-10-13
+Glue Stick,216,88.0,2025-09-28
+Glue Stick,129,83.0,2025-09-01
+Glue Stick,484,86.0,2025-08-09
+Glue Stick,388,90.0,2025-09-05
+Glue Stick,434,88.0,2025-10-05
+Glue Stick,157,89.0,2025-10-09
+Glue Stick,179,90.0,2025-09-25
+Glue Stick,113,88.0,2025-10-19
+Glue Stick,300,91.0,2025-10-08
+Glue Stick,308,83.0,2025-09-06
+Glue Stick,175,89.0,2025-09-12
+Glue Stick,296,94.0,2025-10-24
+Glue Stick,431,90.0,2025-10-05
+Glue Stick,477,93.0,2025-09-14
+Glue Stick,473,82.0,2025-10-06
+Glue Stick,207,97.0,2025-10-15
+Glue Stick,337,82.0,2025-08-27
+Glue Stick,310,95.0,2025-08-28
+Glue Stick,219,90.0,2025-10-25
+Glue Stick,402,88.0,2025-09-16
+Glue Stick,448,96.0,2025-10-18
+Glue Stick,270,98.0,2025-09-12
+Fevicol Tube,117,56.0,2025-09-25
+Fevicol Tube,410,58.0,2025-08-26
+Fevicol Tube,302,44.0,2025-10-27
+Fevicol Tube,460,56.0,2025-08-18
+Fevicol Tube,460,57.0,2025-08-07
+Fevicol Tube,203,62.0,2025-10-21
+Fevicol Tube,383,45.0,2025-09-27
+Fevicol Tube,401,52.0,2025-10-08
+Fevicol Tube,445,56.0,2025-10-19
+Fevicol Tube,113,61.0,2025-09-01
+Fevicol Tube,340,63.0,2025-09-05
+Fevicol Tube,134,55.0,2025-10-25
+Fevicol Tube,197,56.0,2025-08-18
+Fevicol Tube,486,50.0,2025-09-20
+Fevicol Tube,281,57.0,2025-08-20
+Fevicol Tube,143,52.0,2025-10-26
+Fevicol Tube,185,57.0,2025-10-04
+Fevicol Tube,444,53.0,2025-10-20
+Fevicol Tube,233,56.0,2025-10-13
+Fevicol Tube,208,52.0,2025-10-29
+Fevicol Tube,298,55.0,2025-10-12
+Fevicol Tube,334,46.0,2025-10-18
+Fevicol Tube,486,44.0,2025-09-08
+Fevicol Tube,480,52.0,2025-10-24
+Fevicol Tube,419,58.0,2025-10-02
+Fevicol Tube,108,46.0,2025-09-17
+Fevicol Tube,304,51.0,2025-08-15
+Fevicol Tube,398,63.0,2025-10-06
+Fevicol Tube,363,53.0,2025-08-15
+Fevicol Tube,227,58.0,2025-09-18
+Whiteboard Duster,423,94.0,2025-09-20
+Whiteboard Duster,292,103.0,2025-09-23
+Whiteboard Duster,159,101.0,2025-11-02
+Whiteboard Duster,268,91.0,2025-10-28
+Whiteboard Duster,109,92.0,2025-08-08
+Whiteboard Duster,264,105.0,2025-09-23
+Whiteboard Duster,469,91.0,2025-10-28
+Whiteboard Duster,484,98.0,2025-10-20
+Whiteboard Duster,308,93.0,2025-08-12
+Whiteboard Duster,214,93.0,2025-10-15
+Whiteboard Duster,389,98.0,2025-10-07
+Whiteboard Duster,266,96.0,2025-11-05
+Whiteboard Duster,205,88.0,2025-08-24
+Whiteboard Duster,498,93.0,2025-10-29
+Whiteboard Duster,453,102.0,2025-10-10
+Whiteboard Duster,367,101.0,2025-10-24
+Whiteboard Duster,242,88.0,2025-09-18
+Whiteboard Duster,412,94.0,2025-10-14
+Whiteboard Duster,347,103.0,2025-08-11
+Whiteboard Duster,297,89.0,2025-10-15
+Whiteboard Duster,223,91.0,2025-09-23
+Whiteboard Duster,194,107.0,2025-08-20
+Whiteboard Duster,434,100.0,2025-08-23
+Whiteboard Duster,471,97.0,2025-10-14
+Whiteboard Duster,439,105.0,2025-09-23
+Whiteboard Duster,366,88.0,2025-09-16
+Whiteboard Duster,433,89.0,2025-10-21
+Whiteboard Duster,404,99.0,2025-09-10
+Whiteboard Duster,426,100.0,2025-10-24
+Whiteboard Duster,391,88.0,2025-08-22
+Whiteboard Marker,297,108.0,2025-10-16
+Whiteboard Marker,300,111.0,2025-11-04
+Whiteboard Marker,355,106.0,2025-08-25
+Whiteboard Marker,441,105.0,2025-10-31
+Whiteboard Marker,333,119.0,2025-10-23
+Whiteboard Marker,201,113.0,2025-09-05
+Whiteboard Marker,461,104.0,2025-08-15
+Whiteboard Marker,188,114.0,2025-08-19
+Whiteboard Marker,454,102.0,2025-10-25
+Whiteboard Marker,451,112.0,2025-11-03
+Whiteboard Marker,247,104.0,2025-09-19
+Whiteboard Marker,161,107.0,2025-08-20
+Whiteboard Marker,200,106.0,2025-08-20
+Whiteboard Marker,354,102.0,2025-10-11
+Whiteboard Marker,486,101.0,2025-09-20
+Whiteboard Marker,151,101.0,2025-10-15
+Whiteboard Marker,469,109.0,2025-08-24
+Whiteboard Marker,400,115.0,2025-10-20
+Whiteboard Marker,194,103.0,2025-09-10
+Whiteboard Marker,122,112.0,2025-08-22
+Whiteboard Marker,400,110.0,2025-09-06
+Whiteboard Marker,398,118.0,2025-11-05
+Whiteboard Marker,129,115.0,2025-08-09
+Whiteboard Marker,479,103.0,2025-09-28
+Whiteboard Marker,231,115.0,2025-10-02
+Whiteboard Marker,469,108.0,2025-11-04
+Whiteboard Marker,403,117.0,2025-09-25
+Whiteboard Marker,129,102.0,2025-08-09
+Whiteboard Marker,362,105.0,2025-09-18
+Whiteboard Marker,177,111.0,2025-09-28
+Permanent Marker,108,123.0,2025-08-27
+Permanent Marker,103,113.0,2025-08-23
+Permanent Marker,152,131.0,2025-08-21
+Permanent Marker,198,129.0,2025-10-03
+Permanent Marker,245,121.0,2025-09-17
+Permanent Marker,159,113.0,2025-08-24
+Permanent Marker,234,123.0,2025-10-25
+Permanent Marker,456,125.0,2025-10-29
+Permanent Marker,387,114.0,2025-10-25
+Permanent Marker,425,116.0,2025-10-17
+Permanent Marker,292,128.0,2025-08-26
+Permanent Marker,451,119.0,2025-08-17
+Permanent Marker,245,123.0,2025-10-20
+Permanent Marker,437,131.0,2025-10-06
+Permanent Marker,232,118.0,2025-08-18
+Permanent Marker,168,122.0,2025-10-25
+Permanent Marker,310,113.0,2025-10-28
+Permanent Marker,385,116.0,2025-08-29
+Permanent Marker,281,118.0,2025-09-10
+Permanent Marker,490,124.0,2025-09-14
+Permanent Marker,499,115.0,2025-09-23
+Permanent Marker,277,129.0,2025-10-31
+Permanent Marker,271,123.0,2025-10-05
+Permanent Marker,158,129.0,2025-09-22
+Permanent Marker,469,114.0,2025-10-25
+Permanent Marker,202,115.0,2025-11-05
+Permanent Marker,209,129.0,2025-08-12
+Permanent Marker,414,116.0,2025-08-12
+Permanent Marker,451,122.0,2025-08-12
+Permanent Marker,490,119.0,2025-09-04
+Sketch Pen Set,274,210.0,2025-10-24
+Sketch Pen Set,499,213.0,2025-08-08
+Sketch Pen Set,164,208.0,2025-09-03
+Sketch Pen Set,137,201.0,2025-10-17
+Sketch Pen Set,499,208.0,2025-09-05
+Sketch Pen Set,485,195.0,2025-09-30
+Sketch Pen Set,292,207.0,2025-10-21
+Sketch Pen Set,288,210.0,2025-08-21
+Sketch Pen Set,378,212.0,2025-10-08
+Sketch Pen Set,442,210.0,2025-10-29
+Sketch Pen Set,169,207.0,2025-09-30
+Sketch Pen Set,161,201.0,2025-09-28
+Sketch Pen Set,140,209.0,2025-09-10
+Sketch Pen Set,173,196.0,2025-08-16
+Sketch Pen Set,394,206.0,2025-09-18
+Sketch Pen Set,253,206.0,2025-08-26
+Sketch Pen Set,463,201.0,2025-08-21
+Sketch Pen Set,381,197.0,2025-10-15
+Sketch Pen Set,404,204.0,2025-09-23
+Sketch Pen Set,368,208.0,2025-10-04
+Sketch Pen Set,331,212.0,2025-08-19
+Sketch Pen Set,200,194.0,2025-09-28
+Sketch Pen Set,307,204.0,2025-10-05
+Sketch Pen Set,242,207.0,2025-09-15
+Sketch Pen Set,222,213.0,2025-08-08
+Sketch Pen Set,113,207.0,2025-10-09
+Sketch Pen Set,449,210.0,2025-10-13
+Sketch Pen Set,336,208.0,2025-10-11
+Sketch Pen Set,134,194.0,2025-10-09
+Sketch Pen Set,328,197.0,2025-10-13
+Color Pencils,316,186.0,2025-09-19
+Color Pencils,217,183.0,2025-09-08
+Color Pencils,422,184.0,2025-08-07
+Color Pencils,158,198.0,2025-10-05
+Color Pencils,408,197.0,2025-09-16
+Color Pencils,350,192.0,2025-09-17
+Color Pencils,147,194.0,2025-09-25
+Color Pencils,280,198.0,2025-09-22
+Color Pencils,474,183.0,2025-10-02
+Color Pencils,306,192.0,2025-09-20
+Color Pencils,105,200.0,2025-09-24
+Color Pencils,322,200.0,2025-09-06
+Color Pencils,322,191.0,2025-09-27
+Color Pencils,147,200.0,2025-08-17
+Color Pencils,138,184.0,2025-10-27
+Color Pencils,270,194.0,2025-10-16
+Color Pencils,434,201.0,2025-09-24
+Color Pencils,211,195.0,2025-08-11
+Color Pencils,258,196.0,2025-10-19
+Color Pencils,366,196.0,2025-09-02
+Color Pencils,490,194.0,2025-09-27
+Color Pencils,100,200.0,2025-10-21
+Color Pencils,184,200.0,2025-09-09
+Color Pencils,186,196.0,2025-09-21
+Color Pencils,413,197.0,2025-10-04
+Color Pencils,301,187.0,2025-10-27
+Color Pencils,329,187.0,2025-09-13
+Color Pencils,246,201.0,2025-09-22
+Color Pencils,413,188.0,2025-10-25
+Color Pencils,368,189.0,2025-08-21
+Drawing Book,486,166.0,2025-10-08
+Drawing Book,284,152.0,2025-09-17
+Drawing Book,295,164.0,2025-08-09
+Drawing Book,357,164.0,2025-10-30
+Drawing Book,404,170.0,2025-10-17
+Drawing Book,196,153.0,2025-08-28
+Drawing Book,343,157.0,2025-08-29
+Drawing Book,133,160.0,2025-08-12
+Drawing Book,143,154.0,2025-08-28
+Drawing Book,134,154.0,2025-10-14
+Drawing Book,307,165.0,2025-10-03
+Drawing Book,334,163.0,2025-10-05
+Drawing Book,378,151.0,2025-09-02
+Drawing Book,100,162.0,2025-08-30
+Drawing Book,104,157.0,2025-09-28
+Drawing Book,380,155.0,2025-08-14
+Drawing Book,179,154.0,2025-10-28
+Drawing Book,148,168.0,2025-08-24
+Drawing Book,231,170.0,2025-10-05
+Drawing Book,326,163.0,2025-08-19
+Drawing Book,229,164.0,2025-10-02
+Drawing Book,276,152.0,2025-09-25
+Drawing Book,454,163.0,2025-08-28
+Drawing Book,177,152.0,2025-10-20
+Drawing Book,373,151.0,2025-09-17
+Drawing Book,483,156.0,2025-10-31
+Drawing Book,293,162.0,2025-08-30
+Drawing Book,228,160.0,2025-08-19
+Drawing Book,216,154.0,2025-10-03
+Drawing Book,321,169.0,2025-09-01
+A4 Paper Pack,326,96.0,2025-10-28
+A4 Paper Pack,479,97.0,2025-09-05
+A4 Paper Pack,127,103.0,2025-10-18
+A4 Paper Pack,264,98.0,2025-08-10
+A4 Paper Pack,309,106.0,2025-09-26
+A4 Paper Pack,464,101.0,2025-10-01
+A4 Paper Pack,115,92.0,2025-09-01
+A4 Paper Pack,404,109.0,2025-10-04
+A4 Paper Pack,377,103.0,2025-09-13
+A4 Paper Pack,220,104.0,2025-09-20
+A4 Paper Pack,106,106.0,2025-08-15
+A4 Paper Pack,164,102.0,2025-10-18
+A4 Paper Pack,344,95.0,2025-10-02
+A4 Paper Pack,485,104.0,2025-10-25
+A4 Paper Pack,283,106.0,2025-09-01
+A4 Paper Pack,156,97.0,2025-09-04
+A4 Paper Pack,107,96.0,2025-08-24
+A4 Paper Pack,111,108.0,2025-09-04
+A4 Paper Pack,343,102.0,2025-10-02
+A4 Paper Pack,411,99.0,2025-09-25
+A4 Paper Pack,431,102.0,2025-10-10
+A4 Paper Pack,330,109.0,2025-09-17
+A4 Paper Pack,464,109.0,2025-10-21
+A4 Paper Pack,366,105.0,2025-09-26
+A4 Paper Pack,196,101.0,2025-09-17
+A4 Paper Pack,422,92.0,2025-10-30
+A4 Paper Pack,141,99.0,2025-09-21
+A4 Paper Pack,237,107.0,2025-08-23
+A4 Paper Pack,163,98.0,2025-10-24
+A4 Paper Pack,221,105.0,2025-08-15
+File Folder,413,210.0,2025-09-12
+File Folder,261,199.0,2025-09-30
+File Folder,373,216.0,2025-09-23
+File Folder,460,197.0,2025-10-06
+File Folder,495,206.0,2025-09-14
+File Folder,409,206.0,2025-09-30
+File Folder,421,215.0,2025-10-17
+File Folder,282,200.0,2025-08-07
+File Folder,490,199.0,2025-10-05
+File Folder,296,205.0,2025-08-18
+File Folder,113,212.0,2025-10-20
+File Folder,165,207.0,2025-09-04
+File Folder,283,208.0,2025-09-19
+File Folder,221,213.0,2025-08-30
+File Folder,146,212.0,2025-11-03
+File Folder,342,205.0,2025-09-22
+File Folder,315,216.0,2025-10-31
+File Folder,172,212.0,2025-10-06
+File Folder,485,207.0,2025-10-07
+File Folder,281,206.0,2025-10-07
+File Folder,299,202.0,2025-08-07
+File Folder,218,216.0,2025-11-03
+File Folder,135,199.0,2025-09-18
+File Folder,101,212.0,2025-08-12
+File Folder,120,199.0,2025-08-20
+File Folder,390,201.0,2025-09-28
+File Folder,410,198.0,2025-10-16
+File Folder,202,206.0,2025-10-06
+File Folder,293,211.0,2025-10-26
+File Folder,257,212.0,2025-08-27
+Document Holder,480,60.0,2025-10-03
+Document Holder,179,64.0,2025-08-12
+Document Holder,229,64.0,2025-09-06
+Document Holder,111,68.0,2025-10-11
+Document Holder,316,51.0,2025-08-16
+Document Holder,167,69.0,2025-09-12
+Document Holder,134,53.0,2025-09-17
+Document Holder,293,65.0,2025-08-24
+Document Holder,254,55.0,2025-10-03
+Document Holder,348,56.0,2025-09-23
+Document Holder,112,68.0,2025-08-30
+Document Holder,166,68.0,2025-09-04
+Document Holder,152,65.0,2025-10-28
+Document Holder,379,54.0,2025-11-05
+Document Holder,316,67.0,2025-08-21
+Document Holder,382,52.0,2025-09-07
+Document Holder,219,66.0,2025-09-19
+Document Holder,274,55.0,2025-08-18
+Document Holder,446,66.0,2025-09-29
+Document Holder,338,67.0,2025-09-07
+Document Holder,368,63.0,2025-09-21
+Document Holder,407,62.0,2025-09-14
+Document Holder,275,54.0,2025-10-11
+Document Holder,486,67.0,2025-10-15
+Document Holder,300,68.0,2025-08-27
+Document Holder,473,51.0,2025-08-21
+Document Holder,130,56.0,2025-09-13
+Document Holder,380,56.0,2025-08-25
+Document Holder,435,67.0,2025-10-04
+Document Holder,167,58.0,2025-10-29
+Calculator,232,88.0,2025-10-10
+Calculator,469,97.0,2025-08-12
+Calculator,139,92.0,2025-09-16
+Calculator,319,102.0,2025-10-06
+Calculator,498,99.0,2025-10-30
+Calculator,295,90.0,2025-09-24
+Calculator,383,85.0,2025-10-19
+Calculator,500,91.0,2025-09-10
+Calculator,130,90.0,2025-10-17
+Calculator,296,89.0,2025-10-21
+Calculator,250,89.0,2025-09-14
+Calculator,474,99.0,2025-09-07
+Calculator,324,100.0,2025-10-29
+Calculator,340,87.0,2025-09-26
+Calculator,496,91.0,2025-10-02
+Calculator,393,85.0,2025-10-22
+Calculator,137,87.0,2025-09-27
+Calculator,471,90.0,2025-08-07
+Calculator,364,84.0,2025-08-29
+Calculator,100,91.0,2025-10-06
+Calculator,106,88.0,2025-11-03
+Calculator,231,99.0,2025-09-04
+Calculator,324,84.0,2025-10-04
+Calculator,181,97.0,2025-09-16
+Calculator,290,87.0,2025-10-07
+Calculator,348,85.0,2025-09-23
+Calculator,344,91.0,2025-10-15
+Calculator,437,96.0,2025-10-06
+Calculator,445,88.0,2025-10-09
+Calculator,285,87.0,2025-10-29
+Scissors,478,52.0,2025-10-20
+Scissors,230,48.0,2025-08-27
+Scissors,184,55.0,2025-10-04
+Scissors,387,37.0,2025-09-11
+Scissors,353,47.0,2025-11-05
+Scissors,299,40.0,2025-09-28
+Scissors,213,53.0,2025-11-01
+Scissors,360,50.0,2025-10-31
+Scissors,257,44.0,2025-08-31
+Scissors,212,50.0,2025-09-11
+Scissors,401,54.0,2025-09-20
+Scissors,184,52.0,2025-10-13
+Scissors,450,54.0,2025-10-31
+Scissors,151,38.0,2025-09-10
+Scissors,441,41.0,2025-08-29
+Scissors,375,52.0,2025-10-15
+Scissors,127,43.0,2025-10-19
+Scissors,417,41.0,2025-09-23
+Scissors,165,39.0,2025-09-26
+Scissors,447,51.0,2025-10-02
+Scissors,277,42.0,2025-08-28
+Scissors,380,52.0,2025-10-08
+Scissors,344,53.0,2025-09-15
+Scissors,257,42.0,2025-10-04
+Scissors,349,40.0,2025-10-14
+Scissors,407,52.0,2025-10-30
+Scissors,105,36.0,2025-10-29
+Scissors,129,50.0,2025-09-01
+Scissors,263,54.0,2025-09-30
+Scissors,439,53.0,2025-08-20
+Tape,332,57.0,2025-10-17
+Tape,162,56.0,2025-09-06
+Tape,233,61.0,2025-10-07
+Tape,427,54.0,2025-09-06
+Tape,367,72.0,2025-09-06
+Tape,497,69.0,2025-10-30
+Tape,349,55.0,2025-08-16
+Tape,352,64.0,2025-09-16
+Tape,191,70.0,2025-09-23
+Tape,345,71.0,2025-09-23
+Tape,477,59.0,2025-10-24
+Tape,231,66.0,2025-09-17
+Tape,444,68.0,2025-09-22
+Tape,338,55.0,2025-08-08
+Tape,481,62.0,2025-08-16
+Tape,177,65.0,2025-09-23
+Tape,352,55.0,2025-08-31
+Tape,328,71.0,2025-09-07
+Tape,347,70.0,2025-11-01
+Tape,288,67.0,2025-10-03
+Tape,344,69.0,2025-10-06
+Tape,340,66.0,2025-09-06
+Tape,290,63.0,2025-10-29
+Tape,195,53.0,2025-09-12
+Tape,486,59.0,2025-08-07
+Tape,314,55.0,2025-09-03
+Tape,407,64.0,2025-08-31
+Tape,152,61.0,2025-10-30
+Tape,226,54.0,2025-08-11
+Tape,435,62.0,2025-09-19
+Correction Pen,374,53.0,2025-08-12
+Correction Pen,146,53.0,2025-10-22
+Correction Pen,141,49.0,2025-08-29
+Correction Pen,459,36.0,2025-09-07
+Correction Pen,194,45.0,2025-10-31
+Correction Pen,372,39.0,2025-09-16
+Correction Pen,245,38.0,2025-10-06
+Correction Pen,232,39.0,2025-10-30
+Correction Pen,414,40.0,2025-09-25
+Correction Pen,191,52.0,2025-10-26
+Correction Pen,437,45.0,2025-08-23
+Correction Pen,363,48.0,2025-08-19
+Correction Pen,404,37.0,2025-10-06
+Correction Pen,257,35.0,2025-10-01
+Correction Pen,220,37.0,2025-09-27
+Correction Pen,208,52.0,2025-09-04
+Correction Pen,144,36.0,2025-10-03
+Correction Pen,240,50.0,2025-10-10
+Correction Pen,352,42.0,2025-09-28
+Correction Pen,261,37.0,2025-09-06
+Correction Pen,449,35.0,2025-08-17
+Correction Pen,333,45.0,2025-10-13
+Correction Pen,241,43.0,2025-10-16
+Correction Pen,153,53.0,2025-09-25
+Correction Pen,365,51.0,2025-10-22
+Correction Pen,206,51.0,2025-10-13
+Correction Pen,262,51.0,2025-10-06
+Correction Pen,354,49.0,2025-08-08
+Correction Pen,231,36.0,2025-10-09
+Correction Pen,316,51.0,2025-08-25

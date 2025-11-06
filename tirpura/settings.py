@@ -176,7 +176,7 @@ from datetime import timedelta
 CELERY_BEAT_SCHEDULE = {
     "daily_stock_check": {
         "task": "inventory_ai.tasks.run_stock_monitor",
-        "schedule": timedelta(seconds=10),  # every 5 seconds
+        "schedule": timedelta(seconds=84600),  # every 5 seconds
     }
 }
 

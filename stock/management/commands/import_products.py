@@ -18,6 +18,8 @@ class Command(BaseCommand):
                 for row in reader:
                     name = row.get('name')
                     hs_code = row.get('HS_code', '')
+                    supplier_code = row.get('supplier_code', '')
+
 
                     if not name:
                         self.stdout.write(self.style.WARNING("Skipping row with empty name"))
@@ -25,11 +27,13 @@ class Command(BaseCommand):
 
                     product, created = Product.objects.get_or_create(
                         name=name,
-                        defaults={'HS_code': hs_code}
+                        defaults={'HS_code': hs_code,
+                                  'supplier_code': supplier_code}
                     )
 
                     if not created:
                         product.HS_code = hs_code  # Update HS_code if product exists
+                        product.supplier_code = supplier_code  # Update supplier_code if product exists
                         product.save()
 
                     count += 1
