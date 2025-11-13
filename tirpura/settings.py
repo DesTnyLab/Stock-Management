@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k__s*w7)28n9wh8%58%*s2ckg9bq&-a=2s53!p3b^i=0(=o$-a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['18.119.102.225','127.0.0.1','localhost', '192.168.1.70']
+ALLOWED_HOSTS = ['18.119.102.225','127.0.0.1','localhost', '142.93.214.136', '192.168.1.70', '172.20.0.1', '172.19.0.1', '172.20.10.2']
 
 
 # Application definition
@@ -176,7 +176,7 @@ from datetime import timedelta
 CELERY_BEAT_SCHEDULE = {
     "daily_stock_check": {
         "task": "inventory_ai.tasks.run_stock_monitor",
-        "schedule": timedelta(seconds=10),  # every 5 seconds
+        "schedule": timedelta(seconds=84600),  # every 5 seconds
     }
 }
 

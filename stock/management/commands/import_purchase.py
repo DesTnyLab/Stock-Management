@@ -10,7 +10,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--file',
             type=str,
-            default='purchases1.csv',
+            default='purchase.csv',
             help='Path to the purchases CSV file'
         )
 

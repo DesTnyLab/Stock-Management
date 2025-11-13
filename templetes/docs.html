@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Inventory Management System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+      color: #1a202c;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 25s infinite;
+      border-radius: 50%;
+    }
+
+    .bg-animation span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .bg-animation span:nth-child(2) { left: 20%; animation-delay: 2s; width: 30px; height: 30px; }
+    .bg-animation span:nth-child(3) { left: 30%; animation-delay: 4s; }
+    .bg-animation span:nth-child(4) { left: 40%; animation-delay: 6s; width: 25px; height: 25px; }
+    .bg-animation span:nth-child(5) { left: 50%; animation-delay: 8s; }
+    .bg-animation span:nth-child(6) { left: 60%; animation-delay: 10s; width: 35px; height: 35px; }
+    .bg-animation span:nth-child(7) { left: 70%; animation-delay: 12s; }
+    .bg-animation span:nth-child(8) { left: 80%; animation-delay: 14s; width: 28px; height: 28px; }
+    .bg-animation span:nth-child(9) { left: 90%; animation-delay: 16s; }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Header */
+    header {
+      padding: 30px 0;
+      animation: slideDown 0.8s ease;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: white;
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 80px 0;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: 60px;
+      color: white;
+      margin-bottom: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .hero .subtitle {
+      font-size: 22px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 15px;
+    }
+
+    .hero .note {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s;
+    }
+
+    .badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: white;
+      color: #185a9d;
+      padding: 18px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 18px;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Glass Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 40px;
+      margin: 40px 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.8s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .glass-card h2 {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 30px;
+      font-weight: 800;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .feature-card h3 {
+      color: white;
+      font-size: 20px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    /* Code Block */
+    .code-block {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 25px;
+      border-radius: 15px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Architecture Diagram */
+    .arch-diagram {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 16px;
+      color: white;
+      margin: 30px 0;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+    }
+
+    .tech-stack {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .tech-pill {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+      padding: 12px 24px;
+      border-radius: 25px;
+      color: white;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s;
+    }
+
+    .tech-pill:hover {
+      transform: scale(1.1) rotate(2deg);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 60px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 42px; }
+      .nav-links { display: none; }
+      .glass-card { padding: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="container">
+    <header>
+      <nav>
+        <div class="logo">📦 InventoryAI</div>
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#installation">Install</a></li>
+          <li><a href="#contribute">Contribute</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>AI-Powered Inventory<br>Management System</h1>
+      <p class="subtitle">Smart, automated, and data-driven inventory control</p>
+      <p class="note">⚙️ Designed for businesses to manage stock, forecast demand, and optimize operations in real time.</p>
+
+      <div class="badges">
+        <span class="badge">🐍 Django 5+</span>
+        <span class="badge">🐘 PostgreSQL</span>
+        <span class="badge">⚡ Redis & Celery</span>
+        <span class="badge">🧠 Prophet Forecasting</span>
+        <span class="badge">📊 AI Analytics</span>
+      </div>
+
+      <a href="https://github.com/DesTnyLab/Stock-Management" class="cta-button">View on GitHub →</a> 
+      <a href="http://142.93.214.136:8001/swagger/" class="cta-button" style="margin-left: 20px;" >API docs</a>
+    </section>
+
+    <div id="features" class="glass-card">
+      <h2>✨ Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>📦 Smart Stock Management</h3>
+          <p>Track product quantities, categories, and warehouse locations with real-time updates.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🤖 AI Demand Forecasting</h3>
+          <p>Leverages Prophet forecasting algorithms to predict future stock requirements and prevent shortages.</p>
+        </div>
+        <div class="feature-card">
+          <h3>💰 Credit & Debit Tracking</h3>
+          <p>Manage supplier and customer accounts with clear debit/credit history and balance management.</p>
+        </div>
+        <div class="feature-card">
+          <h3>📈 Sales Reports</h3>
+          <p>Generate dynamic sales and performance reports with data visualization dashboards.</p>
+        </div>
+        <div class="feature-card">
+          <h3>⚡ Automated Tasks</h3>
+          <p>Celery and Redis handle background scheduling, report generation, and auto-restocking.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🔒 Secure & Scalable</h3>
+          <p>Implements JWT authentication, access roles, and scalable architecture for large-scale operations.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="architecture" class="glass-card">
+      <h2>🏗 System Architecture</h2>
+      <div class="arch-diagram">
+        <strong>Django REST API</strong> → <strong>PostgreSQL</strong> ↔ <strong>Celery Workers</strong> → <strong>Redis</strong> → <strong>AI Forecast Engine</strong>
+        <p style="margin-top: 15px; font-size: 14px;">AI engine predicts stock demand, Celery automates background jobs, and Redis ensures fast caching.</p>
+      </div>
+
+      <div class="tech-stack">
+        <span class="tech-pill">Django REST Framework</span>
+        <span class="tech-pill">PostgreSQL</span>
+        <span class="tech-pill">Celery + Redis</span>
+        <span class="tech-pill">Prophet AI Model</span>
+        <span class="tech-pill">Docker + Nginx</span>
+      </div>
+    </div>
+
+    <div id="installation" class="glass-card">
+      <h2>📦 Quick Installation</h2>
+      <div class="code-block">
+        git clone https://github.com/DesTnyLab/Stock-Management<br>
+        cd Stock-Management
+      </div>
+
+      <div class="code-block">
+        python3 -m venv env<br>
+        source env/bin/activate<br>
+        pip install -r requirements.txt
+      </div>
+
+      <div class="code-block">
+        cp .env.example .env<br>
+        # configure DB, Redis, and Email credentials
+      </div>
+
+      <div class="code-block">
+        python manage.py migrate<br>
+        python manage.py runserver
+      </div>
+
+      <div class="code-block">
+        celery -A core worker -l info<br>
+        celery -A core beat -l info
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <h2>🐳 Docker Deployment</h2>
+      <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">Run the entire system with a single command:</p>
+      <div class="code-block">docker-compose up -d</div>
+      <p style="color: rgba(255,255,255,0.7); margin-top: 15px; font-size: 14px;">Includes Django API, PostgreSQL, Redis, Celery workers, and Nginx reverse proxy.</p>
+    </div>
+
+    <div id="contribute" class="glass-card">
+      <h2>🤝 Contribute</h2>
+      <p style="color: rgba(255,255,255,0.9); margin-bottom: 20px;">We welcome developers and data enthusiasts to enhance AI and automation modules!</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>1. Fork</h3>
+          <p>Fork the repository to your GitHub account.</p>
+        </div>
+        <div class="feature-card">
+          <h3>2. Branch</h3>
+          <p>Create a feature branch for your changes.</p>
+        </div>
+        <div class="feature-card">
+          <h3>3. Submit PR</h3>
+          <p>Open a pull request with detailed description and test coverage.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p><strong>InventoryAI</strong> • <a href="https://github.com/DesTnyLab/Stock-Management">GitHub</a> • Built with 💡 Django, AI & Automation</p>
+    </footer>
+  </div>
+</body>
+</html>

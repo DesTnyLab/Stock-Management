@@ -1350,9 +1350,11 @@ def export_to_csv(request):
 
 
 
+def index(request):
+    return render(request, 'index.html')
 
-
-
+def docs(request):
+    return render(request, 'docs.html')
 
 
 
@@ -1370,6 +1372,8 @@ def custom_404_view(request, exception):
 
 def custom_500_view(request):
     return render(request, '500_error.html', status=500)
+
+
 
 
 

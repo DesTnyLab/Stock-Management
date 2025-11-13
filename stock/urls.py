@@ -83,4 +83,7 @@ urlpatterns = [
   path('manage_finances/', manage_finances, name='manage_finances'),
   path('export-csv/', export_to_csv, name='export_to_csv'),
 
+
+
+
 ]

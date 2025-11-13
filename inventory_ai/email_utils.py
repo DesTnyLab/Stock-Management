@@ -23,7 +23,7 @@ def send_low_stock_email(supplier, product_list):
     try:
         order = create_order_from_email(supplier.id, products_data)
         # Render email template
-        order_link = f"http://192.168.1.70{reverse('edit_order', args=[order.id])}"
+        order_link = f"http://142.93.214.136{reverse('edit_order', args=[order.id])}"
         context = {"products": products_data, "supplier_name": supplier.name, "order_link": order_link}
         email_template = get_template("inventory_ai/email.html").render(context)
 

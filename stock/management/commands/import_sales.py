@@ -10,7 +10,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--file',
             type=str,
-            default='rice.csv',
+            default='sales_data.csv',
             help='Path to the sales CSV file'
         )
 

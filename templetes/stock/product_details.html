@@ -41,10 +41,18 @@ id="btn"
 style="text-decoration: none; background-color: red; color: white; padding: 5px 10px; border-radius: 5px;"
 onclick="return confirmDelete()">Delete Product</a>
 </div>
+
+<!-- Placeholder for forecast content -->
+ <br><br><br>
+
+<div id="forecast-container">
+    Loading forecast...
+</div>
+<br><br><br><br>
 <div class="history">
     <div >
-        <h1 >Purchase History for  "{{ product.name }}"</h1>
-
+        <h2  style="padding-left: 30%;" >Purchase History for  "{{ product.name }}"</h2>
+<br><br>
         <table >
             <thead>
                 <tr>
@@ -71,10 +79,11 @@ onclick="return confirmDelete()">Delete Product</a>
         </table>
 
     </div>
-
+<br><br>
     <div >
-        <h1 >Sale History for "{{ product.name }}"</h1>
 
+        <h2 style="padding-left: 30%;" >Sale History for "{{ product.name }}"</h2>
+<br><br>
         <table>
             <thead>
                 <tr>
@@ -100,19 +109,15 @@ onclick="return confirmDelete()">Delete Product</a>
             </tbody>
         </table>
 
-        <a href="{% url 'manage_inventory' %}" id="btn" style="
+        <!-- <a href="{% url 'manage_inventory' %}" id="btn" style="
         text-decoration: none;
         margin-top: 10px;
-        margin-bottom: 10px;">Back to Products</a>
+        margin-bottom: 10px;">Back to Products</a> -->
     </div>
 </div>
 </div>
 
 
-<!-- Placeholder for forecast content -->
-<div id="forecast-container">
-    Loading forecast...
-</div>
 
 <!-- jQuery (you can use a CDN if not already included) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

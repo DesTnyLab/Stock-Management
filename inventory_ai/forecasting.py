@@ -5,12 +5,7 @@ from plotly.offline import plot
 import plotly.graph_objs as go
 
 def forecast_sales_prophet(product_id=None, periods=7):
-    """
-    Forecast sales units for next `periods` days using Prophet.
-    Returns a tuple: (forecast_list, plot_div)
-      - forecast_list: list of tuples (date, yhat, yhat_lower, yhat_upper)
-      - plot_div: HTML div string of interactive Plotly graph
-    """
+    
     df = get_sales_data(product_id=product_id)
     if df.empty:
         return [], ""

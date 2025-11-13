@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPOAutomation - Welcome</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center text-slate-900">
+
+  <div class="text-center p-10 rounded-2xl shadow-xl bg-white border border-slate-200 max-w-md w-full">
+
+    <h1 class="text-3xl font-bold mb-4">AI Powered Inventory Management</h1>
+
+    <p class="text-slate-600 mb-8">
+    A Django-based web app that automates stock tracking, order management, and sales reporting with AI-driven demand forecasting, Redis caching, and Celery for background task automation.
+    </p>
+
+    <div class="space-y-4">
+
+      <!-- Documentation Button -->
+      <a href="{% url 'docs' %}"
+         class="block w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition">
+        📘 View Documentation
+      </a>
+
+      <!-- Project Button -->
+      <a href="{% url 'manage_inventory' %}"
+         class="block w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition">
+        🚀 Go to Project
+      </a>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
